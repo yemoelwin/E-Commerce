@@ -1,0 +1,106 @@
+@import url(Main.css);
+
+.button1{
+    padding: 15px;
+    background-color: red;
+    border-radius: 4px;
+}
+
+.button1:hover{
+    background-color: rgb(207, 6, 6);
+}
+
+.me-2{
+    margin-bottom: 3px;
+}
+
+.margin{
+    margin-top: 1.5rem;
+}
+
+.price1{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.padding{
+    padding-inline: 18px;
+}
+
+.cart-header,
+.cart-data {
+    border-bottom: 1px solid #cac8c8;
+}
+
+.cart-header h4 {
+    font-size: 20px;
+    color: var(--color-777777);
+}
+
+.cart-col-1 {
+    width: 40%;
+}
+
+.cart-col-1 p {
+    color: var(--color-777777);
+    font-size: 14px;
+}
+
+.cart-col-2 {
+    width: 10%;
+}
+
+.cart-col-3 {
+    width: 15%;
+}
+
+.cart-col-4 {
+    width: 15%;
+}
+
+.cart-data h5.price {
+    font-size: 14px;
+    color: var(--color-1c1c1b);
+}
+
+
+/* Shippping Page */
+
+.total {
+    font-size: 19px;
+    color: var(--color-1c1c1b);
+}
+
+.total-price {
+    font-size: 18px;
+    color: var(--color-777777);
+}
+
+.total-checkout{
+    margin-left: 6rem;
+}
+
+/* Shipping page ends here */
+
+/* Checkout Page */
+
+.checkout-left-data{
+    margin-bottom: 3rem;
+}
+
+.middle{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.text-info{
+    font-size: 16px;
+    color: #db1616 !important
+}
+
+.text-info:hover{
+    color: #0a97b3 !important
+}
+/* Checkout Page */
