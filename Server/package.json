@@ -6,8 +6,12 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node ./src/server.js",
-    "server": "nodemon ./src/server.js"
+    "start": "nodemon ./src/server.js",
+    "server": "nodemon ./src/server.js",
+    "client": "npm run start --prefix ../Front-end",
+    "dev": "concurrently \"npm run server \" \"npm run front-end\"",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "clean": "rimraf ./build"
   },
   "author": "",
   "license": "ISC",
