@@ -43,7 +43,7 @@ export const isAdmin = asyncHandler(async (req, res, next) => {
     const { email } = req.user;
     const adminUser = await User.findOne({email})
     if (adminUser.role !== 'admin') {
-        throw new Error('Admin only have authorization to access.')
+        throw new Error('You are not authorized.Admin only have authorization to access.')
     } else {
         next()
     }
