@@ -39,24 +39,27 @@ var productSchema = new mongoose.Schema({
         default: 0,
         // select: false
     },
-    images: {
-        type: Array,
-    },
+    images: [],
     color: {
         type: String,
         required: true
     },
     ratings: [{
         stars: Number,
+        comment: String,
         postedby: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User'
         }
-    }]
+    }],
+    totalrating: {
+        type: String,
+        default: 0
+    }
 }, {
     timestamps: true
 }
 );
 
-const ProductModel = mongoose.model("product", productSchema);
+const ProductModel = mongoose.model("Product", productSchema);
 export default ProductModel;

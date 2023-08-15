@@ -1,22 +1,28 @@
 import express from 'express';
-import { Blog } from '../controllers/blog.controller.js';
+import { Blog } from '../controllers/blogController.js';
 import { protect, isAdmin } from '../middlewares/authMiddleware.js';
+// import { blogImgResize } from '../middlewares/imageResize.js';
+import { blogMiddleware } from '../middlewares/ImageUpload.js';
 
 const router = express.Router();
 
-router.post('/createBlog', protect, isAdmin, Blog.createBlog);
+router.post('/createBlog', protect, isAdmin, Blog.createBlog); /* finished */
 
-router.put('/update/:id', protect, Blog.updateBlog);
+router.put('/update/:id', protect, Blog.updateBlog); /* finished */
 
-router.get('/:id', protect, Blog.getBlogById);
+router.put('/upload/:id', protect, isAdmin, blogMiddleware.array('images',2),  Blog.uploadBlogImages); /* under development process( now works as local storage but cannot upload to cloud server ) */
 
-// router.get('/:blogId', protect, Blog.isLiked);
+router.get('/:id', protect, Blog.getBlogById); /* finished */
 
-router.post('/:id/like-dislike', protect, Blog.LikedAndDisLiked);
+// router.put('/like-dislike', protect, Blog.LikedAndDisLiked);
 
-router.get('/', Blog.fetchAllBlogs);
+router.put('/liked-disliked', protect, Blog.toggleLikeAndDislike ); /* finished */
 
-router.delete('/:id', Blog.deleteBlog);
+// router.put('/like-dislike/:id', protect, Blog.isLikedAndDisLiked);
+
+router.get('/', Blog.fetchAllBlogs); /* finished */
+
+router.delete('/:id', Blog.deleteBlog); /* finished */
 
 export default router;
 

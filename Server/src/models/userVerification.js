@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 
-const userVerificationSchema = new mongoose.Schema({
+const userVerifyEmailSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         required: true
     },
-    uniqueString: {
+    token: {
         type: String,
         required: true
     },
@@ -15,6 +15,6 @@ const userVerificationSchema = new mongoose.Schema({
     timestamps: true
 })
 
-const userVerification = mongoose.model('UserVerification', userVerificationSchema);
+const userVerification = mongoose.model('Email Verification', userVerifyEmailSchema);
 
 export default userVerification;

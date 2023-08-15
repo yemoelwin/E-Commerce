@@ -1,4 +1,7 @@
 import User from '../models/userModel.js';
+import Product from '../models/productModel.js';
+import Cart from '../models/cartModel.js';
+import Coupon from '../models/couponModel.js';
 import UserVerification from '../models/userVerification.js';
 import UserPasswordVerification from '../models/passwordVerification.js';
 import { sendVerificationEmail, ResetPasswordToken } from '../config/EmailVerify.js';
@@ -8,8 +11,9 @@ import { generateAccessToken } from '../config/jwtToken.js';
 import { generateRefreshToken } from '../config/refreshToken.js';
 import { validateMongodbID } from '../utils/validateMongodbID.js';
 import jwt from 'jsonwebtoken';
-import crypto from 'crypto'
-
+import { config } from 'dotenv';
+config();
+// import crypto from 'crypto'
 // import { generatePasswordResetToken } from '../models/userModel.js';
 
 const userRegister = asyncHandler(async (req, res) => {
@@ -30,6 +34,9 @@ const userRegister = asyncHandler(async (req, res) => {
             password: hashedPassword,
             verified: false
         })
+        if (email === 'yemoelwin142@gmail.com') {
+            newUser.role = 'admin'; // Set role to admin for specific email
+        }
         const savedUser = await newUser.save();
         await sendVerificationEmail(savedUser, res);
         res.status(200).json(newUser)
@@ -43,24 +50,36 @@ const userRegister = asyncHandler(async (req, res) => {
 })
 
 const verifyRegisterEmail = asyncHandler(async (req, res) => {
-    let { userId, uniqueString } = req.params;
+    let { token, _id } = req.params;
+    console.log('Received userId from route params:', _id);
     try {
-        const verificationData = await UserVerification.findOne({
-            userId, 
-            uniqueString,
-            expiredAt: { $gt: Date.now()}
-        })
-        if (!verificationData) {
-            return res.status(400).json({
-                status: 'FAILED',
-                message: 'Invalid or expired verification link.'
-            });
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if (_id !== decoded._id) {
+            return res.status(400).json({ message: 'Invalid user ID.' });
         }
-        await User.findByIdAndUpdate({ _id: userId }, { $set: { verified: true } }, { new: true });
-        return res.status(200).json({
-            status: 'SUCCESS',
-            message: 'Email verification successful. You can now log in.'
-        });
+        console.log('decode', decoded);
+        const verificationRecord = await UserVerification.findOne(
+            {
+                userId: _id,
+                token,
+                expiredAt: { $gt: Date.now()}
+            });
+        console.log('verificationRecord', verificationRecord);
+        console.log('Current timestamp:', Date.now());
+        // console.log('Expired timestamp:', verificationRecord.expiredAt);
+        if (!verificationRecord) {
+            return res.status(400).json({
+                    status: 'FAILED',
+                    message: 'Invalid or expired verification link.'
+                });
+        }
+        await User.findByIdAndUpdate(
+            _id,
+            { $set: { verified: true } },
+            { new: true }
+        );
+        // await UserVerification.findOneAndDelete({ userId, uniqueString: token });
+        return res.json({ message: 'Email verified successfully.You can login now.' });
     } catch (error) {
         console.error('Error during email verification:', error);
         res.status(500).json({
@@ -105,6 +124,7 @@ const userLogin = asyncHandler(async (req, res) => {
                 firstname: user?.firstname,
                 lastname: user?.lastname,
                 email: user?.email,
+                role: user?.role,
                 token: generateAccessToken(user?._id),
                 status: 'SUCCESS',
                 message: 'User logged in successfully',
@@ -119,6 +139,61 @@ const userLogin = asyncHandler(async (req, res) => {
         res.status(500).json({
             status: 'FAILED',
             message: 'An error occurred while login and pls try again.'
+        })
+    }
+})
+
+const adminLogin = asyncHandler(async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const admin = await User.findOne({ email });
+        if (!admin) {
+            return res.status(404).json({
+                status: 'FAILED',
+                message: 'This admin account does not exists.'
+            })
+        }
+        if (!admin?.verified) {
+            return res.status(403).json({
+                status: 'FAILED',
+                message: 'You need to verify your email.'
+            })
+        }
+        if (admin.role !== 'admin') return res.status(404).json({ status: 'FAILED', message: 'Not Authorised' });
+        // if (admin && (await admin.password(admin.password,password))) {
+        const isMatched = await bcrypt.compare(password, admin.password)
+        if (!isMatched) {
+            return res.status(404).json({ status: 'FAILED', message: 'Password does not match!' });
+        }
+            const refreshToken = await generateRefreshToken(admin?._id);
+            await User.findByIdAndUpdate(
+                admin?.id,
+                {
+                    refreshToken: refreshToken
+                },
+                { new: true }
+            )
+            res.cookie("refreshToken", refreshToken, {
+                httpOnly: true,
+                maxAge: 72 * 60 * 60 * 1000
+            })
+            res.status(200).json({
+                _id: admin?._id,
+                firstname: admin?.firstname,
+                lastname: admin?.lastname,
+                email: admin?.email,
+                role: admin.role,
+                token: generateAccessToken(admin?._id),
+                status: 'SUCCESS',
+                message: 'User logged in successfully',
+            });
+        // } else {
+        //     return res.status(404).json({ message: 'Invalid Credetials.' })
+        // }
+    } catch (error) {
+        res.status(500).json({
+            status: 'FAILED',
+            message: 'An error occurred while login as admin and pls try again.'
         })
     }
 })
@@ -292,6 +367,24 @@ const updatePassword = asyncHandler(async (req, res) => {
     }
 })
 
+const saveAddress = asyncHandler(async (req, res) => {
+    const { _id } = req.params;
+    console.log('userId', _id);
+    try {
+        const updatedUser = await User.findByIdAndUpdate(
+            _id,
+            {
+                address: req?.body.address
+            },
+            { new: true }
+        )
+        console.log('updatedUser', updatedUser);
+        res.status(200).json(updatedUser)
+    } catch (error) {
+        res.status(500).json({ message: 'Internal server error.' });
+    }
+})
+
 const getAllUser = asyncHandler(async (req, res) => {
     try {
         const getUsers = await User.find();
@@ -412,8 +505,224 @@ const unBlockUser = asyncHandler(async (req, res) => {
                 message: 'This user is no longer blocked and now access and authorization to their corresponding part.'
             })
     } catch (error) {
-        
+        res.status(500).json({
+            status: "FAILED",
+            message: 'An error occurred and try again.'
+        })
     }
 })
 
-export const userInfo = { userRegister, userLogin, getAllUser, getUserById, deleteUser, updatedUser, blockUser, unBlockUser, handleRefreshToken, Logout, verifyResetToken, forgotPasswordToken, updatePassword, verifyRegisterEmail, resetPassword};
+const getWishlist = asyncHandler(async (req, res) => {
+    const { _id } = req.params;
+    let wishlistData = [];
+    try {
+        const user = await User.findById(_id);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+        if (user.role === 'admin') {
+            wishlistData = await User.populate(user, {
+                path: 'wishlist',
+                select: '-__v'
+            });
+        } else {
+            wishlistData = await User.populate(user, {
+                path: 'wishlist',
+                select: 'title price description brand category quantity images color totalratings'
+            });
+        };
+        const userData = {
+            _id: user._id,
+            firstname: user.firstname,
+            lastname: user.lastname,
+            email: user.email,
+            wishlist: wishlistData.wishlist
+        };
+        res.status(200).json({ message: 'user wishlist', user: userData });
+    } catch (error) {
+        console.log('error', error);
+        res.status(500).json({
+            status: "FAILED",
+            message: 'An error occurred while getting wishlist.'
+        })
+    }
+})
+
+const addToCart = asyncHandler(async (req, res) => {
+    const { cart } = req.body;
+    const { _id } = req.user;
+    try {
+        const user = await User.findById(_id)
+        if (!user) {
+            return res.status(404).json({ message: 'Error'})
+        }
+        let products = [];
+        await Cart.findOneAndDelete({ orderby: user._id })
+        for (let i = 0; i < cart.length; i++){
+            let object = [];
+            object.product = cart[i]._id;
+            object.count = cart[i].count;
+            object.color = cart[i].color;
+            let getPrice = await Product.findById(cart[i]._id).select('price').exec();
+            object.price = getPrice.price;
+            products.push(object)
+        }
+        let cartTotalPrice = 0;
+        for (let i = 0; i < products.length; i++){
+            cartTotalPrice += products[i].price * products[i].count;
+        }
+        let newCart = new Cart({
+            products,
+            cartTotalPrice,
+            orderby: user?._id
+        })
+        await newCart.save();
+        res.status(200).json({ message: 'Items have been added to your cart.', newCart})
+        console.log("products and cartTotal", products, cartTotal);
+    } catch (error) {
+        console.log('error', error);
+        res.status(500).json({ message: "Error Occurred while adding the product to the user's cart" });
+    }
+})
+
+const getUserCart = asyncHandler(async (req, res) => {
+    const { _id } = req.params;
+    try {
+        const cart = await Cart.findOne({ orderby: _id })
+            .populate('products.product', "_id color title brand totalAfterDiscount")
+        if (!cart || cart === 'null') {
+            return res.status(404).json({ message: 'Cart is empty.' })
+        }
+            // .populate({
+            //     path: 'products.product',"_id color totalAfterDiscount"
+            //     // select: '-ratings -slug -category -price -sold -totalratings -createdAt -updatedAt -quantity -images'
+            // });
+        res.status(200).json(cart)
+    } catch (error) {
+        console.log('error', error);
+        res.status(500).json({ message: "Error Occurred while getting the product of the user's cart" });
+    }
+})
+
+const emptyCart = asyncHandler(async (req, res) => {
+    const { _id } = req.user;
+    console.log(_id);
+    try {
+        const user = await User.findOne(_id);
+        if (!user) return res.status(404).json({ message: 'Not Found!' })
+        const productCart = await Cart.findOneAndRemove({ orderby: _id })
+        if (!productCart) return res.status(404).json({ message: 'empty cart' })
+        res.status(200).json(productCart)
+    } catch (error) {
+        console.log('error', error);
+        res.status(500).json({ message: "Error Occurred while removing the product to the user's cart" });
+    }
+})
+
+const applyCoupon = asyncHandler(async (req, res) => {
+    const { couponId } = req.body;
+    const { _id } = req.user;
+    try {
+        const validCoupon = await Coupon.findOne({ code: couponId });
+        if (!validCoupon) {
+            return res.status(400).json({ message: 'Invalid coupon code. Coupon not found.' });
+        }
+        const cart = await Cart.findOne({ orderby: _id })
+        let cartTotalPrice = cart.cartTotalPrice;
+        let totalAfterDiscount = (
+            cartTotalPrice - (cartTotalPrice * validCoupon.discount) / 100
+        ).toFixed(2);
+        await Cart.findOneAndUpdate(
+            { orderby: _id },
+            { totalAfterDiscount },
+            { new: true }
+        )
+        return res.status(200).json(
+            {
+                message: 'Coupon applied successfully.',
+                totalBeforeDiscount: cartTotalPrice.toFixed(2),
+                totalAfterDiscount
+            })
+    } catch (error) {
+        console.log('error', error);
+        res.status(500).json({ message: "Error Occurred while applying the coupon." });
+    }
+})
+
+const creatOrder = asyncHandler(async (req, res) => {
+    const { COD, couponApplied, Prepaid } = req.body;
+    const { _id } = req.user;
+    try {
+        if (!COD || Prepaid) {
+            return res.status(500).json({ message: 'Failed.'})
+        }
+        const user = await User.findById(_id);
+        const userCart = await Cart.findOne({ orderby: user._id });
+        let finalAmount = 0;
+        if (couponApplied && userCart.totalAfterDiscount) {
+            finalAmount = userCart.totalAfterDiscount
+        } else {
+            finalAmount = userCart.cartTotalPrice
+        }
+        const paymentMethod = COD ? "COD" : "Prepaid";
+        const orderStatus = COD ? "Cash on Delivery" : "Prepaid";
+        const newOrder = await new Order({
+            products: userCart.products,
+            payment: [{
+                id: uniqid(),
+                method: paymentMethod,
+                amount: finalAmount,
+                status: orderStatus,
+                createdAt: new Date(),
+                currency: 'usd'
+            }],
+            orderby: user._id,
+            orderStatus: orderStatus
+        }).save();
+        const bulkWriteOperations = userCart.products.map((item) => ({
+            updateOne: {
+                filter: { _id: item.product._id },
+                update: { $inc: { quantity: -item.count, sold: +item.count } },
+            },
+        }));
+        const updated = await Product.bulkWrite(bulkWriteOperations, {});
+        res.json({ message: "Order created successfully.", updated });
+    } catch (error) {
+        console.log('error', error);
+        res.status(500).json({ message: "Error Occurred while ordering." });
+    }
+})
+
+
+export const userInfo = { userRegister, userLogin, getAllUser, getUserById, deleteUser, updatedUser, blockUser, unBlockUser, handleRefreshToken, Logout, verifyResetToken, forgotPasswordToken, updatePassword, verifyRegisterEmail, resetPassword, adminLogin, getWishlist, saveAddress, addToCart, getUserCart, emptyCart, applyCoupon, creatOrder };
+
+
+
+
+
+
+
+
+
+        // wishlistData = user.wishlist.map(product => ({
+        //         _id: product._id,
+        //         title: product.title,
+        //         price: product.price,
+        //         description: product.description,
+        //         brand: product.brand,
+        //         category: product.category,
+        //         quantity: product.quantity,
+        //         color: product.color,
+        //         images: product.images,
+        //         totalratings: product.totalratings
+        //     }));
+        // }
+
+        // const userData = {
+        //     _id: user._id,
+        //     firstname: user.firstname,
+        //     lastname: user.lastname,
+        //     email: user.email,
+        //     mobile: user.mobile,
+        //     wishlist: wishlistData
+        // };

@@ -49,6 +49,18 @@ export const isAdmin = asyncHandler(async (req, res, next) => {
     }
 })
 
+// export const isUser = asyncHandler(async (req, res, next) => {
+//     const { _id } = req.user; // Assuming `_id` is used to identify users
+//     const user = await User.findById(_id);
+
+//     if (!user) {
+//         throw new Error('User not found.');
+//     } else {
+//         req.user = user; // Store user information in the request object
+//         next();
+//     }
+// });
+
 
 // export const verifyJWT = (token) => {
 //     try {

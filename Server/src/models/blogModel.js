@@ -39,9 +39,10 @@ var blogSchema = new mongoose.Schema({
             ref: 'User',
         }
     ],
-    image: {
-        type: String,
-        default: "https://img.freepik.com/premium-photo/how-start-blog-blogging-beginners-ways-monetize-your-blog-blog-word-table-with-laptop_72482-5630.jpg"
+    images: [],
+    postedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     },
     author: {
         type: String,

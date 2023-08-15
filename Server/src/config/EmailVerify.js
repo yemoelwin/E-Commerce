@@ -1,9 +1,11 @@
 import nodeMailer from 'nodemailer';
 import UserVerification from '../models/userVerification.js';
 import userPasswordVerification from "../models/passwordVerification.js";
+import { generateAccessToken } from './jwtToken.js';
 import crypto from 'crypto';
-import bcrypt from 'bcryptjs';
-import { v4 as uuidv4 } from 'uuid';
+import jwt from 'jsonwebtoken';
+// import bcrypt from 'bcryptjs';
+// import { v4 as uuidv4 } from 'uuid';
 import { config } from 'dotenv';
 config()
 
@@ -29,36 +31,38 @@ transporter.verify((error, success) => {
 
 
 export const sendVerificationEmail = async ({ _id, email }) => {
-    const currentURL = 'http://localhost:8080/api/';
-    const uniqueString = uuidv4() + _id;
-    console.log('uniqueString01',uniqueString);
+    // const currentURL = 'http://localhost:8080/api/';
+    // const uniqueString = uuidv4() + _id;
     try {
-        const hashedUniqueString = await bcrypt.hash(uniqueString, 10);
+        // const hashedUniqueString = await bcrypt.hash(uniqueString, 10);
+        const token = jwt.sign({ _id }, `${process.env.JWT_SECRET}`, { expiresIn: "1h" });
+        console.log('token',token);
+        const verificationLink = `http://localhost:8080/api/user/verify_email/${token}/${_id}`;
         const newVerification = new UserVerification({
             userId: _id,
-            uniqueString: hashedUniqueString,
+            token: token,
             createdAt: Date.now(),
             expiredAt: Date.now() + 24 * 60 * 60 * 1000 
             // expiredAt: Date.now() + 21600000
         });
-
-        console.log('uniqueStringVerify :', uniqueString);
+        console.log('newVerification', newVerification);
         await newVerification.save();
         const mailOptions = {
             from: process.env.AUTH_EMAIL,
             to: email,
             subject: 'Verify Your Email',
-            text: "Hello world?",
-            html:
-                `<p>Verify your email address to complete signup and login your account.</p><br/>
-            <p>This link <b>expires in 6 hours</b>.</p>
-            <p><a href=${currentURL + 'user/verify/' + _id + "/" + hashedUniqueString }>Click here</a> 
-            to proceed.</p>`
+            text: `Click the following link to verify your email: ${verificationLink}`,
+            // html:
+            //     `<p>Verify your email address to complete signup and login your account.</p><br/>
+            // <p>This link <b>expires in 6 hours</b>.</p>
+            // <p><a href=${currentURL + 'user/verify/' + _id + "/" + encodeURIComponent(accessToken) }>Click here</a> 
+            // to proceed.</p>`
         };
-        await transporter.sendMail(mailOptions);
+        await transporter.sendMail(mailOptions);       
+        console.log('Email sent successfully.');        
         return {
-            status: 'PENDING',
-            message: 'Verification Email Sent.'
+            status: 'SUCCESS',
+            message: 'Verification email sent successfully'
         };
     } catch (error) {
         console.error('Error sending verification email:', error);

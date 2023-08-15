@@ -5,22 +5,34 @@ import { dbConnect } from './config/dbConnect.js';
 import errorHandler from './middlewares/errorHandler.js';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
+import cors from 'cors';
+
 import authRoute from './routes/authRoute.js';
 import productRoute from './routes/productRoute.js';
 import blogRoute from './routes/blogRoute.js';
+import categoryRoute from './routes/productCategoryRoute.js';
+import blogCategoryRoute from './routes/blogCategoryRoute.js';
+import brandRoute from './routes/brandRoute.js';
+import couponRoute from './routes/couponRoute.js';
 
 config();
 
 const app = express();
 
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan("dev"));
+app.use(cors());
 app.use('/api/user', authRoute);
 app.use('/api/product', productRoute);
 app.use('/api/blog', blogRoute);
+app.use('/api/category', categoryRoute);
+app.use('/api/blogCategory', blogCategoryRoute);
+app.use('/api/brand', brandRoute);
+app.use('/api/coupon', couponRoute);
 app.use(errorHandler.pageNotFound);
 app.use(errorHandler.handleError);
 

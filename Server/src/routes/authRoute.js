@@ -1,36 +1,52 @@
 import express from 'express';
 import { userInfo } from '../controllers/userController.js';
-import {protect, isAdmin} from '../middlewares/authMiddleware.js';
+import { protect, isAdmin } from '../middlewares/authMiddleware.js';
 const router = express.Router();
 
-router.post('/register', userInfo.userRegister);
+router.post('/register', userInfo.userRegister); /* finished */
 
-router.get('/verify/:userId/:uniqueString', userInfo.verifyRegisterEmail);
+router.get('/verify_email/:token/:_id', userInfo.verifyRegisterEmail); /* finished */
 
-router.post('/login', userInfo.userLogin);
+router.post('/login', userInfo.userLogin); /* finished */ 
 
-router.get('/refresh-token', userInfo.handleRefreshToken);
+router.post('/admin-login', userInfo.adminLogin); /* finished */
 
-router.get('/alluser', userInfo.getAllUser);
+router.get('/refresh-token', userInfo.handleRefreshToken); /* finished */
 
-router.get('/:id', protect, isAdmin, userInfo.getUserById);
+router.get('/alluser', userInfo.getAllUser); /* finished */
 
-router.put('/edit-user', protect, userInfo.updatedUser);
+router.get('/:id', protect, isAdmin, userInfo.getUserById); /* finished */
 
-router.delete('/:id', userInfo.deleteUser);
+router.put('/edit-user', protect, userInfo.updatedUser); /* finished */
 
-router.put('/block-user/:id', protect, isAdmin, userInfo.blockUser);
+router.put('/save-address/:_id', protect, userInfo.saveAddress); /* finished */
 
-router.put('/unblock-user/:id', protect, isAdmin, userInfo.unBlockUser);
+router.post('/apply_coupon', protect, userInfo.applyCoupon);
 
-router.post('/logout', userInfo.Logout);
+router.get('/wishlist/:_id', protect, userInfo.getWishlist); /* finished */
 
-router.get('/reset-password/:userId/:uniqueToken', userInfo.verifyResetToken);
+router.post('/addtocart', protect, userInfo.addToCart); /* finished */
 
-router.post('/update-password', protect, userInfo.updatePassword);
+router.get('/get-usercart/:_id', protect, userInfo.getUserCart); /* finished */
 
-router.post('/forgot-password', userInfo.forgotPasswordToken);
+router.delete('/remove-cart-products', protect, userInfo.emptyCart); /* finished */
 
-router.post('/reset-password/:userId/:uniqueToken', userInfo.resetPassword);
+router.post('/order_items', protect, userInfo.creatOrder);
+
+router.put('/block-user/:id', protect, isAdmin, userInfo.blockUser); /* finished */
+
+router.put('/unblock-user/:id', protect, isAdmin, userInfo.unBlockUser); /* finished */
+
+router.post('/logout', userInfo.Logout); /* finished */
+
+router.get('/reset-password/:userId/:uniqueToken', userInfo.verifyResetToken); /* finished */
+
+router.post('/update-password', protect, userInfo.updatePassword); /* finished */
+
+router.post('/forgot-password', userInfo.forgotPasswordToken); /* finished */
+
+router.post('/reset-password/:userId/:uniqueToken', userInfo.resetPassword); /* finished */
+
+router.delete('/:id', userInfo.deleteUser); /* finished */
 
 export default router
