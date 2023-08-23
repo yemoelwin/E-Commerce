@@ -269,7 +269,7 @@ const uploadBlogImages = asyncHandler(async (req, res) => {
         if (!blog) {
             return res.status(404).json({ error: 'Product not found' });
         }
-        if (blog.author !== userId) {
+        if (blog.author !== id) {
             return res.status(403).json({ error: 'Unauthorized: You do not own this blog' });
         }
         const prevImages = blog.images.map(image => image.filePath);

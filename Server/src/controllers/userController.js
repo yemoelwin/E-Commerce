@@ -2,6 +2,7 @@ import User from '../models/userModel.js';
 import Product from '../models/productModel.js';
 import Cart from '../models/cartModel.js';
 import Coupon from '../models/couponModel.js';
+import Order from '../models/orderModel.js';
 import UserVerification from '../models/userVerification.js';
 import UserPasswordVerification from '../models/passwordVerification.js';
 import { sendVerificationEmail, ResetPasswordToken } from '../config/EmailVerify.js';
@@ -11,6 +12,7 @@ import { generateAccessToken } from '../config/jwtToken.js';
 import { generateRefreshToken } from '../config/refreshToken.js';
 import { validateMongodbID } from '../utils/validateMongodbID.js';
 import jwt from 'jsonwebtoken';
+import uniqid from 'uniqid';
 import { config } from 'dotenv';
 config();
 // import crypto from 'crypto'
@@ -651,13 +653,16 @@ const applyCoupon = asyncHandler(async (req, res) => {
 
 const creatOrder = asyncHandler(async (req, res) => {
     const { COD, couponApplied, Prepaid } = req.body;
+    console.log("prepaid",Prepaid);
     const { _id } = req.user;
     try {
-        if (!COD || Prepaid) {
+        if (!COD && !Prepaid) {
             return res.status(500).json({ message: 'Failed.'})
         }
         const user = await User.findById(_id);
-        const userCart = await Cart.findOne({ orderby: user._id });
+        const userCart = await Cart.findOne({ orderby: user._id })
+        console.log('userCart',userCart);
+            // .populate("products.product", "_id color title price brand totalAfterDiscount")
         let finalAmount = 0;
         if (couponApplied && userCart.totalAfterDiscount) {
             finalAmount = userCart.totalAfterDiscount
@@ -666,7 +671,7 @@ const creatOrder = asyncHandler(async (req, res) => {
         }
         const paymentMethod = COD ? "COD" : "Prepaid";
         const orderStatus = COD ? "Cash on Delivery" : "Prepaid";
-        const newOrder = await new Order({
+        const newOrder = new Order({
             products: userCart.products,
             payment: [{
                 id: uniqid(),
@@ -678,23 +683,58 @@ const creatOrder = asyncHandler(async (req, res) => {
             }],
             orderby: user._id,
             orderStatus: orderStatus
-        }).save();
+        })
+        await newOrder.save();
         const bulkWriteOperations = userCart.products.map((item) => ({
             updateOne: {
                 filter: { _id: item.product._id },
                 update: { $inc: { quantity: -item.count, sold: +item.count } },
             },
         }));
-        const updated = await Product.bulkWrite(bulkWriteOperations, {});
-        res.json({ message: "Order created successfully.", updated });
+        await Product.bulkWrite(bulkWriteOperations, {});
+        res.json({ message: "Order created successfully." });
+    } catch (error) {
+        console.log('error', error);
+        res.status(500).json({ message: "Error Occurred while creating ordering." });
+    }
+})
+
+const userOrders = asyncHandler(async (req, res) => {
+    const { _id } = req.user;
+    try {
+        const userOrders = await Order.findOne({ orderby: _id })
+        .populate('products.product', "_id color title brand description").exec()
+        res.status(200).json(userOrders);
+    } catch (error) {
+        console.log('error', error);
+        res.status(500).json({ message: "Error Occurred while retrieving user orders." });
+    }
+})
+
+const updateOrderStatus = asyncHandler(async (req, res) => {
+    const { status } = req.body;
+    const { id } = req.params;
+    validateMongodbID(id);
+    try {
+        const updateOrderStatus = await Order.findByIdAndUpdate(
+        id,
+        {
+            orderStatus: status,
+            payment: {
+            status: status,
+            },
+        },
+        { new: true }
+        );
+        res.json(updateOrderStatus);
     } catch (error) {
         console.log('error', error);
         res.status(500).json({ message: "Error Occurred while ordering." });
     }
-})
+});
 
 
-export const userInfo = { userRegister, userLogin, getAllUser, getUserById, deleteUser, updatedUser, blockUser, unBlockUser, handleRefreshToken, Logout, verifyResetToken, forgotPasswordToken, updatePassword, verifyRegisterEmail, resetPassword, adminLogin, getWishlist, saveAddress, addToCart, getUserCart, emptyCart, applyCoupon, creatOrder };
+export const userInfo = { userRegister, userLogin, getAllUser, getUserById, deleteUser, updatedUser, blockUser, unBlockUser, handleRefreshToken, Logout, verifyResetToken, forgotPasswordToken, updatePassword, verifyRegisterEmail, resetPassword, adminLogin, getWishlist, saveAddress, addToCart, getUserCart, emptyCart, applyCoupon, creatOrder, userOrders, updateOrderStatus };
 
 
 

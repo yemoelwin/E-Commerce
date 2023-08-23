@@ -3,10 +3,8 @@ import Product from '../models/productModel.js';
 import asyncHandler from 'express-async-handler';
 import User from '../models/userModel.js';
 import slugify from 'slugify';
-// import cloudinary from '../config/cloudinaryConfig.js';
-// import cloudinaryUploadImg from '../config/cloudinaryConfig.js';
-// import cloudinaryUploadImg from '../config/cloudinaryConfig.js';
-// import path from 'path';
+import { cloudinaryUploadImg } from '../config/cloudinaryConfig.js';
+import path from 'path';
 // import fs from 'fs';
 
 const createProduct = asyncHandler(async (req, res) => {
@@ -54,6 +52,7 @@ const uploadImagesAndFormatSizes = asyncHandler(async (req, res) => {
     try {
         const { id } = req.params; // Get product ID from route params
         const imageFiles = req.files; // Using req.file because you're uploading a multi file
+        console.log("controller image files", imageFiles);
         if (!imageFiles) {
             return res.status(400).json({ error: 'No file uploaded' });
         }
@@ -68,12 +67,17 @@ const uploadImagesAndFormatSizes = asyncHandler(async (req, res) => {
         // Update product images and save
         const uploadedImageUrls = [];
         if (imageFiles !== undefined && imageFiles !== null) {
-            for (const file of imageFiles) {                
+            for (const file of imageFiles) {  
+                // const result = await cloudinaryUploadImg(file.path, {
+                //     folder: "online-shop"
+                // });
+                // const uploader = async (path) => await cloudinaryUploadImg(path, "images")
                 const imageInfo = {
                     fileName: file.originalname,
-                    filePath: file.path,
+                    // filePath: file.path,
                     fileType: file.mimetype,
                     fileSize: fileSizeFormatter(file.size, 2),
+                    filePath: file.path,
                 } 
                 uploadedImageUrls.push(imageInfo);
             }
@@ -103,27 +107,19 @@ const fileSizeFormatter = (bytes, decimal = 2) => {
 }
 
 // const uploadImages = asyncHandler(async (req, res) => {
-//     console.log(req.files);
-//     const { id } = req.params;
 //     try {
-//         // const uploadImage = await cloudinary.uploader.upload(req.files)
 //         const uploader = async (path) => await cloudinaryUploadImg(path, "images")
 //         const urls = [];
 //         const files = req.files;
-//         console.log('files',files);
 //         for (const file of files) {
-//             const { path } = file;  
-//             console.log('path',path);
+//             const { path } = file;
 //             const newpath = await uploader(path);
 //             urls.push(newpath);
-//             console.log('newpath', newpath);
 //             fs.unlinkSync(path);
 //         }
-//         const images = await Product.findByIdAndUpdate(id,
-//             { images: urls.map((file) => { return file; }) },
-//             // { images: urls },
-//             { new: true }
-//         )
+//         const images = urls.map((file) =>{
+        //    return file
+//          })
 //         res.status(200).json(images)
 //     } catch (error) {
 //         console.log(error);

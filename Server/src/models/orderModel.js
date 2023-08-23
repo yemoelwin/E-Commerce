@@ -10,7 +10,8 @@ var orderSchema = new Schema({
                 ref: 'Product'
             },
             count: Number,
-            // color: String,
+            color: String,
+            price: Number,
         }
     ],
     payment: [],
@@ -20,6 +21,7 @@ var orderSchema = new Schema({
         enum: [
             "Not Processed",
             "Cash on Delivery",
+            "Prepaid",
             "Processing",
             "Dispatched",
             "Cancelled",

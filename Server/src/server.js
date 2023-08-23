@@ -14,6 +14,8 @@ import categoryRoute from './routes/productCategoryRoute.js';
 import blogCategoryRoute from './routes/blogCategoryRoute.js';
 import brandRoute from './routes/brandRoute.js';
 import couponRoute from './routes/couponRoute.js';
+import colorRoute from './routes/colorRoute.js';
+import enquiryRoute from './routes/enquiryRoute.js';
 
 config();
 
@@ -33,6 +35,8 @@ app.use('/api/category', categoryRoute);
 app.use('/api/blogCategory', blogCategoryRoute);
 app.use('/api/brand', brandRoute);
 app.use('/api/coupon', couponRoute);
+app.use('/api/color', colorRoute);
+app.use('/api/enquiry', enquiryRoute);
 app.use(errorHandler.pageNotFound);
 app.use(errorHandler.handleError);
 
