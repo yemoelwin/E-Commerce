@@ -1,8 +1,8 @@
+import Order from '../models/orderModel.js';
 import User from '../models/userModel.js';
 import Product from '../models/productModel.js';
 import Cart from '../models/cartModel.js';
 import Coupon from '../models/couponModel.js';
-import Order from '../models/orderModel.js';
 import UserVerification from '../models/userVerification.js';
 import UserPasswordVerification from '../models/passwordVerification.js';
 import { sendVerificationEmail, ResetPasswordToken } from '../config/EmailVerify.js';
@@ -95,30 +95,36 @@ const userLogin = asyncHandler(async (req, res) => {
     try {
         const { email, password } = req.body;
         const user = await User.findOne({ email })
+        const genericErrorMessage = 'Invalid email or password';
+        const verifyEmailMessage = 'Verify Your Email';
         if (!user) {
-            res.status(404).json({
+            res.status(401).json({
                 status: 'FAILED',
-                message: 'This user account does not exists.'
+                message: genericErrorMessage
             })
             return;
         }
         if (user.verified === false) {
             return res.status(403).json({
                 status: 'FAILED',
-                message: 'You need to verify your email.'
+                message: verifyEmailMessage
             })
         }
         const isMatched = await bcrypt.compare(password, user.password)
         // console.log(isMatched);
         if (isMatched) {
+            const userType = user.role === 'admin' ? 'admin' : 'user';
             const refreshToken = generateRefreshToken(user?._id);
-            const updatedUser = await User.findByIdAndUpdate(user._id, {
+            const accessToken = generateAccessToken(user?._id);
+            await User.findByIdAndUpdate(user._id, {
                 refreshToken
             }, {
                 new: true
             })
             res.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
+                secure: true, // Use only on HTTPS connections
+                sameSite: 'strict',
                 maxAge: 72 * 60 * 60 * 1000
             })
             res.status(200).json({
@@ -126,15 +132,15 @@ const userLogin = asyncHandler(async (req, res) => {
                 firstname: user?.firstname,
                 lastname: user?.lastname,
                 email: user?.email,
-                role: user?.role,
-                token: generateAccessToken(user?._id),
+                role: userType,
+                token: accessToken,
                 status: 'SUCCESS',
-                message: 'User logged in successfully',
+                message: `${userType === 'admin' ? 'Admin' : 'User'} logged in successfully`,
             });
         } else {
             res.status(401).json({
                 status: 'FAILED',
-                message: 'Invalid Password'
+                message: genericErrorMessage
             })
         }
     } catch (error) {
@@ -145,60 +151,62 @@ const userLogin = asyncHandler(async (req, res) => {
     }
 })
 
-const adminLogin = asyncHandler(async (req, res) => {
-    try {
-        const { email, password } = req.body;
-        const admin = await User.findOne({ email });
-        if (!admin) {
-            return res.status(404).json({
-                status: 'FAILED',
-                message: 'This admin account does not exists.'
-            })
-        }
-        if (!admin?.verified) {
-            return res.status(403).json({
-                status: 'FAILED',
-                message: 'You need to verify your email.'
-            })
-        }
-        if (admin.role !== 'admin') return res.status(404).json({ status: 'FAILED', message: 'Not Authorised' });
-        // if (admin && (await admin.password(admin.password,password))) {
-        const isMatched = await bcrypt.compare(password, admin.password)
-        if (!isMatched) {
-            return res.status(404).json({ status: 'FAILED', message: 'Password does not match!' });
-        }
-            const refreshToken = await generateRefreshToken(admin?._id);
-            await User.findByIdAndUpdate(
-                admin?.id,
-                {
-                    refreshToken: refreshToken
-                },
-                { new: true }
-            )
-            res.cookie("refreshToken", refreshToken, {
-                httpOnly: true,
-                maxAge: 72 * 60 * 60 * 1000
-            })
-            res.status(200).json({
-                _id: admin?._id,
-                firstname: admin?.firstname,
-                lastname: admin?.lastname,
-                email: admin?.email,
-                role: admin.role,
-                token: generateAccessToken(admin?._id),
-                status: 'SUCCESS',
-                message: 'User logged in successfully',
-            });
-        // } else {
-        //     return res.status(404).json({ message: 'Invalid Credetials.' })
-        // }
-    } catch (error) {
-        res.status(500).json({
-            status: 'FAILED',
-            message: 'An error occurred while login as admin and pls try again.'
-        })
-    }
-})
+// const adminLogin = asyncHandler(async (req, res) => {
+//     try {
+//         const { email, password } = req.body;
+//         const admin = await User.findOne({ email });
+//         if (!admin) {
+//             return res.status(404).json({
+//                 status: 'FAILED',
+//                 message: 'This admin account does not exists.'
+//             })
+//         }
+//         if (!admin?.verified) {
+//             return res.status(403).json({
+//                 status: 'FAILED',
+//                 message: 'You need to verify your email.'
+//             })
+//         }
+//         if (admin.role !== 'admin') return res.status(404).json({ status: 'FAILED', message: 'Not Authorised' });
+//         // if (admin && (await admin.password(admin.password,password))) {
+//         const isMatched = await bcrypt.compare(password, admin.password)
+//         if (!isMatched) {
+//             return res.status(404).json({ status: 'FAILED', message: 'Password does not match!' });
+//         }
+//             const refreshToken = generateRefreshToken(admin?._id);
+//             await User.findByIdAndUpdate(
+//                 admin?.id,
+//                 {
+//                     refreshToken: refreshToken
+//                 },
+//                 { new: true }
+//             )
+//             res.cookie("refreshToken", refreshToken, {
+//                 httpOnly: true,
+//                 secure: true, 
+//                 sameSite: 'strict',
+//                 maxAge: 72 * 60 * 60 * 1000
+//             })
+//             res.status(200).json({
+//                 _id: admin?._id,
+//                 firstname: admin?.firstname,
+//                 lastname: admin?.lastname,
+//                 email: admin?.email,
+//                 role: admin.role,
+//                 token: generateAccessToken(admin?._id),
+//                 status: 'SUCCESS',
+//                 message: 'Admin logged in successfully',
+//             });
+//         // } else {
+//         //     return res.status(404).json({ message: 'Invalid Credetials.' })
+//         // }
+//     } catch (error) {
+//         res.status(500).json({
+//             status: 'FAILED',
+//             message: 'An error occurred while login as admin and pls try again.'
+//         })
+//     }
+// })
 
 const Logout = asyncHandler(async (req, res) => {
     try {
@@ -390,7 +398,7 @@ const saveAddress = asyncHandler(async (req, res) => {
 const getAllUser = asyncHandler(async (req, res) => {
     try {
         const getUsers = await User.find();
-        res.json(getUsers)
+        res.status(200).json(getUsers)
     } catch (error) {
         throw new Error(error)
     }
@@ -580,7 +588,7 @@ const addToCart = asyncHandler(async (req, res) => {
         })
         await newCart.save();
         res.status(200).json({ message: 'Items have been added to your cart.', newCart})
-        console.log("products and cartTotal", products, cartTotal);
+        console.log("products and cartTotal", products);
     } catch (error) {
         console.log('error', error);
         res.status(500).json({ message: "Error Occurred while adding the product to the user's cart" });
@@ -699,17 +707,29 @@ const creatOrder = asyncHandler(async (req, res) => {
     }
 })
 
-const userOrders = asyncHandler(async (req, res) => {
+const userOrder = asyncHandler(async (req, res) => {
     const { _id } = req.user;
     try {
         const userOrders = await Order.findOne({ orderby: _id })
-        .populate('products.product', "_id color title brand description").exec()
+            .populate('products.product', "_id color title brand description").exec();
         res.status(200).json(userOrders);
     } catch (error) {
         console.log('error', error);
         res.status(500).json({ message: "Error Occurred while retrieving user orders." });
     }
-})
+});
+
+const getAllOrders = asyncHandler(async (req, res) => {
+    try {
+        const alluserorders = await Order.find()
+        .populate('products.product', "_id color title brand description")
+        .populate('orderby', 'firstname lastname email mobile')
+            .exec();
+        res.status(200).json(alluserorders);
+    } catch (error) {
+        throw new Error(error);
+    }
+});
 
 const updateOrderStatus = asyncHandler(async (req, res) => {
     const { status } = req.body;
@@ -734,7 +754,7 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
 });
 
 
-export const userInfo = { userRegister, userLogin, getAllUser, getUserById, deleteUser, updatedUser, blockUser, unBlockUser, handleRefreshToken, Logout, verifyResetToken, forgotPasswordToken, updatePassword, verifyRegisterEmail, resetPassword, adminLogin, getWishlist, saveAddress, addToCart, getUserCart, emptyCart, applyCoupon, creatOrder, userOrders, updateOrderStatus };
+export const userInfo = { userRegister, userLogin, getAllUser, getUserById, deleteUser, updatedUser, blockUser, unBlockUser, handleRefreshToken, Logout, verifyResetToken, forgotPasswordToken, updatePassword, verifyRegisterEmail, resetPassword, getWishlist, saveAddress, addToCart, getUserCart, emptyCart, applyCoupon, creatOrder, userOrder, getAllOrders, updateOrderStatus };
 
 
 

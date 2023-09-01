@@ -6,10 +6,10 @@
   "main": "index.js",
   "scripts": {
     "server": "nodemon ./src/server.js",
-    "client": "npm run start --prefix ../Front-end",
+    "client": "npm run start --prefix ../Client",
     "dev": "concurrently \"npm run server \" \"npm run client\"",
     "start": "nodemon ./src/server.js",
-    "clean": "rimraf ./build"
+    "clean": "rimraf ./build" 
   },
   "author": "",
   "license": "ISC",

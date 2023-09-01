@@ -25,16 +25,21 @@ export const protect = asyncHandler(async (req, res, next) => {
                     if (!req.user) {
                         throw new Error('User Not Found');
                     }
+                    if (user === 'token expired') {
+                        return res.status(401).json({ message: 'error', data: "token expired" });
+                    }
                     next();
                 }
             } catch (error) {
-                console.log(error);
-                res.status(401)
-                throw new Error("Not Authorized token expired! Pls login again.")
+                if (error.name === 'TokenExpiredError') {
+                    res.status(401).json({ message: 'error', data: 'Token expired' });
+                } else {
+                    console.log(error);
+                    res.status(401).json({ message: 'error', data: 'Not Authorized, Invalid Token' });
+                }
             }
         } else {
-            res.status(401);
-            throw new Error('Not Authorized, No Token')
+            res.status(401).json({ message: 'error', data: 'Not Authorized, No Token' });
         }
     }
 )

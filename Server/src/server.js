@@ -15,7 +15,7 @@ import blogCategoryRoute from './routes/blogCategoryRoute.js';
 import brandRoute from './routes/brandRoute.js';
 import couponRoute from './routes/couponRoute.js';
 import colorRoute from './routes/colorRoute.js';
-import enquiryRoute from './routes/enquiryRoute.js';
+import inquiryRoute from './routes/inquiryRoute.js';
 
 config();
 
@@ -27,7 +27,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan("dev"));
-app.use(cors());
+// app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:3000', // Replace with your frontend's URL
+    credentials: true, // Enable cookies
+}));
 app.use('/api/user', authRoute);
 app.use('/api/product', productRoute);
 app.use('/api/blog', blogRoute);
@@ -36,7 +40,7 @@ app.use('/api/blogCategory', blogCategoryRoute);
 app.use('/api/brand', brandRoute);
 app.use('/api/coupon', couponRoute);
 app.use('/api/color', colorRoute);
-app.use('/api/enquiry', enquiryRoute);
+app.use('/api/inquiry', inquiryRoute);
 app.use(errorHandler.pageNotFound);
 app.use(errorHandler.handleError);
 

@@ -1,0 +1,26 @@
+:root {
+    --color-212529: #212529;
+    --color-ffd333: #ffd333;
+    --color-47ad24: #47ad24;
+    --color-e52e2e: #e52e2e;
+    --color-828599: #828599;
+    --color-3d464d: #3d464d;
+    --color-ced4da: #ced4da;
+}
+
+.justify_A{
+    justify-content: space-between;
+    align-items: center;
+}
+
+.green{
+    color: var(--color-47ad24);
+    font-family: 'Roboto' !important;
+    font-size: 14px;
+}
+
+.red{
+    color: var(--color-e52e2e);
+    font-family: 'Roboto' !important;
+    font-size: 14px;
+}

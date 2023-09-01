@@ -9,10 +9,9 @@ const createBlog = asyncHandler(async (req, res) => {
     const blog = { ...req.body, postedBy };
     try {
         const newBlog = await blogModel.create(blog);
-        return res.status(200).json({
+        return res.status(200).json(newBlog,{
             status: 'SUCCESS',
             message: 'successfully created.',
-            newBlog
         })
     } catch (error) {
         res.status(500).json({
@@ -70,10 +69,7 @@ const getBlogById = asyncHandler(async (req, res) => {
 const fetchAllBlogs = asyncHandler(async (req, res) => {
     try {
         const allBlog = await blogModel.find();
-        return res.status(200).json({
-            status: 'SUCCESS',
-            allBlog
-        })
+        return res.status(200).json(allBlog)
     } catch (error) {
         res.status(500).json({
             status: 'FAILED',

@@ -9,7 +9,7 @@ router.get('/verify_email/:token/:_id', userInfo.verifyRegisterEmail); /* finish
 
 router.post('/login', userInfo.userLogin); /* finished */ 
 
-router.post('/admin-login', userInfo.adminLogin); /* finished */
+// router.post('/admin-login', userInfo.adminLogin); /* finished */
 
 router.get('/refresh-token', userInfo.handleRefreshToken); /* finished */
 
@@ -33,7 +33,9 @@ router.delete('/cart/remove-cart-products', protect, userInfo.emptyCart); /* fin
 
 router.post('/order/cash_order_items', protect, userInfo.creatOrder); /* finished */
 
-router.get('/order/user_orders', protect, userInfo.userOrders); /* finished */
+router.get('/user_order', protect, userInfo.userOrder); /* finished */
+
+router.get('/order/allorders', protect, isAdmin, userInfo.getAllOrders); /* finished */
 
 router.put('/order/update_user_order_status/:id', protect, isAdmin, userInfo.updateOrderStatus); /*finished*/
 
