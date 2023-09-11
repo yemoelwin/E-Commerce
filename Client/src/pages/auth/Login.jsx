@@ -13,7 +13,7 @@ const Login = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { isLoading } = useSelector((state) => state.auth);
+    const { isLoading, user } = useSelector((state) => state.auth);
 
     useEffect(() => {
         userRef.current.focus()
@@ -33,11 +33,22 @@ const Login = () => {
             const loginData = { email, password };
             dispatch(login(loginData));
             // localStorage.setItem('user', JSON.stringify(userData));
+            
             navigate('/admin')
         } catch (error) {
             console.error('Login failed:', error);
         }
     }
+
+    // useEffect(() => {
+    //     if (user && user.role) {
+    //     if (user.role === 'admin') {
+    //         navigate('/admin');
+    //     } else if (user.role === 'user') {
+    //         navigate('/'); // Change this to the actual route for the home page.
+    //     }
+    //     }
+    // }, [user, navigate]);
 
     return (
         <>

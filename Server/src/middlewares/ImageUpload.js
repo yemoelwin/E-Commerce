@@ -4,7 +4,7 @@ import fs from 'fs';
 
 const fileStorage = multer.diskStorage({
         destination: (req, file, cb) => {
-        console.log("image files", file)
+        console.log("image files middleware", file)
         cb(null, `./src/public/images`);
     },
         filename: function (req, file, cb) {

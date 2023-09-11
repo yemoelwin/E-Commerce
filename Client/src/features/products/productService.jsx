@@ -10,8 +10,21 @@ const getProducts = async () => {
     }
 };
 
+const createProduct = async (prod) => {
+    try {
+        const response = await api.post('/product/create-product', prod);
+        console.log('response create data', response);
+        return response.data;
+        
+    } catch (error) {
+        console.error("An error occurred during login:", error);
+        throw error; // Re-throw the error for higher-level handling
+    }
+}
+
 const productService = {
     getProducts,
+    createProduct
 };
 
 export default productService;

@@ -10,7 +10,7 @@ var productSchema = new mongoose.Schema({
     slug:{
         type:String,
         required: true,
-        unique: true,
+        // unique: true,
         lowercase: true
     },
     description:{
@@ -39,9 +39,15 @@ var productSchema = new mongoose.Schema({
         default: 0,
         // select: false
     },
-    images: [],
+    images: [
+        {   
+            url: String,
+            asset_id: String,
+            public_id: String,
+        },
+    ],
     color: [],
-    tags: [],
+    tags: String,
     ratings: [{
         stars: Number,
         comment: String,

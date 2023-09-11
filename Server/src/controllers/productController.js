@@ -1,15 +1,12 @@
-// import { query } from 'express';
 import Product from '../models/productModel.js';
 import asyncHandler from 'express-async-handler';
 import User from '../models/userModel.js';
 import slugify from 'slugify';
-import { cloudinaryUploadImg } from '../config/cloudinaryConfig.js';
-import path from 'path';
-// import fs from 'fs';
+
 
 const createProduct = asyncHandler(async (req, res) => {
     try {
-        const { title, description, price, brand, category, quantity, color } = req.body;
+        const { title, description, price, brand, category, quantity, color, images, tags } = req.body;
         console.log('Title from req.body:', title);
         if (!title) {
             return res.status(400).json({ message: 'Title is missing or invalid.' });
@@ -32,7 +29,10 @@ const createProduct = asyncHandler(async (req, res) => {
             category,
             quantity,
             color,
+            images,
+            tags,
         });
+        console.log('newProduct', newProduct);
         await newProduct.save();
         res.status(200).json({
             message: "Product Created Successfully.",
@@ -47,64 +47,6 @@ const createProduct = asyncHandler(async (req, res) => {
             })
         }
 });
-
-const uploadImagesAndFormatSizes = asyncHandler(async (req, res) => {
-    try {
-        const { id } = req.params; // Get product ID from route params
-        const imageFiles = req.files; // Using req.file because you're uploading a multi file
-        console.log("controller image files", imageFiles);
-        if (!imageFiles) {
-            return res.status(400).json({ error: 'No file uploaded' });
-        }
-        const maxFileSize = 5 * 1024 * 1024; // 5MB
-        if (imageFiles.size > maxFileSize) {
-            return res.status(400).json({ error: 'File size exceeds the limit' });
-        }
-        const product = await Product.findById(id);
-        if (!product) {
-            return res.status(404).json({ error: 'Product not found' });
-        }
-        // Update product images and save
-        const uploadedImageUrls = [];
-        if (imageFiles !== undefined && imageFiles !== null) {
-            for (const file of imageFiles) {  
-                // const result = await cloudinaryUploadImg(file.path, {
-                //     folder: "online-shop"
-                // });
-                // const uploader = async (path) => await cloudinaryUploadImg(path, "images")
-                const imageInfo = {
-                    fileName: file.originalname,
-                    // filePath: file.path,
-                    fileType: file.mimetype,
-                    fileSize: fileSizeFormatter(file.size, 2),
-                    filePath: file.path,
-                } 
-                uploadedImageUrls.push(imageInfo);
-            }
-            product.images = uploadedImageUrls;
-            const productImages = await product.save();
-            // Format image sizes        
-            return res.status(200).json({
-                message: 'Product image updated successfully',
-                productImages,
-            });
-        }
-    } catch (error) {
-        console.log('error', error);
-        return res.status(500).json({ error: 'Internal server error' });
-    }
-});
-
-const fileSizeFormatter = (bytes, decimal = 2) => {
-    if (bytes === 0) return '0 Bytes';
-
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-    
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(decimal)) + ' ' + sizes[i];
-}
 
 // const uploadImages = asyncHandler(async (req, res) => {
 //     try {
@@ -372,7 +314,7 @@ const filterProduct = asyncHandler(async (req, res) => {
     }
 })
 
-export const productController = { createProduct, getProductById, fetchAllProduct, deleteProduct, addToWishlist, updateProduct, starRating, uploadImagesAndFormatSizes };
+export const productController = { createProduct, getProductById, fetchAllProduct, deleteProduct, addToWishlist, updateProduct, starRating };
 
 
 // const generateUniqueSlug = async (title) => {

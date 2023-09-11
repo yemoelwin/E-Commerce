@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Table } from "antd";
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
@@ -22,6 +22,10 @@ const columns = [
         dataIndex: "customerName",
     },
     {
+        title: "Product Name",
+        dataIndex: "product",
+    },
+    {
         title: "Total Amount",
         dataIndex: "amount",
     },
@@ -43,21 +47,31 @@ const Orders = () => {
     },[dispatch]);
     const data1 = [];
     for (let i = 0; i < orderState.length; i++) {
+        const productTitles = orderState[i].products.map((product) => {
+            return (
+                <li key={product.product._id}>{product.product.title}</li>
+            )
+        });
         const createdAtDate = new Date(orderState[i].createdAt);
         const formattedDate = createdAtDate.toLocaleString('en-US', {
             year: 'numeric',
             month: '2-digit',
             day: '2-digit',
-            // hour: '2-digit',
-            // minute: '2-digit',
-            // second: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
         });
         data1.push({
             key: i + 1,
             orderId: orderState[i]._id,
             date: formattedDate,
-            customerName: orderState[i].orderby.firstname,
-            // amount: `${orderState[i].payment.amount}`,
+            customerName: orderState[i].orderby[0].firstname + ' ' + orderState[i].orderby[0].lastname,
+            amount: `${orderState[i].payment[0].amount}`,
+            product: (
+                <>
+                    {productTitles}
+                </>
+            ),
             status: (
                 <>
                     <select name="" id='' className='form-control form-select'>

@@ -288,3 +288,50 @@
 }
 
 /* Main Product Page */
+
+/* Add product */
+
+.label-name{
+    font-size: 17px;
+    color:navy;
+}
+
+.header-name{
+    color: navy;
+}
+
+.product-border{
+    border: 1px solid rgb(218, 218, 218);
+    border-radius: 5px;
+}
+
+.invalid-feedback{
+    font-size: 14px;
+}
+
+.red-text{
+    color: red;
+}
+
+.option-name{
+    /* font-size: 12px; */
+    font-weight:100;
+}
+
+.is-invalid {
+    border: 1px solid rgb(253, 14, 14);
+    border-radius: 5px;
+}
+
+.image_w{
+    height: 50vh;
+    background-color: yellow;
+}
+
+.btn-close{
+    font-size: 20px;
+}
+
+.btn-close:hover{
+    color: white !important;
+}

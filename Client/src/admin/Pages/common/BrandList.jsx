@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getBrands } from '../../../features/brand/brandSlice';
 import { Link } from 'react-router-dom';
 import { MdDelete } from 'react-icons/md';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const columns = [
     {
@@ -28,7 +30,6 @@ const columns = [
 const BrandList = () => {
     const dispatch = useDispatch();
     const brandState = useSelector((state) => state.brand.brands);
-    console.log('brandState', brandState);
     useEffect(() => {
         dispatch(getBrands());
     }, [dispatch]);
@@ -52,7 +53,19 @@ const BrandList = () => {
                 <h3 className="mb-4 title">Brand Lists</h3>
                 <div>
                     <Table columns={columns} dataSource={data1} />
-                </div>
+            </div>
+            <ToastContainer
+                                position="top-right"
+                                autoClose={2500}
+                                hideProgressBar={false}
+                                newestOnTop={true}
+                                closeOnClick
+                                rtl={false}
+                                pauseOnFocusLoss
+                                draggable
+                                // pauseOnHover
+                                theme="light"
+                        />
                 {/* <CustomModal
                     hideModal={hideModal}
                     open={open}

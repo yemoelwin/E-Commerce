@@ -11,6 +11,7 @@ const createBrand = asyncHandler(async (req, res) => {
         const existingBrand = await brandModel.findOne({ title });
         if (existingBrand)return res.status(409).json({ message: 'Category with this title already exists.' });
         const newBrand = await brandModel.create({ title });
+        console.log('newBrand server', newBrand);
         return res.status(200).json({ message: 'Successfully created.', newBrand });
     } catch (error) {
         res.status(500).json({ message: 'Error Occurred while creating the brand.' });

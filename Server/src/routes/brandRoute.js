@@ -15,3 +15,5 @@ router.get('/', Brand.getAllBrand); /* finished */
 router.delete('/delete/:id', Brand.deleteBrand); /* finished */
 
 export default router;
+
+// 5EAa#Gxea32NV+R

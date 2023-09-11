@@ -9,7 +9,7 @@ import './css/Login.css';
 import './css/Cart.css';
 import './css/Dashboard.css';
 import './admin/layouts/MainLayout.css';
-import { BrowserRouter, Routes, Route, useNavigate, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/layout/Layout';
 import Home from './pages/Home';
 import About from './pages/About';
@@ -103,7 +103,7 @@ function App() {
                 <Route path="category-lists" element= {<CategoryList />} />
                 <Route path="category" element= {<AddCategory />} />
                 <Route path="brand-lists" element= {<BrandList />} />
-                <Route path="brand" element= {<AddBrand />} />
+                <Route path="add-brand" element= {<AddBrand />} />
                 <Route path="product-lists" element= {<ProductList />} />
                 <Route path="add-product" element={<AddProduct />} />
           </Route>

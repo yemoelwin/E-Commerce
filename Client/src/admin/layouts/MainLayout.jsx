@@ -14,6 +14,8 @@ import { ImBlog } from 'react-icons/im';
 import { RiHomeOfficeLine } from 'react-icons/ri';
 import { IoIosNotifications } from 'react-icons/io';
 import { Layout, Menu } from 'antd';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 // Breadcrumb,theme
 import { Link, useNavigate } from 'react-router-dom';
 import { Outlet } from 'react-router-dom';
@@ -34,7 +36,7 @@ const items = [
     getItem('Catalog', 'catalog', <AiOutlineShoppingCart className='fs-6'/>, [
         getItem('Add Products', 'add-product', <AiOutlineShoppingCart className='fs-6'/>),
         getItem('Product-Lists', 'product-lists', <AiOutlineShoppingCart className='fs-6' />),
-        getItem('Brand', 'brand', <SiBrandfolder className='fs-6' />),
+        getItem('Add Brand', 'add-brand', <SiBrandfolder className='fs-6' />),
         getItem('Brand-Lists', 'brand-lists', <SiBrandfolder className='fs-6' />),
         getItem('Category', 'category', <BiCategory className='fs-6' />),
         getItem('Category-Lists', 'category-lists', <BiCategory className='fs-6' />),
@@ -133,7 +135,20 @@ const MainLayout = () => {
                             <Breadcrumb.Item>User</Breadcrumb.Item>
                             <Breadcrumb.Item>Bill</Breadcrumb.Item>
                         </Breadcrumb> */}
+                        {/* <ToastContainer
+                                position="top-right"
+                                autoClose={2500}
+                                hideProgressBar={false}
+                                newestOnTop={true}
+                                closeOnClick
+                                rtl={false}
+                                pauseOnFocusLoss
+                                draggable
+                                // pauseOnHover
+                                theme="light"
+                        /> */}
                         <div className='dashboard'>
+                            
                             <Outlet />
                         </div>
                     </Content>

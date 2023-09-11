@@ -8,7 +8,6 @@ const login = async (user) => {
 const getOrders = async () => {
     try {
         const response = await api.get('/user/order/allorders')
-        console.log('responseData',response);
         return response.data;
     } catch (error) {
         // console.error("An error occurred during login:", error);

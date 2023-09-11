@@ -713,6 +713,7 @@ const userOrder = asyncHandler(async (req, res) => {
         const userOrders = await Order.findOne({ orderby: _id })
             .populate('products.product', "_id color title brand description").exec();
         res.status(200).json(userOrders);
+        // console.log('userOrderPayment', userOrders);
     } catch (error) {
         console.log('error', error);
         res.status(500).json({ message: "Error Occurred while retrieving user orders." });
@@ -726,6 +727,7 @@ const getAllOrders = asyncHandler(async (req, res) => {
         .populate('orderby', 'firstname lastname email mobile')
             .exec();
         res.status(200).json(alluserorders);
+        console.log('userPayment',alluserorders.firstname);
     } catch (error) {
         throw new Error(error);
     }

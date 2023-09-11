@@ -404,3 +404,9 @@ footer .input-group-text{
 .color-red{
   color: red;
 }
+
+/* error */
+
+.error {
+  color: red;
+}
