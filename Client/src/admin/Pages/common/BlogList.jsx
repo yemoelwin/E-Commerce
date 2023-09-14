@@ -5,8 +5,6 @@ import { Link } from 'react-router-dom';
 import { MdDelete } from 'react-icons/md';
 import { getBlog } from '../../../features/blog/blogSlice';
 
-
-
 const columns = [
     {
         title: "No",
@@ -35,7 +33,6 @@ const columns = [
 const BlogList = () => {
     const dispatch = useDispatch();
     const blogState = useSelector((state) => state.blog.blogs);
-    console.log('blogState', blogState);
     useEffect(() => {
         dispatch(getBlog());
     }, [dispatch]);
@@ -69,6 +66,7 @@ const BlogList = () => {
                     }}
                     title="Are you sure you want to delete this enquiry?"
                 /> */}
+                
             </div>
         </>
     )

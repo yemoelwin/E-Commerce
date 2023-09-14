@@ -5,24 +5,56 @@ const getAllBrands = async () => {
         const response = await api.get('/brand/');
         return response.data;
     } catch (error) {
-        console.error("An error occurred during login:", error);
+        console.error("An error occurred while fetching all the brand data:", error);
         throw error; // Re-throw the error for higher-level handling
     }
 };
 
-const createBrand = async (data) => {
+const addBrand = async (data) => {
     try {
-        const response = await api.post('/brand/create-brand', data);
+        const response = await api.post('/brand/post/add-brand', data);
         return response.data;
     } catch (error) {
-        console.error("An error occurred during login:", error);
-        throw error; // Re-throw the error for higher-level handling
+        console.error("An error occurred while creating new brand:", error);
+        throw new Error(); // Re-throw the error for higher-level handling
+    }
+};
+
+const getBrand = async (_id) => {
+    try {
+        const response = await api.get(`/brand/single/${_id}`);
+        return response.data;
+    } catch (error) {
+        console.error("An error occurred while fetching single brand with id:", error.message);
+        throw new Error(); // Re-throw the error for higher-level handling
+    }
+};
+
+const updateBrand = async (brandData) => {
+    try {
+        const response = await api.put(`/brand/updBrand/${brandData.id}`, {title: brandData.data.title});
+        return response.data;
+    } catch (error) {
+        console.error("An error occurred while updating new brand:", error);
+        throw new Error(); // Re-throw the error for higher-level handling
+    }
+};
+const deleteBrand = async (id) => {
+    try {
+        const response = await api.delete(`/brand/delete/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error("An error occurred while deleting new brand:", error);
+        throw new Error(); // Re-throw the error for higher-level handling
     }
 };
 
 const brandService = {
     getAllBrands,
-    createBrand
+    addBrand,
+    getBrand,
+    updateBrand,
+    deleteBrand
 };
 
 export default brandService;

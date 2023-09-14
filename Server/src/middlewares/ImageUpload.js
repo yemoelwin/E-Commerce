@@ -25,7 +25,13 @@ const fileFilter = (req, file, cb) => {
     }
 };
 
-export const upload = multer({
+export const productUpload = multer({
+    storage: fileStorage,
+    fileFilter: fileFilter,
+    limits: { fileSize : 2000000 }, // Set the file filter function
+});
+
+export const blogUpload = multer({
     storage: fileStorage,
     fileFilter: fileFilter,
     limits: { fileSize : 2000000 }, // Set the file filter function

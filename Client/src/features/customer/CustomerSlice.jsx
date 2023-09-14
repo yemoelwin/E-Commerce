@@ -18,7 +18,6 @@ export const getUsers = createAsyncThunk('customer/get-customers', async (thunkA
     }
 })
 
-
 export const customerSlice = createSlice({
     name: 'customer',
     initialState,
@@ -44,6 +43,5 @@ export const customerSlice = createSlice({
             })
     }
 });
-
 
 export default customerSlice.reducer;

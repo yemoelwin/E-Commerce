@@ -6,7 +6,7 @@ import { protect, isAdmin } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-router.post('/createBlog', protect, isAdmin, Blog.createBlog); /* finished */
+router.post('/create-blog', protect, isAdmin, Blog.createBlog); /* finished */
 
 router.put('/update/:id', protect, Blog.updateBlog); /* finished */
 

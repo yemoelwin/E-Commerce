@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, createAction } from '@reduxjs/toolkit';
 import colorService from './colorService';
 
 const initialState = {
@@ -17,6 +17,17 @@ export const getColors = createAsyncThunk('color/get-colors', async(thunkApi) =>
         return thunkApi.rejectWithValue(error);
     }
 });
+
+export const createColor = createAsyncThunk('color/create-color', async(colorData, thunkApi) => {
+    try {
+        return await colorService.createColor(colorData);
+    } catch (error) {
+        console.log(error);
+        return thunkApi.rejectWithValue(error);
+    }
+});
+
+export const colorResetState = createAction("reset_all");
 
 export const colorSlice = createSlice({
     name: 'color',
@@ -40,7 +51,25 @@ export const colorSlice = createSlice({
                 state.isSuccess = false;
                 state.isLoading = false;
                 state.message = action.error.message || "An error occurred.";
-        })
+            })
+            .addCase(createColor.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(createColor.fulfilled, (state, action) => {
+                state.createdColor = action.payload;
+                state.isError = false;
+                state.isSuccess = true;
+                state.isLoading = false;
+                state.message = 'Success';
+            })
+            .addCase(createColor.rejected, (state, action) => {
+                state.colors = null;
+                state.isError = true;
+                state.isSuccess = false;
+                state.isLoading = false;
+                state.message = action.payload || "An error occurred.";
+            })
+            .addCase(colorResetState, () => initialState);
     }
 });
 

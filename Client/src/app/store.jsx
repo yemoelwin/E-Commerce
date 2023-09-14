@@ -9,6 +9,8 @@ import blogReducer from '../features/blog/blogSlice';
 import blogCategoryReducer from '../features/blogCategory/blogCategorySlice';
 import inquiryReducer from '../features/inquiry/inquirySlice';
 import uploadImgReducer from '../features/upload/uploadSlice';
+import blogImgUploadReducer from '../features/upload/blogUploadSlice';
+import couponReducer from '../features/coupon/couponSlice';
 import tokenMiddleware from '../middleware/tokenMiddleware';
 // import { login } from '../features/auth/AuthSlice';
 // import { apiSlice } from './api/apiSlice';
@@ -26,8 +28,10 @@ const store = configureStore({
         blogCategory: blogCategoryReducer,
         inquiry: inquiryReducer,
         uploadImg: uploadImgReducer,
+        blogUploadImg: blogImgUploadReducer,
+        coupon: couponReducer,
     },
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(tokenMiddleware),
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware({serializableCheck: false}).concat(tokenMiddleware),
     // devTools: true
     // preloadedState,
 });

@@ -52,6 +52,8 @@ import AddProduct from "./admin/Pages/common/AddProduct";
 
 import { useDispatch, useSelector } from 'react-redux';
 import { setUser } from './features/auth/AuthSlice';
+import AddCoupon from './admin/Pages/common/AddCoupon';
+import CouponList from './admin/Pages/common/CouponList';
 // import ProtectedRoute from './routes/protectedRoute';
 
 function App() {
@@ -101,11 +103,14 @@ function App() {
                 <Route path="color-lists" element= {<Colors />} />
                 <Route path="add-color" element= {<AddColor />} />
                 <Route path="category-lists" element= {<CategoryList />} />
-                <Route path="category" element= {<AddCategory />} />
+                <Route path="add-category" element= {<AddCategory />} />
                 <Route path="brand-lists" element= {<BrandList />} />
-                <Route path="add-brand" element= {<AddBrand />} />
+                <Route path="add-product-brand" element= {<AddBrand mode='add' />} />
+                <Route path="edit-product-brand/:id" element= {<AddBrand mode='update'/>} />
                 <Route path="product-lists" element= {<ProductList />} />
                 <Route path="add-product" element={<AddProduct />} />
+                <Route path="add-coupon" element={<AddCoupon/>} />
+                <Route path="coupon-lists" element={<CouponList/>} />
           </Route>
           <Route
             path="/login"

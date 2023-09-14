@@ -2,59 +2,80 @@ import React, { useEffect } from 'react';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { createBrand } from '../../../features/brand/brandSlice';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { addBrand, brandResetState, getSingleBrand, updateBrand } from '../../../features/brand/brandSlice';
 
 let schema = yup.object().shape({
     title: yup.string().required("Title is Required"),
 });
 
-const AddBrand = () => {
+const AddBrand = ({mode}) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
     const newBrand = useSelector((state) => state.brand);
-    const { isSuccess, isError, createdBrand } = newBrand;
-    
+    const { isSuccess, isError, createdBrand, brandName, updatedBrand } = newBrand;
+    const brandIdSegment = location.pathname.split('/')[3];
+    const brandId = brandIdSegment === 'undefined' ? undefined : brandIdSegment;
+
     const formik = useFormik({
+        enableReinitialize: true,
         initialValues: {
-            title: "",
+            title: brandName || "",
         },
         validationSchema: schema,
         onSubmit: async (values) => {
             try {
-                dispatch(createBrand(values));
-                formik.resetForm();
-                // toast.success('New brand added successfully.')
-                setTimeout(() => {
-                    navigate('/admin/brand-lists')
-                    
+                if (mode === 'add') {
+                    dispatch(addBrand(values));
+                    navigate('/admin/add-product-brand');
+                    setTimeout(() => {
+                        dispatch(brandResetState());
                 },[2000])
+                }
+                if (brandId !== 'undefined' && mode === 'update') {
+                    dispatch(updateBrand({ id: brandId, data: values }));
+                    setTimeout(() => {
+                        dispatch(brandResetState());
+                        navigate(`/admin/brand-lists`);
+                },[1000])
+                }  
+                formik.resetForm();
+                
             } catch (error) {
                 throw new Error();
             }
         }
-    })
+    });
 
     useEffect(() => {
         if (isSuccess && createdBrand) {
-            toast.success('New brand added successfully.')
+            toast.success('Brand added successfully.');
+        }
+        if (isSuccess && updatedBrand) {
+            toast.success('Brand updated successfully.');
         }
         if (isError) {
-            toast.error('Something went wrong and cannot add.Try again.')
+            toast.error('Something went wrong and cannot add.Try again.');
         }
-        
-    }, [isSuccess, isError, createdBrand])
-    
+    }, [isSuccess, isError, updatedBrand]);
+
+    useEffect(() => {
+        if (brandId !== undefined) {
+            dispatch(getSingleBrand(brandId));
+        }
+    }, [brandId]);
+
     return (
         <>
             <div className="container ">
                 <div className="row justify-content-center">
                         <div className="col-md-8">
                             <form onSubmit={formik.handleSubmit}>
-                                <h2 className="mb-4 header-name">Add Brand</h2>
+                            <h2 className="mb-4 header-name">
+                                {mode === 'add' ? 'Add Brand' : 'Update Brand'}
+                            </h2>
 
                                 <div className="form-group mt-2">
                                     <label htmlFor="brandTitle" className='label-name'>Brand Title</label>
@@ -64,7 +85,7 @@ const AddBrand = () => {
                                         id="brandTitle"
                                         name='title'
                                         placeholder= 'Enter Brand Title'
-                                        onChange={formik.handleChange("title")}
+                                        onChange={formik.handleChange('title')}
                                         onBlur={formik.handleBlur("title")}
                                         value={formik.values.title}
                                         required />
@@ -75,7 +96,9 @@ const AddBrand = () => {
                                     )}
                                 </div>
 
-                                <button type="submit" className="btn btn-success btn-block mt-4">Add Brand</button>
+                            <button type="submit" className="btn btn-success btn-block mt-4">
+                                {mode === 'add' ? 'Add Brand' : 'Update Brand'}
+                            </button>
                             </form>
                         </div>
                 </div>

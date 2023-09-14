@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom';
 import { MdDelete } from 'react-icons/md';
 import { getBlogCategory } from '../../../features/blogCategory/blogCategorySlice';
 
-
 const columns = [
     {
         title: "No",
@@ -54,14 +53,6 @@ const BlogCategoryList = () => {
                 <div>
                     <Table columns={columns} dataSource={data1} />
                 </div>
-                {/* <CustomModal
-                    hideModal={hideModal}
-                    open={open}
-                    performAction={() => {
-                    deleteEnq(enqId);
-                    }}
-                    title="Are you sure you want to delete this enquiry?"
-                /> */}
             </div>
         </>
     )

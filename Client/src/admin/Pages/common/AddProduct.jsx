@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
 import { toast } from "react-toastify";
 import Select from 'react-select';
 import { getBrands } from '../../../features/brand/brandSlice';
 import { getCategory } from '../../../features/category/categorySlice';
 import { getColors } from '../../../features/color/colorSlice';
-import { deleteImages, uploadImages } from '../../../features/upload/uploadSlice';
-import { createProduct } from '../../../features/products/productSlice';
+import { deleteImages, productImgUpload, removeImage } from '../../../features/upload/uploadSlice';
+import { createProduct, productResetState } from '../../../features/products/productSlice';
 import { useMemo } from 'react';
 
 let schema = yup.object().shape({
@@ -30,17 +28,16 @@ let schema = yup.object().shape({
 
 const AddProduct = () => {
     const dispatch = useDispatch();
-    const navigate = useNavigate();
-    const [fileList, setFileList] = useState([]);
+    // const navigate = useNavigate();
     const [selectedColors, setSelectedColors] = useState([]);
     const [imageStateLoading, setImageStateLoading] = useState(false);
     const [loadedImagesCount, setLoadedImagesCount] = useState(false);
     const brandState = useSelector((state) => state.brand.brands);
     const categoryState = useSelector((state) => state.category.categories);
     const colorState = useSelector((state) => state.color.colors);
-    const imageState = useSelector((state) => state.uploadImg.images);
-    // const newProduct = useSelector((state) => state.product);
-    // const { isSuccess, isError, products } = newProduct;
+    const imageState = useSelector((state) => state.uploadImg.prodimages);
+    const newProduct = useSelector((state) => state.product);
+    const { isSuccess, isError, createdProduct } = newProduct;
     
     const formik = useFormik({
         initialValues: {
@@ -56,20 +53,15 @@ const AddProduct = () => {
         },
     validationSchema: schema,
         onSubmit: async (values) => {
-            try {
-                alert(JSON.stringify(values));
-                dispatch(createProduct(values));
-                toast.success('New Product successfully created!');
-                // navigate('/admin/product-lists')
-                formik.resetForm();
-                setSelectedColors(null);
-                setTimeout(() => {
-                    // dispatch(resetState());
-                    }, 3000);
-            } catch (error) {
-                toast.error("Something Went Wrong!");
-            }
-            
+            alert(JSON.stringify(values));
+            dispatch(createProduct(values));
+            formik.resetForm();
+            setSelectedColors(null);
+            setTimeout(() => {
+                dispatch(productResetState());
+                dispatch(removeImage());
+                // navigate('/admin/product-lists');
+            }, 3000);
         },
     });
 
@@ -79,7 +71,14 @@ const AddProduct = () => {
         dispatch(getColors())
     }, [dispatch]);
 
-    
+    useEffect(() => {
+        if (isSuccess && createdProduct) {
+            toast.success('New Product successfully created!');
+        }
+        if (isError) {
+            toast.error('Something went wrong and cannot add.Try again.');
+        }
+    }, [createdProduct, isError, isSuccess]);
 
     const img = useMemo(() => {
         if (!Array.isArray(imageState)) {
@@ -92,9 +91,9 @@ const AddProduct = () => {
         }));
     }, [imageState]);
 
-    useEffect(() => {
-        setFileList(imageState);
-    }, [imageState])
+    // useEffect(() => {
+    //     setFileList(imageState);
+    // }, [imageState])
 
     const handleImageLoad = (index) => {
         setLoadedImagesCount((prevCount) => prevCount + 1);
@@ -114,10 +113,10 @@ const AddProduct = () => {
         }
         try {    
             setImageStateLoading(true);
-            dispatch(uploadImages(formData)).finally(() => {
+            dispatch(productImgUpload(formData)).finally(() => {
                 setImageStateLoading(false);
             }) ;
-            setFileList(Array.from(files)); // Convert files to an array for rendering
+            // setFileList(Array.from(files)); // Convert files to an array for rendering
         } catch (error) {
             console.error("Error while uploading:", error);
         }
@@ -135,7 +134,7 @@ const AddProduct = () => {
 
     useEffect(() => {
         formik.values.images = img;
-        formik.values.color = selectedColors ? selectedColors : " ";
+        formik.values.color = selectedColors || "";
     }, [img, formik.values, selectedColors]);
     
     const handleColors = (selectedOptions) => {
@@ -146,14 +145,6 @@ const AddProduct = () => {
         setSelectedColors(colorState)
     },[colorState])
 
-    // useEffect(() => {
-    //     const formattedOptions = colorState.map((color) => ({
-    //         value: color._id, // Replace with your actual data structure
-    //         label: color.color, // Replace with your actual data structure
-    //     }));
-    //     setSelectedColors(formattedOptions);
-    // },[colorState])
-
     return (
         <>
             <div className="container ">
@@ -162,6 +153,7 @@ const AddProduct = () => {
                         <form onSubmit={formik.handleSubmit}>
                             <h2 className="mb-4 header-name">Add Product</h2>
 
+                            {/* Title */}
                             <div className="form-group mt-2">
                                 <label htmlFor="productTitle" className='label-name'>Product Title</label>
                                 <input
@@ -181,6 +173,7 @@ const AddProduct = () => {
                                 )}
                             </div>
 
+                            {/* Brand */}
                             <div className="form-group mt-2">
                                 <label htmlFor="brandSelect" className='label-name'>Brand</label>
                                 <select
@@ -206,6 +199,7 @@ const AddProduct = () => {
                                 )}
                             </div>
 
+                            {/* Category */}
                             <div className="form-group mt-2">
                                 <label htmlFor="categorySelect" className='label-name'>Category</label>
                                 <select
@@ -231,6 +225,7 @@ const AddProduct = () => {
                                 )}
                             </div>
 
+                            {/* Color */}
                             <div className="form-group mt-2">
                                 <label htmlFor="colorSelect" className='label-name'>Color</label>
                                     <Select
@@ -251,6 +246,7 @@ const AddProduct = () => {
                                 )}
                             </div>
 
+                            {/* Product Tags */}
                             <div className="form-group mt-2">
                                 <label htmlFor="TagSelect" className='label-name'>Tag</label>
                                 <select
@@ -274,6 +270,7 @@ const AddProduct = () => {
                                 )}
                             </div>
 
+                            {/* Product Price */}
                             <div className="form-group mt-2">
                                 <label htmlFor="productPrice" className='label-name'>Price</label>
                                 <input
@@ -293,7 +290,8 @@ const AddProduct = () => {
                                     </div>
                                 )}
                             </div>
-
+                            
+                            {/* Product Quantity */}
                             <div className="form-group mt-2">
                                 <label htmlFor="productQuantity" className='label-name'>Quantity</label>
                                 <input
@@ -314,6 +312,7 @@ const AddProduct = () => {
                                 )}
                             </div>
 
+                            {/* image */}
                             <div className='mt-2'>
                                 <label htmlFor="imageUpload" className='label-name'>Image Upload</label>
                                 <div className='product-border bg-white p-3'>
@@ -341,25 +340,30 @@ const AddProduct = () => {
                                     ))
                                 ) : imageStateLoading ? (
                                     // Show loading message if images are still loading
-                                    <p>Loading images...</p>
+                                    <p className='pt-2 fs-6 display_color2'>Loading images...</p>
                                 ) : (
                                     // Show "No images to display" message if no images
-                                    <p>No images to display</p>
+                                    <p className='pt-2 fs-6 display_color1'>No images to display</p>
                                 )}
                             </div>
 
+                            {/* Description */}
                             <div className='mt-2'>
                                 <label htmlFor="productDescription" className='label-name'>Description</label>
-                                <ReactQuill
-                                    theme="snow"
+                                <textarea
+                                    className={`form-control ${formik.touched.description && formik.errors.description ? 'is-invalid' : ''}`}
                                     name="description"
+                                    id="description"
                                     onChange={formik.handleChange("description")}
+                                    onBlur={formik.handleBlur("description")}
                                     value={formik.values.description}
+                                    rows={4} // Adjust the number of rows as needed
                                 />
                             </div>
                             <div className='error'>
                                 {formik.touched.description && formik.errors.description}
                             </div>
+
 
                             <button type="submit" className="btn btn-success btn-block mt-4">Add Product</button>
                         </form>

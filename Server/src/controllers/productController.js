@@ -7,7 +7,6 @@ import slugify from 'slugify';
 const createProduct = asyncHandler(async (req, res) => {
     try {
         const { title, description, price, brand, category, quantity, color, images, tags } = req.body;
-        console.log('Title from req.body:', title);
         if (!title) {
             return res.status(400).json({ message: 'Title is missing or invalid.' });
         }

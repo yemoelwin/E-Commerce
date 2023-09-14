@@ -1,8 +1,8 @@
 import api from '../../app/api/currentApi';
 
-const uploadImg = async (formData) => {
+const blogUploadImg = async (formData) => {
     try {
-        const response = await api.post(`/upload/images`, formData);
+        const response = await api.post(`/upload/blog/images`, formData);
         console.log('image response', response);
         return response.data;
     } catch (error) {
@@ -21,9 +21,9 @@ const deleteImg = async (id) => {
     }
 }
 
-const uploadService = {
-    uploadImg,
+const blogUploadService = {
+    blogUploadImg,
     deleteImg,
 };
 
-export default uploadService;
+export default blogUploadService;

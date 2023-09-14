@@ -1,18 +1,18 @@
 import { createSlice, createAsyncThunk, createAction } from '@reduxjs/toolkit';
-import uploadService from './uploadService';
+import blogUploadService from './blogUploadService';
 
 const initialState = {
-    prodimages: [],
+    images: [],
     isError: false,
     isLoading: false,
     isSuccess: false,
     message: "",
 }
 
-export const productImgUpload = createAsyncThunk('product/uploadImages', async (formData, thunkApi) => {
+export const blogImgUpload = createAsyncThunk('blog/uploadImages', async (formData, thunkApi) => {
     try {
         // const folderName = "products"
-        return await uploadService.uploadImg(formData);
+        return await blogUploadService.blogUploadImg(formData);
     } catch (error) {
         console.log("error while uploading",error);
         return thunkApi.rejectWithValue(error);
@@ -22,34 +22,34 @@ export const productImgUpload = createAsyncThunk('product/uploadImages', async (
 export const deleteImages = createAsyncThunk('delete/uploadImages', async (id, thunkApi) => {
     try {
         
-        return await uploadService.deleteImg(id);
+        return await blogUploadService.deleteImg(id);
     } catch (error) {
         console.log("error while uploading",error);
         return thunkApi.rejectWithValue(error);
     }
 });
 
-export const removeImage = createAction('remove_image');
+export const clearImageState = createAction('remove-image');
 
-export const imageUploadSlice = createSlice({
+export const blogImageUploadSlice = createSlice({
     name: 'images',
     initialState,
     reducers: {
     },
     extraReducers: (builder) => {
         builder
-            .addCase(productImgUpload.pending, (state) => {
+            .addCase(blogImgUpload.pending, (state) => {
                 state.isLoading = true;
             })
-            .addCase(productImgUpload.fulfilled, (state, action) => {
-                state.prodimages = action.payload;
+            .addCase(blogImgUpload.fulfilled, (state, action) => {
+                state.images = action.payload;
                 state.isError = false;
                 state.isSuccess = true;
                 state.isLoading = false;
                 state.message = 'Success';
             })
-            .addCase(productImgUpload.rejected, (state, action) => {
-                state.prodimages = null;
+            .addCase(blogImgUpload.rejected, (state, action) => {
+                state.images = null;
                 state.isError = true;
                 state.isSuccess = false;
                 state.isLoading = false;
@@ -59,22 +59,22 @@ export const imageUploadSlice = createSlice({
                 state.isLoading = true;
             })
             .addCase(deleteImages.fulfilled, (state, action) => {
-                state.prodimages = action.payload;
+                state.images = action.payload;
                 state.isError = false;
                 state.isSuccess = true;
                 state.isLoading = false;
                 state.message = 'Success';
             })
             .addCase(deleteImages.rejected, (state, action) => {
-                state.prodimages = null;
+                state.images = null;
                 state.isError = true;
                 state.isSuccess = false;
                 state.isLoading = false;
                 state.message = action.payload || "An error occurred.";
             })
-            .addCase(removeImage, () => initialState);
+            .addCase(clearImageState, () => initialState);
     }
 });
 
 
-export default imageUploadSlice.reducer;
+export default blogImageUploadSlice.reducer;

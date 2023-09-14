@@ -13,10 +13,11 @@ import { FaClipboardList, FaBlogger } from 'react-icons/fa';
 import { ImBlog } from 'react-icons/im';
 import { RiHomeOfficeLine } from 'react-icons/ri';
 import { IoIosNotifications } from 'react-icons/io';
+import { CiDiscount1, CiViewList } from 'react-icons/ci';
+import { CgPlayListAdd } from 'react-icons/cg';
 import { Layout, Menu } from 'antd';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-// Breadcrumb,theme
 import { Link, useNavigate } from 'react-router-dom';
 import { Outlet } from 'react-router-dom';
 const { Header, Content, Footer, Sider } = Layout;
@@ -36,14 +37,18 @@ const items = [
     getItem('Catalog', 'catalog', <AiOutlineShoppingCart className='fs-6'/>, [
         getItem('Add Products', 'add-product', <AiOutlineShoppingCart className='fs-6'/>),
         getItem('Product-Lists', 'product-lists', <AiOutlineShoppingCart className='fs-6' />),
-        getItem('Add Brand', 'add-brand', <SiBrandfolder className='fs-6' />),
+        getItem('Add Brand', 'add-product-brand', <SiBrandfolder className='fs-6' />),
         getItem('Brand-Lists', 'brand-lists', <SiBrandfolder className='fs-6' />),
-        getItem('Category', 'category', <BiCategory className='fs-6' />),
+        getItem('Add Category', 'add-category', <BiCategory className='fs-6' />),
         getItem('Category-Lists', 'category-lists', <BiCategory className='fs-6' />),
-        getItem('Color', 'add-color', <AiOutlineBgColors className='fs-6' />),
+        getItem('Add Color', 'add-color', <AiOutlineBgColors className='fs-6' />),
         getItem('Color-Lists', 'color-lists', <AiOutlineBgColors className='fs-6' />),
     ]),
     getItem('Orders', 'orders', <FaClipboardList className='fs-6'/>),
+    getItem('Marketing', 'Marketing', <CiDiscount1 className='fs-6' />, [
+        getItem('Add Coupon', 'add-coupon', <CgPlayListAdd className='fs-5'/>),
+        getItem('Coupon Lists', 'coupon-lists', <CiViewList className='fs-5'/>),
+    ]),
     getItem('Blogs', 'blogs', <FaBlogger className='fs-6'/>, [
         getItem('Add Blog', 'add-blog', <ImBlog className='fs-6'/>),
         getItem('Blog List', 'blog-list', <FaBlogger className='fs-6'/>),
@@ -57,14 +62,10 @@ const items = [
 const MainLayout = () => {
     const [collapsed, setCollapsed] = useState(false);
     const [showText, setShowText] = useState(false);
-    // const [email, setEmail] = useState('');
     const navigate = useNavigate();
     const handleSideBarTrigger = () => {
         setShowText((prevShowLargeText) => !prevShowLargeText)
     }
-    // const {
-    //     token: { colorBgContainer },
-    // } = theme.useToken();
     return (
         <>
             <Layout
@@ -135,7 +136,8 @@ const MainLayout = () => {
                             <Breadcrumb.Item>User</Breadcrumb.Item>
                             <Breadcrumb.Item>Bill</Breadcrumb.Item>
                         </Breadcrumb> */}
-                        {/* <ToastContainer
+                        <div className='dashboard'>
+                            <ToastContainer
                                 position="top-right"
                                 autoClose={2500}
                                 hideProgressBar={false}
@@ -146,9 +148,7 @@ const MainLayout = () => {
                                 draggable
                                 // pauseOnHover
                                 theme="light"
-                        /> */}
-                        <div className='dashboard'>
-                            
+                            />
                             <Outlet />
                         </div>
                     </Content>

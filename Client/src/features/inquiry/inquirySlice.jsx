@@ -45,7 +45,7 @@ export const inquirySlice = createSlice({
                 state.isError = true;
                 state.isSuccess = false;
                 state.isLoading = false;
-                state.message = action.error.message || "An error occurred.";
+                state.message = action.payload || "An error occurred.";
         })
     }
 });

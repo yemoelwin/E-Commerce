@@ -39,7 +39,13 @@ var blogSchema = new mongoose.Schema({
             ref: 'User',
         }
     ],
-    images: [],
+    images: [
+        {   
+            url: String,
+            asset_id: String,
+            public_id: String,
+        }
+    ],
     postedBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'

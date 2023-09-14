@@ -47,7 +47,7 @@ import fs from 'fs';
 
 const uploadImages = asyncHandler(async (req, res) => {
     try {
-        const uploader = (path) => cloudinaryUploadImg(path, "images");
+        const uploader = (path) => cloudinaryUploadImg(path, req.query.context);
         const urls = [];
         const files = req.files;
         for (const file of files) {

@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, createAction } from '@reduxjs/toolkit';
 import productService from './productService';
 
 const initialState = {
@@ -27,6 +27,8 @@ export const createProduct = createAsyncThunk('product/createProduct', async (da
     }
 })
 
+export const productResetState = createAction('reset_all');
+
 export const productSlice = createSlice({
     name: 'product',
     initialState,
@@ -54,7 +56,7 @@ export const productSlice = createSlice({
                 state.isLoading = true;
             })
             .addCase(createProduct.fulfilled, (state, action) => {
-                state.products = action.payload;
+                state.createdProduct = action.payload;
                 state.isError = false;
                 state.isSuccess = true;
                 state.isLoading = false;
@@ -67,6 +69,7 @@ export const productSlice = createSlice({
                 state.isLoading = false;
                 state.message = action.error.message || "An error occurred.";
             })
+            .addCase(productResetState, () => initialState);
     }
 });
 

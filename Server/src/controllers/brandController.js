@@ -19,12 +19,12 @@ const createBrand = asyncHandler(async (req, res) => {
 })
 
 const updateBrand = asyncHandler(async (req, res) => {
-    const { id } = req.params;
+    const { _id } = req.params;
     const { title } = req.body;
-    validateMongodbID(id);
+    // validateMongodbID(id);
     try {
         const updatedBrand = await brandModel.findByIdAndUpdate(
-            id, { title }, { new: true });
+            _id, { title }, { new: true });
         updatedBrand.message = 'Successfully updated the category.';
         return res.status(200).json(updatedBrand);
     } catch (error) {
@@ -33,10 +33,10 @@ const updateBrand = asyncHandler(async (req, res) => {
 });
 
 const getBrand = asyncHandler(async (req, res) => {
-    const { id } = req.params;
+    const { _id } = req.params;
     try {
         const getBrand = await brandModel.findByIdAndUpdate(
-            { _id: id },
+            { _id: _id },
             { $inc: { numSearchs: 1 } },
             { new: true }
         );
@@ -56,9 +56,9 @@ const getAllBrand = asyncHandler(async (req, res) => {
 })
 
 const deleteBrand = asyncHandler(async (req, res) => {
-    const { id } = req.params;
+    const { _id } = req.params;
     try {
-        const deletedBrand = await brandModel.findByIdAndDelete(id)
+        const deletedBrand = await brandModel.findByIdAndDelete(_id)
         if (!deletedBrand) return res.status(404).json({ message: 'Not found.' });
         return res.status(200).json(deletedBrand);
     } catch (error) {
