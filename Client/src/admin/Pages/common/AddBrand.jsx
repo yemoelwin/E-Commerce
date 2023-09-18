@@ -18,7 +18,7 @@ const AddBrand = ({mode}) => {
     const { isSuccess, isError, createdBrand, brandName, updatedBrand } = newBrand;
     const brandIdSegment = location.pathname.split('/')[3];
     const brandId = brandIdSegment === 'undefined' ? undefined : brandIdSegment;
-
+    
     const formik = useFormik({
         enableReinitialize: true,
         initialValues: {
@@ -29,20 +29,14 @@ const AddBrand = ({mode}) => {
             try {
                 if (mode === 'add') {
                     dispatch(addBrand(values));
-                    navigate('/admin/add-product-brand');
-                    setTimeout(() => {
-                        dispatch(brandResetState());
-                },[2000])
                 }
                 if (brandId !== 'undefined' && mode === 'update') {
                     dispatch(updateBrand({ id: brandId, data: values }));
                     setTimeout(() => {
-                        dispatch(brandResetState());
                         navigate(`/admin/brand-lists`);
-                },[1000])
+                },[0])
                 }  
                 formik.resetForm();
-                
             } catch (error) {
                 throw new Error();
             }
@@ -52,6 +46,7 @@ const AddBrand = ({mode}) => {
     useEffect(() => {
         if (isSuccess && createdBrand) {
             toast.success('Brand added successfully.');
+            // dispatch(brandResetState());
         }
         if (isSuccess && updatedBrand) {
             toast.success('Brand updated successfully.');
@@ -59,7 +54,8 @@ const AddBrand = ({mode}) => {
         if (isError) {
             toast.error('Something went wrong and cannot add.Try again.');
         }
-    }, [isSuccess, isError, updatedBrand]);
+        dispatch(brandResetState());
+    }, [isSuccess, isError]);
 
     useEffect(() => {
         if (brandId !== undefined) {

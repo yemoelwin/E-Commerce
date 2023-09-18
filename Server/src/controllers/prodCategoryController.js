@@ -20,6 +20,7 @@ const createCategory = asyncHandler(async (req, res) => {
 const updateCategory = asyncHandler(async (req, res) => {
     const { id } = req.params;
     const { title } = req.body;
+    console.log(req.body);
     validateMongodbID(id);
     console.log('cateGoryId', id);
     try {

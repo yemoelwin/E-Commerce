@@ -2,9 +2,9 @@ import React, { useEffect } from 'react';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { categoryResetState, createCategory } from '../../../features/category/categorySlice';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { categoryResetState, createCategory, getCategory, updateCategory } from '../../../features/category/categorySlice';
+import { showToast } from '../../../components/common/ShowToast';
 
 let schema = yup.object().shape({
     title: yup.string().required("Title is Required"),
@@ -13,37 +13,46 @@ let schema = yup.object().shape({
 const AddCategory = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
+    const categoryIdSegment = location.pathname.split('/')[3];
+    const categoryId = categoryIdSegment === 'undefined' ? undefined : categoryIdSegment;
     const newCategory = useSelector((state) => state.category);
-    const { isSuccess, isError, createdCategory } = newCategory;
+    const { categoryName } = newCategory;
     
     const formik = useFormik({
+        enableReinitialize: true,
         initialValues: {
-            title: "",
+            title: categoryName || "",
         },
         validationSchema: schema,
-        onSubmit: async (values) => {
+        onSubmit: async(values) => {
             try {
-                dispatch(createCategory(values));
+                if (categoryId !== undefined) {
+                    const data = { id: categoryId, CategoryData: values };
+                    await dispatch(updateCategory(data));
+                    showToast('Product category updated succesfully.')
+                    navigate(`/admin/category-lists`);
+                    setTimeout(() => {
+                        dispatch(categoryResetState());
+                    }, [0])
+                } else {
+                    await dispatch(createCategory(values));
+                    showToast('New category added successfully.')
+                }
                 formik.resetForm();
-                setTimeout(() => {
-                    dispatch(categoryResetState());
-                    navigate('/admin/category-lists')
-                },[2000])
             } catch (error) {
-                throw new Error();
+                showToast('Something went wrong and cannot add.Try again.')
             }
         }
     })
 
     useEffect(() => {
-        if (isSuccess && createdCategory) {
-            toast.success('New category added successfully.')
+        if (categoryId !== undefined) {
+            dispatch(getCategory(categoryId));
+        } else {
+            dispatch(categoryResetState());
         }
-        if (isError) {
-            toast.error('Something went wrong and cannot add.Try again.')
-        }
-        
-    }, [isSuccess, isError, createdCategory])
+    }, [categoryId])
     
     return (
         <>
@@ -51,7 +60,7 @@ const AddCategory = () => {
                 <div className="row justify-content-center">
                         <div className="col-md-8">
                             <form onSubmit={formik.handleSubmit}>
-                                <h2 className="mb-4 header-name">Add Category</h2>
+                            <h2 className="mb-4 header-name">{categoryId ? "Update" : "Add"} Category</h2>
 
                                 <div className="form-group mt-2">
                                     <label htmlFor="categoryTitle" className='label-name'>Category Title</label>
@@ -72,7 +81,8 @@ const AddCategory = () => {
                                     )}
                                 </div>
 
-                                <button type="submit" className="btn btn-success btn-block mt-4">Add Category</button>
+                            <button type="submit" className="btn btn-success btn-block mt-4">
+                                {categoryId ? "Update" : "Add"} Category</button>
                             </form>
                         </div>
                 </div>

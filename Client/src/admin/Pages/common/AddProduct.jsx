@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { toast } from "react-toastify";
 import Select from 'react-select';
 import { getBrands } from '../../../features/brand/brandSlice';
-import { getCategory } from '../../../features/category/categorySlice';
+import { getAllCategory } from '../../../features/category/categorySlice';
 import { getColors } from '../../../features/color/colorSlice';
 import { deleteImages, productImgUpload, removeImage } from '../../../features/upload/uploadSlice';
 import { createProduct, productResetState } from '../../../features/products/productSlice';
@@ -67,7 +67,7 @@ const AddProduct = () => {
 
     useEffect(() => {
         dispatch(getBrands());
-        dispatch(getCategory());
+        dispatch(getAllCategory());
         dispatch(getColors())
     }, [dispatch]);
 

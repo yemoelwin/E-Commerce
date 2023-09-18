@@ -1,9 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table } from "antd";
 import { Link } from 'react-router-dom';
 import { MdDelete } from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
-import { getCategory } from '../../../features/category/categorySlice';
+import { deleteCategory, getAllCategory } from '../../../features/category/categorySlice';
+import { CustomModal } from '../../../components/common/CustomModal';
+import { showToast } from '../../../components/common/ShowToast';
 
 const columns = [
     {
@@ -27,10 +29,41 @@ const columns = [
 
 const CategoryList = () => {
     const dispatch = useDispatch();
+    const [open, setOpen] = useState(false);
+    const [categoryId, setCategoryId] = useState('');
+    const [selectedCategoryName, setSelectedCategoryName] = useState("");
     const categoryState = useSelector((state) => state.category.categories);
+    // const newCategory = useSelector((state) => state.category);
+    // const { isSuccess, isError, deletedCategory } = newCategory;
+
     useEffect(() => {
-        dispatch(getCategory());
+        dispatch(getAllCategory());
     }, [dispatch]);
+
+    const showModal = (e) => {
+        setOpen(true);
+        setCategoryId(e);
+        const selectedCategory = categoryState.find((category) => category._id === e);
+        setSelectedCategoryName(selectedCategory ? selectedCategory.title : '');
+    };
+
+    const deleteItem = (e) => {
+        dispatch(deleteCategory(e))
+            .then(() => {
+                dispatch(getAllCategory());
+                showToast('Product Category deleted successfully.')
+            })
+            .catch(error => {
+                console.log(error);
+                showToast('Something went wrong and cannot add.Try again.');
+            });
+        setOpen(false);
+    }
+
+    const handleCancel = () => {
+        setOpen(false);
+    };
+
     const data1 = [];
     for (let i = 0; i < categoryState.length; i++) {
         data1.push({
@@ -39,26 +72,28 @@ const CategoryList = () => {
             views: categoryState[i].numSearchs,
             action: (
                 <>
-                    <Link className=''>Edit</Link>
-                    <Link className='ms-3'><MdDelete  className='fs-5 text-danger mb-1 '/></Link>
+                    <Link to={`/admin/edit-category/${categoryState[i]._id}`} className=''>Edit</Link>
+                    <button className='ms-3 modalFix' onClick={() => showModal(categoryState[i]._id)}>
+                        <MdDelete className='fs-5 text-danger mb-1' />
+                    </button>
                 </>
             ),
         });
     }
+
     return (
         <div>
                 <h3 className="mb-4 title">Product Category Lists</h3>
                 <div>
                     <Table columns={columns} dataSource={data1} />
                 </div>
-                {/* <CustomModal
-                    hideModal={hideModal}
+                <CustomModal
+                    title="Are you sure you want to delete this Category?"
                     open={open}
-                    performAction={() => {
-                    deleteEnq(enqId);
-                    }}
-                    title="Are you sure you want to delete this enquiry?"
-                /> */}
+                    handleCancel={handleCancel}
+                    performAction={() => {deleteItem(categoryId)}}
+                    selectedCategoryName={selectedCategoryName}
+                />
             </div>
     )
 }

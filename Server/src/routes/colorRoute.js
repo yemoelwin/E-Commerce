@@ -8,9 +8,9 @@ router.post('/create-color/youngsone', protect, isAdmin, Color.createColor); /* 
 
 router.put('/update/:id', protect, isAdmin, Color.updateColor); /* finished */
 
-router.get('/:id', protect, Color.getColor); /* finished */
+router.get('/:id', protect, isAdmin, Color.getColor); /* finished */
 
-router.get('/', Color.getAllColor); /* finished */
+router.get('/', protect, Color.getAllColor); /* finished */
 
 router.delete('/delete/:id', protect, isAdmin, Color.deleteColor); /* finished */
 

@@ -12,7 +12,7 @@ router.get('/single/:_id', protect, isAdmin, Brand.getBrand); /* finished */
 
 router.get('/', Brand.getAllBrand); /* finished */
 
-router.delete('/delete/:_id', isAdmin, Brand.deleteBrand); /* finished */
+router.delete('/delete/:_id', protect, isAdmin, Brand.deleteBrand); /* finished */
 
 export default router;
 

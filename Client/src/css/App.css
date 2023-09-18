@@ -436,13 +436,13 @@ footer .input-group-text{
   background-color: #FAFAFA;
 }
 
-.selectedBrand{
+.selectedItem{
   color: red;
   font-size: 16px;
   font-weight: 400;
 }
 
-.spanSelectedBrand{
+.spanSelectedItem{
   font-size: 16px;
   font-weight: 400;
 }

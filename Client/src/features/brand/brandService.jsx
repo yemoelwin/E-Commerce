@@ -39,9 +39,10 @@ const updateBrand = async (brandData) => {
         throw new Error(); // Re-throw the error for higher-level handling
     }
 };
-const deleteBrand = async (id) => {
+
+const deleteBrand = async (_id) => {
     try {
-        const response = await api.delete(`/brand/delete/${id}`);
+        const response = await api.delete(`/brand/delete/${_id}`);
         return response.data;
     } catch (error) {
         console.error("An error occurred while deleting new brand:", error);

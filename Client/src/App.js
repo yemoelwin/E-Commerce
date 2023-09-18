@@ -102,8 +102,10 @@ function App() {
                 <Route path="customers" element= {<Customers />} />
                 <Route path="color-lists" element= {<Colors />} />
                 <Route path="add-color" element= {<AddColor />} />
+                <Route path="edit-color/:id" element= {<AddColor />} />
                 <Route path="category-lists" element= {<CategoryList />} />
                 <Route path="add-category" element= {<AddCategory />} />
+                <Route path="edit-category/:id" element= {<AddCategory />} />
                 <Route path="brand-lists" element= {<BrandList />} />
                 <Route path="add-product-brand" element= {<AddBrand mode='add' />} />
                 <Route path="edit-product-brand/:id" element= {<AddBrand mode='update'/>} />

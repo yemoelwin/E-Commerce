@@ -2,9 +2,9 @@ import React, { useEffect } from 'react';
 import * as yup from 'yup';
 import { useFormik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { colorResetState, createColor } from '../../../features/color/colorSlice';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { colorResetState, createColor, fetchColor, updateColor } from '../../../features/color/colorSlice';
+import { showToast } from '../../../components/common/ShowToast';
 
 let schema = yup.object().shape({
     color: yup.string().required("Color is Required"),
@@ -13,22 +13,35 @@ let schema = yup.object().shape({
 const AddColor = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
+    const colorIdSegment = location.pathname.split('/')[3];
+    const colorId = colorIdSegment === 'undefined' ? undefined : colorIdSegment;
+    // console.log(colorId);
     const newColor = useSelector((state) => state.color);
-    const { isSuccess, isError, createdColor } = newColor;
-    
+    const { colorName } = newColor;
+
     const formik = useFormik({
+        enableReinitialize: true,
         initialValues: {
-            color: "",
+            color: colorName || "",
         },
         validationSchema: schema,
         onSubmit: async (values) => {
             try {
-                dispatch(createColor(values));
+                if (colorId !== undefined) {
+                    await dispatch(updateColor({ id: colorId, colorData: values }));
+                    showToast('Color updated succesfully.');
+                    setTimeout(() => {
+                        navigate('/admin/color-lists');
+                    }, [50]);
+                } else {
+                    dispatch(createColor(values));
+                    showToast('Color added succesfully.');
+                }
                 formik.resetForm();
                 setTimeout(() => {
                     dispatch(colorResetState());
-                    navigate('/admin/color-lists')
-                },[2000])
+                },[0])
             } catch (error) {
                 throw new Error();
             }
@@ -36,14 +49,22 @@ const AddColor = () => {
     })
 
     useEffect(() => {
-        if (isSuccess && createdColor) {
-            toast.success('New color added successfully.')
+        if (colorId !== undefined) {
+            dispatch(fetchColor(colorId));
+        } else {
+            dispatch(colorResetState());
         }
-        if (isError) {
-            toast.error('Something went wrong and cannot add.Try again.')
-        }
+    }, [colorId]);
+
+    // useEffect(() => {
+    //     if (isSuccess && createdColor) {
+    //         toast.success('New color added successfully.')
+    //     }
+    //     if (isError) {
+    //         toast.error('Something went wrong and cannot add.Try again.')
+    //     }
         
-    }, [isSuccess, isError, createdColor])
+    // }, [isSuccess, isError, createdColor])
     
     return (
         <>
@@ -51,7 +72,9 @@ const AddColor = () => {
                 <div className="row justify-content-center">
                         <div className="col-md-8">
                             <form onSubmit={formik.handleSubmit}>
-                                <h2 className="mb-4 header-name">Add Color</h2>
+                            <h2 className="mb-4 header-name">
+                                {colorId ? 'Edit Color' : 'Add Color'}
+                            </h2>
 
                                 <div className="form-group mt-2">
                                     <label htmlFor="colorTitle" className='label-name'>Color</label>
@@ -72,7 +95,9 @@ const AddColor = () => {
                                     )}
                                 </div>
 
-                                <button type="submit" className="btn btn-success btn-block mt-4">Add Color</button>
+                            <button type="submit" className="btn btn-success btn-block mt-4">
+                                {colorId ? 'Update' : 'Add Color'}
+                            </button>
                             </form>
                         </div>
                 </div>
