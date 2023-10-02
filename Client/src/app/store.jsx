@@ -11,14 +11,15 @@ import inquiryReducer from '../features/inquiry/inquirySlice';
 import uploadImgReducer from '../features/upload/uploadSlice';
 import blogImgUploadReducer from '../features/upload/blogUploadSlice';
 import couponReducer from '../features/coupon/couponSlice';
-import tokenMiddleware from '../middleware/tokenMiddleware';
-// import { login } from '../features/auth/AuthSlice';
-// import { apiSlice } from './api/apiSlice';
+import userReducer from '../features/users/userSlice';
+// import tokenMiddleware from '../middleware/tokenMiddleware';
+
 
 const store = configureStore({
     reducer: {
         // [apiSlice.reducerPath]: apiSlice.reducer,
         auth: authReducer,
+        user: userReducer,
         customer: customerReducer,
         product: productReducer,
         brand: brandReducer,
@@ -31,9 +32,8 @@ const store = configureStore({
         blogUploadImg: blogImgUploadReducer,
         coupon: couponReducer,
     },
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware({serializableCheck: false}).concat(tokenMiddleware),
-    // devTools: true
-    // preloadedState,
+    middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }),
+    
 });
 
 export default store;

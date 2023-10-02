@@ -1,6 +1,4 @@
-import mongoose from "mongoose"; // Erase if already required
-// import crypto from 'crypto';
-// import bcrypt from 'bcryptjs';
+import mongoose from "mongoose";
 
 // Declare the Schema of the Mongo model
 var userSchema = new mongoose.Schema({
@@ -30,6 +28,13 @@ var userSchema = new mongoose.Schema({
         type: String,
         default: "user"
     },
+    profileImage: [
+        {   
+            url: String,
+            asset_id: String,
+            public_id: String,
+        }
+    ],
     isBlocked: {
         type: Boolean,
         default: false
@@ -43,7 +48,7 @@ var userSchema = new mongoose.Schema({
     }],
     wishlist: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Product"
+        ref: 'Product',
     }],
     refreshToken: {
         type: String,
@@ -59,6 +64,10 @@ var userSchema = new mongoose.Schema({
     timestamps: true
 }
 );
+
+
+const UserModel = mongoose.model("User", userSchema);
+export default UserModel;
 
 // generate reset token and validate that token
 
@@ -100,5 +109,3 @@ var userSchema = new mongoose.Schema({
 // userSchema.methods.isPasswordMatched = async function (enterPassword) {
 //     return await bcrypt.compare(enterPassword,this.password)
 // }
-const UserModel = mongoose.model("user", userSchema);
-export default UserModel;

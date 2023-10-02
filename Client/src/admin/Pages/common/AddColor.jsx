@@ -33,7 +33,8 @@ const AddColor = () => {
                     showToast('Color updated succesfully.');
                     setTimeout(() => {
                         navigate('/admin/color-lists');
-                    }, [50]);
+                        dispatch(colorResetState());
+                    }, [200]);
                 } else {
                     dispatch(createColor(values));
                     showToast('Color added succesfully.');
@@ -55,16 +56,6 @@ const AddColor = () => {
             dispatch(colorResetState());
         }
     }, [colorId]);
-
-    // useEffect(() => {
-    //     if (isSuccess && createdColor) {
-    //         toast.success('New color added successfully.')
-    //     }
-    //     if (isError) {
-    //         toast.error('Something went wrong and cannot add.Try again.')
-    //     }
-        
-    // }, [isSuccess, isError, createdColor])
     
     return (
         <>

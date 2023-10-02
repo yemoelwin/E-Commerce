@@ -13,17 +13,15 @@ router.post('/login', userInfo.userLogin); /* finished */
 
 router.get('/refresh-token', userInfo.handleRefreshToken); /* finished */
 
-router.get('/alluser', userInfo.getAllUser); /* finished */
+router.get('/alluser', protect, isAdmin, userInfo.getAllUser); /* finished */
 
-router.get('/:id', protect, isAdmin, userInfo.getUserById); /* finished */
+router.get('/:id', protect, userInfo.getUserById); /* finished */
 
 router.put('/edit-user', protect, userInfo.updatedUser); /* finished */
 
 router.put('/save-address/:_id', protect, userInfo.saveAddress); /* finished */
 
 router.post('/cart/apply_coupon', protect, userInfo.applyCoupon);
-
-router.get('/wishlist/:_id', protect, userInfo.getWishlist); /* finished */
 
 router.post('/addtocart', protect, userInfo.addToCart); /* finished */
 
@@ -33,11 +31,15 @@ router.delete('/cart/remove-cart-products', protect, userInfo.emptyCart); /* fin
 
 router.post('/order/cash_order_items', protect, userInfo.creatOrder); /* finished */
 
-router.get('/user_order', protect, userInfo.userOrder); /* finished */
+router.get('/order/get_order_byuser/:id', protect, userInfo.userOrder); /* finished */
 
 router.get('/order/allorders', protect, isAdmin, userInfo.getAllOrders); /* finished */
 
 router.put('/order/update_user_order_status/:id', protect, isAdmin, userInfo.updateOrderStatus); /*finished*/
+
+router.delete('/delete_order/:id', protect, isAdmin, userInfo.deleteOrder); /* finished */
+
+router.get('/wish/user_wishlist', protect, userInfo.wishList); /* finished */
 
 router.put('/block-user/:id', protect, isAdmin, userInfo.blockUser); /* finished */
 
@@ -53,6 +55,6 @@ router.post('/forgot-password', userInfo.forgotPasswordToken); /* finished */
 
 router.post('/reset-password/:userId/:uniqueToken', userInfo.resetPassword); /* finished */
 
-router.delete('/:id', userInfo.deleteUser); /* finished */
+router.delete('/:id', protect, isAdmin,userInfo.deleteUser); /* finished */
 
 export default router

@@ -5,7 +5,7 @@ import './css/Product.css';
 import './css/Contact.css';
 import './css/CompareProduct.css';
 import './css/Login.css';
-// import './pages/auth/Login.css'
+import './css/signup.css';
 import './css/Cart.css';
 import './css/Dashboard.css';
 import './admin/layouts/MainLayout.css';
@@ -50,10 +50,15 @@ import AddCategory from "./admin/Pages/common/AddCategory";
 import AddBrand from "./admin/Pages/common/AddBrand";
 import AddProduct from "./admin/Pages/common/AddProduct";
 
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setUser } from './features/auth/AuthSlice';
 import AddCoupon from './admin/Pages/common/AddCoupon';
 import CouponList from './admin/Pages/common/CouponList';
+import ViewInquiry from './admin/Pages/common/ViewInquiry';
+import DataTable from './components/common/DataTable';
+import SpecificDataPage from './admin/Pages/common/SpecificDataPage';
+import ViewOrders from './admin/Pages/common/ViewOrders';
+
 // import ProtectedRoute from './routes/protectedRoute';
 
 function App() {
@@ -62,7 +67,7 @@ function App() {
   useEffect(() => {
     dispatch(setUser(user));
   }, [dispatch, user]);
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  // const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   return (
     <>
@@ -81,7 +86,6 @@ function App() {
             <Route path='compare-product' element={<CompareProduct />} />
             <Route path='wishlist' element={<WishList />} />
             <Route path='login' element={<Login />} />
-            {/* <Route path='login' element={<Loggedin />} /> */}
             <Route path='signup' element={<SignUp />} />
             <Route path='forgot-password' element={<ForgotPassword />} />
             <Route path='reset-password' element={<ResetPassword />} />
@@ -92,13 +96,18 @@ function App() {
           </Route>
 
           <Route path="admin" element={<MainLayout />} >
-                <Route index element= {<DashBoard />} />
-                <Route path="inquiry" element= {<Inquiry />} />
-                <Route path="blog-list" element= {<BlogList />} />
-                <Route path="blog-category-list" element={<BlogCategoryList />} />
+            <Route index element={<DashBoard />} />
+                <Route path="product-lists" element= {<ProductList />} />
+                <Route path="add-product" element={<AddProduct />} />
+                <Route path="edit-product/:id" element={<AddProduct />} />
                 <Route path="add-blog" element={<AddBlog />} />
+                <Route path="edit-blog/:id" element={<AddBlog />} />
+                <Route path="blog-list" element= {<BlogList />} />
                 <Route path="add-blog-category" element={<AddBlogCategory />} />
+                <Route path="edit-blog-category/:id" element={<AddBlogCategory />} />
+                <Route path="blog-category-list" element={<BlogCategoryList />} />
                 <Route path="orders" element= {<Orders />} />
+                <Route path="view-orders/:id" element= {<ViewOrders />} />
                 <Route path="customers" element= {<Customers />} />
                 <Route path="color-lists" element= {<Colors />} />
                 <Route path="add-color" element= {<AddColor />} />
@@ -107,17 +116,19 @@ function App() {
                 <Route path="add-category" element= {<AddCategory />} />
                 <Route path="edit-category/:id" element= {<AddCategory />} />
                 <Route path="brand-lists" element= {<BrandList />} />
-                <Route path="add-product-brand" element= {<AddBrand mode='add' />} />
-                <Route path="edit-product-brand/:id" element= {<AddBrand mode='update'/>} />
-                <Route path="product-lists" element= {<ProductList />} />
-                <Route path="add-product" element={<AddProduct />} />
+                <Route path="add-product-brand" element= {<AddBrand />} />
+                <Route path="edit-product-brand/:id" element= {<AddBrand />} />
                 <Route path="add-coupon" element={<AddCoupon/>} />
-                <Route path="coupon-lists" element={<CouponList/>} />
+                <Route path="coupon-lists" element={<CouponList />} />
+                <Route path="inquiry" element= {<Inquiry />} />
+                <Route path="view-inquiry/:id" element= {<ViewInquiry />} />
+                <Route path="specific-data" element= {<SpecificDataPage />} />
+                <Route path="table" element= {<DataTable />} />
           </Route>
-          <Route
+          {/* <Route
             path="/login"
             element={isAuthenticated ? <Navigate to="/admin" /> : <Login />}
-          />
+          /> */}
         </Routes>
       </BrowserRouter >
     </>

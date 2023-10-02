@@ -9,6 +9,6 @@ router.get('/', couponInfo.getAllCoupon); /* finished */
 
 router.get('/:_id', protect, couponInfo.getCoupon); /* finished */
 
-router.delete('/:_id', protect, couponInfo.deleteCoupon); /* finished */
+router.delete('/:_id', protect, isAdmin, couponInfo.deleteCoupon); /* finished */
 
 export default router;

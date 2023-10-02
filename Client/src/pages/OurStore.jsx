@@ -1,14 +1,32 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ReactStars from 'react-rating-stars-component'
 import CardProduct from './containers/CardProduct';
 import Colors from '../components/common/Colors';
 import Container from '../components/common/Container';
 import BreadCrumb from '../components/common/BreadCrumb';
 import Meta from '../components/common/Meta';
+import { useDispatch, useSelector } from 'react-redux';
+import { getProducts } from '../features/products/productSlice';
 
 const ProductPage = () => {
+    const dispatch = useDispatch();
     const [grid, setGrid] = useState(4);
     const [isChecked, setIsChecked] = useState(false);
+    const productState = useSelector((state) => state.product.products);
+
+    useEffect(() => {
+        const getAllProducts = async () => {
+            try {
+                await dispatch(getProducts());
+            } catch (error) {
+                console.error("error", error);
+                throw new Error('An error occurred while fetching all products.'); // Fallback error message
+            }
+        }
+        getAllProducts();
+    },[])
+
+    
     // alert (grid)
 
     const handleCheckboxChange = (event) => {
@@ -55,6 +73,7 @@ const ProductPage = () => {
                                     </div>
                                 </div>
 
+                                {/* Price */}
                                 <h5 className='sub-title'>Price</h5>
                                 <div className='d-flex align-items-center gap-10'>
                                     <div className="form-floating">
@@ -67,11 +86,13 @@ const ProductPage = () => {
                                     </div>
                                 </div>
                                 
+                                {/* Colors */}
                                 <h5 className="sub-title">Colors</h5>
                                 <div>
                                     <Colors />
                                 </div>
 
+                                {/* Size */}
                                 <h5 className='sub-title'>Size</h5>
                                 <div>
                                     <div className="form-check">
@@ -91,6 +112,7 @@ const ProductPage = () => {
 
                         </div>
 
+                        {/* Product Tags */}
                         <div className='filter-card mb-3'>
                             <h3 className='filter-title'>
                                 Product Tags
@@ -128,6 +150,7 @@ const ProductPage = () => {
                             </div>
                         </div>
 
+                        {/* Random Product */}
                         <div className='filter-card mb-3'>
                             <h3 className='filter-title'>
                                 Random Product
@@ -175,6 +198,7 @@ const ProductPage = () => {
 
                     </div>
 
+                    {/* Featured */}
                     <div className="col-9">
                         <div className="filter-sort-grid mb-4">
                             <div className="d-flex justify-content-between align-items-center">
@@ -249,14 +273,7 @@ const ProductPage = () => {
                 
                         <div className="products-list pb-5">
                             <div className='d-flex flex-wrap gap-10'>
-                                <CardProduct grid={grid} />        
-                                <CardProduct grid={grid} />        
-                                <CardProduct grid={grid} />        
-                                <CardProduct grid={grid} />        
-                                <CardProduct grid={grid} />        
-                                <CardProduct grid={grid} />        
-                                <CardProduct grid={grid} />        
-                                <CardProduct grid={grid} />                     
+                                <CardProduct prodData={productState ? productState : []} grid={grid} />        
                             </div>
                         </div>
                     </div>

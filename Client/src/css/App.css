@@ -146,6 +146,24 @@ footer .input-group-text{
   width: 49%;
 }
 
+.dashboardBanner{
+    margin-left: 1rem;
+    cursor: pointer;
+    color: rgb(255, 255, 255);
+    text-align: center;
+}
+
+.navBanner{
+  margin-left: 1rem;
+  cursor: pointer;
+  color: red;
+  text-align: center;
+}
+
+.navBanner:hover{
+  color: white;
+}
+
 
 /* Home wrapper -2  */
 
@@ -405,6 +423,10 @@ footer .input-group-text{
   color: red;
 }
 
+.viewColor{
+  color: rgb(255, 78, 3);
+}
+
 /* error */
 
 .error {
@@ -446,6 +468,63 @@ footer .input-group-text{
   font-size: 16px;
   font-weight: 400;
 }
+
+.selectedHeader {
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.loading{
+  display: flex;
+  justify-content: start;
+  font-size: 20px;
+  /* color: blue; */
+}
+
+.gobackColor{
+  color: blue;
+}
+
+/* In your CSS file */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-spinner {
+  border: 2px solid rgba(9, 9, 9, 0.1);
+  border-left: 2px solid #4b4b4b;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 0px;
+}
+
+.loading{
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 17px;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 80vh;
+  font-size: 17px;
+  /* Adjust height as needed */
+}
+
+
+
 
 
 

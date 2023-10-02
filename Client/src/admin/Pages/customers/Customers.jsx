@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table } from "antd";
 import { useDispatch, useSelector } from 'react-redux';
 import { getUsers } from '../../../features/customer/CustomerSlice';
@@ -26,20 +26,33 @@ const columns = [
 
 const Customers = () => {
     const dispatch = useDispatch();
+    const [isLoading, setIsLoading] = useState(true);
+
     useEffect(() => {
-        dispatch(getUsers());
-    }, [dispatch]);
+        const fetchCustomer = async () => {
+            try {
+                setIsLoading(true);
+                await dispatch(getUsers());
+            } catch (error) {
+                console.error('Error fetching customers:', error);
+            } finally {
+                setIsLoading(false); // Set loading to false regardless of success or failure
+            }
+        }
+        fetchCustomer();
+    }, []);
+
     const customerState = useSelector((state) => state.customer.users);
     const data1 = [];
     let counter = 0;
-    for (let i = 0; i < customerState.length; i++) {
-        if (customerState[i].role !== 'admin') {
+    for (let i = 0; i < customerState?.length; i++) {
+        if (customerState[i]?.role !== 'admin') {
             counter++;
             data1.push({
                 key: counter,
-                name: customerState[i].firstname + " " + customerState[i].lastname,
-                email: customerState[i].email,
-                mobile: customerState[i].mobile,
+                name: customerState[i]?.firstname + " " + customerState[i]?.lastname,
+                email: customerState[i]?.email,
+                mobile: customerState[i]?.mobile,
             });
         }
     }
@@ -49,8 +62,17 @@ const Customers = () => {
             <div>
                 <h3 className="mb-4 title">Customer Lists</h3>
                 <div>
-                    <Table columns={columns} dataSource={data1} />
+                    {isLoading ? ( // Show loading indicator when isLoading is true
+                        <div className='loading gap-3'>
+                            <div className='loading-spinner'></div>
+                            <div className='load'>Loading ... </div>
+                        </div> 
+                    ) : (
+                        <Table columns={columns} dataSource={data1} />
+                    )}
                 </div>
+                    
+                
                 {/* <CustomModal
                     hideModal={hideModal}
                     open={open}

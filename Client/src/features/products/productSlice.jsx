@@ -11,19 +11,78 @@ const initialState = {
 
 export const getProducts = createAsyncThunk('product/getProducts', async (thunkApi) => {
     try {
-        return await productService.getProducts();
+        const response = await productService.getProducts();
+        return response;
     } catch (error) {
         console.log(error);
-        return thunkApi.rejectWithValue(error);
+        const errorMessage = error.message || "An error occurred.";
+        return thunkApi.rejectWithValue(errorMessage);
     }
 });
 
 export const createProduct = createAsyncThunk('product/createProduct', async (data, thunkApi) => {
     try {
-        return await productService.createProduct(data);
+        const response = await productService.createProduct(data);
+        return response;
     } catch (error) {
         console.log(error);
-        return thunkApi.rejectWithValue(error);
+        const errorMessage = error.message || "An error occurred.";
+        return thunkApi.rejectWithValue(errorMessage);
+    }
+});
+
+export const addToWishlistProduct = createAsyncThunk('product/wishlist', async (prodId, thunkApi) => {
+    try {
+        const response = await productService.addToWishlist(prodId);
+        return response;
+    } catch (error) {
+        console.log(error);
+        const errorMessage = error.message || "An error occurred.";
+        return thunkApi.rejectWithValue(errorMessage);
+    }
+});
+
+export const removeWishlist = createAsyncThunk('product/remove_wishlist', async (prodId, thunkApi) => {
+    try {
+        const response = await productService.removeFromToWishlist(prodId);
+        return response;
+    } catch (error) {
+        console.log(error);
+        const errorMessage = error.message || "An error occurred.";
+        return thunkApi.rejectWithValue(errorMessage);
+    }
+});
+
+export const fetchProductData  = createAsyncThunk('product/fetch-single-Product', async (id, thunkApi) => {
+    try {
+        const response = await productService.getProduct(id);
+        return response;
+    } catch (error) {
+        console.log(error);
+        const errorMessage = error.message || "An error occurred.";
+        return thunkApi.rejectWithValue(errorMessage);
+    }
+});
+
+export const updateProductData  = createAsyncThunk('product/update-Product', async (data, thunkApi) => {
+    try {
+        const response = await productService.updateProduct(data);
+        return response;
+    } catch (error) {
+        console.log(error);
+        const errorMessage = error.message || "An error occurred.";
+        return thunkApi.rejectWithValue(errorMessage);
+    }
+});
+
+export const deleteProduct = createAsyncThunk('product/deleteProduct', async (id, thunkApi) => {
+    try {
+        const response = await productService.deleteProduct(id);
+        return response;
+    } catch (error) {
+        console.log(error);
+        const errorMessage = error.message || "An error occurred.";
+        return thunkApi.rejectWithValue(errorMessage);
     }
 })
 
@@ -52,6 +111,7 @@ export const productSlice = createSlice({
                 state.isLoading = false;
                 state.message = action.error.message || "An error occurred.";
             })
+            /* Create Product */
             .addCase(createProduct.pending, (state) => {
                 state.isLoading = true;
             })
@@ -63,6 +123,97 @@ export const productSlice = createSlice({
                 state.message = 'Success';
             })
             .addCase(createProduct.rejected, (state, action) => {
+                state.products = null;
+                state.isError = true;
+                state.isSuccess = false;
+                state.isLoading = false;
+                state.message = action.error.message || "An error occurred.";
+            })
+            /* Fetch single Product */
+            .addCase(fetchProductData.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(fetchProductData.fulfilled, (state, action) => {
+                state.isError = false;
+                state.isSuccess = true;
+                state.isLoading = false;
+                state.message = 'Success';
+                state.singleData = action.payload;
+            })
+            .addCase(fetchProductData.rejected, (state, action) => {
+                state.products = null;
+                state.isError = true;
+                state.isSuccess = false;
+                state.isLoading = false;
+                state.message = action.error.message || "An error occurred.";
+            })
+            /* Update Product */
+            .addCase(updateProductData.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(updateProductData.fulfilled, (state, action) => {
+                const { title, description, category, price, color, brand, tags, images, quantity } = action.payload;
+                state.isError = false;
+                state.isSuccess = true;
+                state.isLoading = false;
+                state.message = 'Success';
+                state.updatedData = { title, description, category, price, color, brand, tags, images, quantity };
+            })
+            .addCase(updateProductData.rejected, (state, action) => {
+                state.products = null;
+                state.isError = true;
+                state.isSuccess = false;
+                state.isLoading = false;
+                state.message = action.error.message || "An error occurred.";
+            })
+            /* Delete Product */
+            .addCase(deleteProduct.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(deleteProduct.fulfilled, (state, action) => {
+                state.isError = false;
+                state.isSuccess = true;
+                state.isLoading = false;
+                state.message = 'Success';
+                state.deletedProduct = action.payload;
+            })
+            .addCase(deleteProduct.rejected, (state, action) => {
+                state.products = null;
+                state.isError = true;
+                state.isSuccess = false;
+                state.isLoading = false;
+                state.message = action.error.message || "An error occurred.";
+            })
+            /* Add to WishList */
+            .addCase(addToWishlistProduct.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(addToWishlistProduct.fulfilled, (state, action) => {
+                state.wishlistProduct = action.payload;
+                state.isError = false;
+                state.isSuccess = true;
+                state.isLoading = false;
+                state.message = 'Product successfully added to wishlist';
+            })
+            .addCase(addToWishlistProduct.rejected, (state, action) => {
+                state.products = null;
+                state.isError = true;
+                state.isSuccess = false;
+                state.isLoading = false;
+                state.message = action.error.message || "An error occurred.";
+            })
+            /* removeFrom wishlist */
+            .addCase(removeWishlist.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(removeWishlist.fulfilled, (state, action) => {
+                state.wishlistProduct = action.payload;
+                state.isError = false;
+                state.isSuccess = true;
+                state.isLoading = false;
+                state.message = 'Product successfully added to wishlist';
+            })
+            .addCase(removeWishlist.rejected, (state, action) => {
                 state.products = null;
                 state.isError = true;
                 state.isSuccess = false;

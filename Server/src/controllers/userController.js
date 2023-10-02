@@ -24,7 +24,11 @@ const userRegister = asyncHandler(async (req, res) => {
         const { firstname, lastname, email, mobile, password } = req.body;
         const existingUser = await User.findOne({ $or: [{ email }, { mobile }] })
         if (existingUser) {
-            throw new Error('User with this email or phone number already exists! ')
+            if (existingUser.email === email) {
+                return res.status(409).json({ message: 'User with this email already exists!' });
+            } else if (existingUser.mobile === mobile) {
+                return res.status(409).json({ message: 'User with this mobile number already exists!' });
+            }
         }
         const saltRounds = 12;
         const hashedPassword = await bcrypt.hash(password, saltRounds)
@@ -66,8 +70,8 @@ const verifyRegisterEmail = asyncHandler(async (req, res) => {
                 token,
                 expiredAt: { $gt: Date.now()}
             });
-        console.log('verificationRecord', verificationRecord);
-        console.log('Current timestamp:', Date.now());
+        // console.log('verificationRecord', verificationRecord);
+        // console.log('Current timestamp:', Date.now());
         // console.log('Expired timestamp:', verificationRecord.expiredAt);
         if (!verificationRecord) {
             return res.status(400).json({
@@ -134,7 +138,7 @@ const userLogin = asyncHandler(async (req, res) => {
                 email: user?.email,
                 role: userType,
                 token: accessToken,
-                status: 'SUCCESS',
+                status: 'Login Success',
                 message: `${userType === 'admin' ? 'Admin' : 'User'} logged in successfully`,
             });
         } else {
@@ -522,35 +526,16 @@ const unBlockUser = asyncHandler(async (req, res) => {
     }
 })
 
-const getWishlist = asyncHandler(async (req, res) => {
-    const { _id } = req.params;
-    let wishlistData = [];
+const wishList = asyncHandler(async (req, res) => {
+    const { _id } = req.user;
     try {
-        const user = await User.findById(_id);
+        const user = await User.findById(_id).populate('wishlist')
         if (!user) {
             return res.status(404).json({ message: 'User not found.' });
         }
-        if (user.role === 'admin') {
-            wishlistData = await User.populate(user, {
-                path: 'wishlist',
-                select: '-__v'
-            });
-        } else {
-            wishlistData = await User.populate(user, {
-                path: 'wishlist',
-                select: 'title price description brand category quantity images color totalratings'
-            });
-        };
-        const userData = {
-            _id: user._id,
-            firstname: user.firstname,
-            lastname: user.lastname,
-            email: user.email,
-            wishlist: wishlistData.wishlist
-        };
-        res.status(200).json({ message: 'user wishlist', user: userData });
+        res.status(200).json({ user, message: 'User Wishlist' });
     } catch (error) {
-        console.log('error', error);
+        console.error('error', error);
         res.status(500).json({
             status: "FAILED",
             message: 'An error occurred while getting wishlist.'
@@ -558,42 +543,88 @@ const getWishlist = asyncHandler(async (req, res) => {
     }
 })
 
+// const addToCart = asyncHandler(async (req, res) => {
+//     const { cart } = req.body;
+//     const { _id } = req.user;
+//     try {
+//         const user = await User.findById(_id)
+//         if (!user) {
+//             return res.status(404).json({ message: 'Error'})
+//         }
+//         let products = [];
+//         await Cart.findOneAndDelete({ orderby: user._id })
+//         for (let i = 0; i < cart.length; i++){
+//             let object = [];
+//             object.product = cart[i]._id;
+//             object.count = cart[i].count;
+//             object.color = cart[i].color;
+//             let getPrice = await Product.findById(cart[i]._id).select('price').exec();
+//             object.price = getPrice.price;
+//             products.push(object)
+//         }
+//         let cartTotalPrice = 0;
+//         for (let i = 0; i < products.length; i++){
+//             cartTotalPrice += products[i].price * products[i].count;
+//         }
+//         let newCart = new Cart({
+//             products,
+//             cartTotalPrice,
+//             orderby: user?._id
+//         })
+//         await newCart.save();
+//         res.status(200).json({ message: 'Items have been added to your cart.', newCart})
+//         console.log("products and cartTotal", products);
+//     } catch (error) {
+//         console.log('error', error);
+//         res.status(500).json({ message: "Error Occurred while adding the product to the user's cart" });
+//     }
+// })
+
 const addToCart = asyncHandler(async (req, res) => {
     const { cart } = req.body;
     const { _id } = req.user;
     try {
-        const user = await User.findById(_id)
+        const user = await User.findById(_id);
         if (!user) {
-            return res.status(404).json({ message: 'Error'})
-        }
+            return res.status(404).json({ message: 'Error' });
+        };
         let products = [];
-        await Cart.findOneAndDelete({ orderby: user._id })
-        for (let i = 0; i < cart.length; i++){
-            let object = [];
-            object.product = cart[i]._id;
-            object.count = cart[i].count;
-            object.color = cart[i].color;
-            let getPrice = await Product.findById(cart[i]._id).select('price').exec();
-            object.price = getPrice.price;
-            products.push(object)
-        }
+        // Use Promise.all to fetch prices for all products concurrently
+        const getPricePromises = cart.map(async (cartItem) => {
+            try {
+                const product = await Product.findById(cartItem._id).select('price').exec();
+                if (!product) {
+                    throw new Error('Product not found');
+                }
+                const object = {
+                    product: cartItem._id,
+                    count: cartItem.count,
+                    color: cartItem.color,
+                    price: product.price,
+                };
+                products.push(object);
+            } catch (error) {
+                console.error('Error fetching product price:', error);
+            }
+        });
+        await Promise.all(getPricePromises);
         let cartTotalPrice = 0;
-        for (let i = 0; i < products.length; i++){
+        for (let i = 0; i < products.length; i++) {
             cartTotalPrice += products[i].price * products[i].count;
         }
         let newCart = new Cart({
             products,
             cartTotalPrice,
             orderby: user?._id
-        })
+        });
         await newCart.save();
-        res.status(200).json({ message: 'Items have been added to your cart.', newCart})
+        res.status(200).json({ message: 'Items have been added to your cart.', newCart });
         console.log("products and cartTotal", products);
     } catch (error) {
         console.log('error', error);
         res.status(500).json({ message: "Error Occurred while adding the product to the user's cart" });
     }
-})
+});
 
 const getUserCart = asyncHandler(async (req, res) => {
     const { _id } = req.params;
@@ -661,16 +692,15 @@ const applyCoupon = asyncHandler(async (req, res) => {
 
 const creatOrder = asyncHandler(async (req, res) => {
     const { COD, couponApplied, Prepaid } = req.body;
-    console.log("prepaid",Prepaid);
     const { _id } = req.user;
     try {
         if (!COD && !Prepaid) {
             return res.status(500).json({ message: 'Failed.'})
         }
-        const user = await User.findById(_id);
+        const user = await User.findById(_id)
         const userCart = await Cart.findOne({ orderby: user._id })
-        console.log('userCart',userCart);
-            // .populate("products.product", "_id color title price brand totalAfterDiscount")
+            .populate("products.product", "_id color title price brand quantity")
+            .populate('orderby', 'firstname lastname email mobile')
         let finalAmount = 0;
         if (couponApplied && userCart.totalAfterDiscount) {
             finalAmount = userCart.totalAfterDiscount
@@ -687,12 +717,13 @@ const creatOrder = asyncHandler(async (req, res) => {
                 amount: finalAmount,
                 status: orderStatus,
                 createdAt: new Date(),
-                currency: 'usd'
+                currency: 'usd',
             }],
             orderby: user._id,
             orderStatus: orderStatus
         })
         await newOrder.save();
+        res.status(200).json({newOrder, message: 'Order created successfully.'});
         const bulkWriteOperations = userCart.products.map((item) => ({
             updateOne: {
                 filter: { _id: item.product._id },
@@ -700,7 +731,6 @@ const creatOrder = asyncHandler(async (req, res) => {
             },
         }));
         await Product.bulkWrite(bulkWriteOperations, {});
-        res.json({ message: "Order created successfully." });
     } catch (error) {
         console.log('error', error);
         res.status(500).json({ message: "Error Occurred while creating ordering." });
@@ -708,42 +738,43 @@ const creatOrder = asyncHandler(async (req, res) => {
 })
 
 const userOrder = asyncHandler(async (req, res) => {
-    const { _id } = req.user;
+    const { id } = req.params;
+    console.log(id);
     try {
-        const userOrders = await Order.findOne({ orderby: _id })
-            .populate('products.product', "_id color title brand description").exec();
-        res.status(200).json(userOrders);
-        // console.log('userOrderPayment', userOrders);
+        const userOrder = await Order.findById(id)
+            .populate('products.product', "_id color title brand ").exec();
+        res.status(200).json(userOrder);
     } catch (error) {
         console.log('error', error);
-        res.status(500).json({ message: "Error Occurred while retrieving user orders." });
+        res.status(500).json({ message: "Error Occurred while retrieving user order." });
     }
 });
 
 const getAllOrders = asyncHandler(async (req, res) => {
     try {
         const alluserorders = await Order.find()
-        .populate('products.product', "_id color title brand description")
+        .populate('products.product', "_id color title brand")
         .populate('orderby', 'firstname lastname email mobile')
             .exec();
         res.status(200).json(alluserorders);
-        console.log('userPayment',alluserorders.firstname);
     } catch (error) {
         throw new Error(error);
     }
 });
 
 const updateOrderStatus = asyncHandler(async (req, res) => {
-    const { status } = req.body;
+    const { orderStatus } = req.body;
     const { id } = req.params;
     validateMongodbID(id);
     try {
         const updateOrderStatus = await Order.findByIdAndUpdate(
-        id,
+            id,
+            // { $set: { 'orderStatus': status, 'payment.$.status': status } },
+            // { new: true },
         {
-            orderStatus: status,
+            orderStatus: orderStatus,
             payment: {
-            status: status,
+                status: orderStatus,
             },
         },
         { new: true }
@@ -755,36 +786,26 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
     }
 });
 
-
-export const userInfo = { userRegister, userLogin, getAllUser, getUserById, deleteUser, updatedUser, blockUser, unBlockUser, handleRefreshToken, Logout, verifyResetToken, forgotPasswordToken, updatePassword, verifyRegisterEmail, resetPassword, getWishlist, saveAddress, addToCart, getUserCart, emptyCart, applyCoupon, creatOrder, userOrder, getAllOrders, updateOrderStatus };
-
-
-
-
-
-
-
-
-
-        // wishlistData = user.wishlist.map(product => ({
-        //         _id: product._id,
-        //         title: product.title,
-        //         price: product.price,
-        //         description: product.description,
-        //         brand: product.brand,
-        //         category: product.category,
-        //         quantity: product.quantity,
-        //         color: product.color,
-        //         images: product.images,
-        //         totalratings: product.totalratings
-        //     }));
-        // }
-
-        // const userData = {
-        //     _id: user._id,
-        //     firstname: user.firstname,
-        //     lastname: user.lastname,
-        //     email: user.email,
-        //     mobile: user.mobile,
-        //     wishlist: wishlistData
-        // };
+const deleteOrder = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    validateMongodbID(id)
+    try {
+        const order = await Order.findByIdAndDelete(id)
+        if (!order) {
+            return res.status(404).json({
+                status: "FAILED",
+                message: "Order not found."
+            })
+        }
+        res.status(200).json({
+            status: "SUCCESS",
+            message: "Order successfully deleted."
+        })
+    } catch (error) {
+        res.status(500).json({
+            status: 'FAILED',
+            message: 'An error occurred while deleting and pls try again.'
+        })
+    }
+})
+export const userInfo = { userRegister, userLogin, getAllUser, getUserById, deleteUser, updatedUser, wishList, blockUser, unBlockUser, handleRefreshToken, Logout, verifyResetToken, forgotPasswordToken, updatePassword, verifyRegisterEmail, resetPassword, saveAddress, addToCart, getUserCart, emptyCart, applyCoupon, creatOrder, userOrder, getAllOrders, updateOrderStatus, deleteOrder };

@@ -14,7 +14,7 @@ var orderSchema = new Schema({
             price: Number,
         }
     ],
-    payment: [],
+    payment: {},
     orderStatus: {
         type: String,
         default: 'Not Processed',
@@ -31,7 +31,7 @@ var orderSchema = new Schema({
     orderby: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "user",
+            ref: "User",
         }
     ],
 }, {

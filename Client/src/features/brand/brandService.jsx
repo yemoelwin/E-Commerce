@@ -20,9 +20,9 @@ const addBrand = async (data) => {
     }
 };
 
-const getBrand = async (_id) => {
+const getBrand = async (id) => {
     try {
-        const response = await api.get(`/brand/single/${_id}`);
+        const response = await api.get(`/brand/single/${id}`);
         return response.data;
     } catch (error) {
         console.error("An error occurred while fetching single brand with id:", error.message);

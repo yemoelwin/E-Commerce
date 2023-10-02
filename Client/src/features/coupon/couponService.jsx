@@ -20,9 +20,20 @@ const createCoupon = async (data) => {
     }
 };
 
+const deleteCoupon = async (id) => {
+    try {
+        const response = await api.delete(`/coupon/${id}` );
+        return response.data;
+    } catch (error) {
+        console.error("An error occurred while deleting coupon:", error);
+        throw error; // Re-throw the error for higher-level handling
+    }
+};
+
 const couponService = {
     getAllCoupons,
-    createCoupon
+    createCoupon,
+    deleteCoupon,
 };
 
 export default couponService;

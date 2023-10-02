@@ -4,39 +4,52 @@ import { useFormik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { addBrand, brandResetState, getSingleBrand, updateBrand } from '../../../features/brand/brandSlice';
+import { addBrand, brandResetState, fetchBrand, updateBrand } from '../../../features/brand/brandSlice';
 
 let schema = yup.object().shape({
     title: yup.string().required("Title is Required"),
 });
 
-const AddBrand = ({mode}) => {
+const AddBrand = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
-    const newBrand = useSelector((state) => state.brand);
-    const { isSuccess, isError, createdBrand, brandName, updatedBrand } = newBrand;
     const brandIdSegment = location.pathname.split('/')[3];
     const brandId = brandIdSegment === 'undefined' ? undefined : brandIdSegment;
-    
+    console.log('brandId', brandId);
+    const newBrand = useSelector((state) => state.brand);
+    const { isSuccess, isError, createdBrand, brandTitle, updatedBrand } = newBrand;
+    console.log('brandTitle', brandTitle);
+
+    useEffect(() => {
+        if (brandId !== undefined) {
+            dispatch(fetchBrand(brandId));
+        } else {
+            dispatch(brandResetState());
+        }
+    }, [brandId, dispatch]);
+
+    const initialValues = {
+        title: brandTitle || "",
+    };
+
     const formik = useFormik({
         enableReinitialize: true,
-        initialValues: {
-            title: brandName || "",
-        },
+        initialValues,
         validationSchema: schema,
         onSubmit: async (values) => {
             try {
-                if (mode === 'add') {
-                    dispatch(addBrand(values));
-                }
-                if (brandId !== 'undefined' && mode === 'update') {
-                    dispatch(updateBrand({ id: brandId, data: values }));
+                if (brandId !== undefined) {
+                    await dispatch(updateBrand({ id: brandId, data: values }));
+                    dispatch(brandResetState());
                     setTimeout(() => {
                         navigate(`/admin/brand-lists`);
-                },[0])
-                }  
-                formik.resetForm();
+                    },[0])
+                } else {
+                    await dispatch(addBrand(values));
+                    dispatch(brandResetState());
+                    formik.resetForm();
+                }
             } catch (error) {
                 throw new Error();
             }
@@ -46,7 +59,6 @@ const AddBrand = ({mode}) => {
     useEffect(() => {
         if (isSuccess && createdBrand) {
             toast.success('Brand added successfully.');
-            // dispatch(brandResetState());
         }
         if (isSuccess && updatedBrand) {
             toast.success('Brand updated successfully.');
@@ -54,14 +66,7 @@ const AddBrand = ({mode}) => {
         if (isError) {
             toast.error('Something went wrong and cannot add.Try again.');
         }
-        dispatch(brandResetState());
-    }, [isSuccess, isError]);
-
-    useEffect(() => {
-        if (brandId !== undefined) {
-            dispatch(getSingleBrand(brandId));
-        }
-    }, [brandId]);
+    }, [isSuccess, isError, updatedBrand]);
 
     return (
         <>
@@ -70,7 +75,7 @@ const AddBrand = ({mode}) => {
                         <div className="col-md-8">
                             <form onSubmit={formik.handleSubmit}>
                             <h2 className="mb-4 header-name">
-                                {mode === 'add' ? 'Add Brand' : 'Update Brand'}
+                                {brandId !== undefined ? 'Update Brand' : 'Add Brand'}
                             </h2>
 
                                 <div className="form-group mt-2">
@@ -93,7 +98,7 @@ const AddBrand = ({mode}) => {
                                 </div>
 
                             <button type="submit" className="btn btn-success btn-block mt-4">
-                                {mode === 'add' ? 'Add Brand' : 'Update Brand'}
+                                {brandId !== undefined ? 'Update' : 'Add Brand'}
                             </button>
                             </form>
                         </div>

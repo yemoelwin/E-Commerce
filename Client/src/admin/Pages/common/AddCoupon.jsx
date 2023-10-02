@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { couponResetState, createNewCoupon } from '../../../features/coupon/couponSlice';
+import { showToast } from '../../../components/common/ShowToast';
 
 
 let schema = yup.object().shape({
@@ -14,9 +15,7 @@ let schema = yup.object().shape({
 
 const AddCoupon = () => {
     const dispatch = useDispatch();
-    const navigate = useNavigate();
-    const newCoupon = useSelector((state) => state.coupon);
-    const { isSuccess, isError, createdCoupon } = newCoupon;
+    // const newCoupon = useSelector((state) => state.coupon);
     
     const formik = useFormik({
         initialValues: {
@@ -26,27 +25,17 @@ const AddCoupon = () => {
         validationSchema: schema,
         onSubmit: async (values) => {
             try {
-                dispatch(createNewCoupon(values))
+                dispatch(createNewCoupon(values));
+                showToast(('New coupon added successfully.'))
                 formik.resetForm();
                 setTimeout(() => {
                     dispatch(couponResetState());
-                    navigate('/admin/coupon-lists')
-                },[2000])
+                }, [300]);
             } catch (error) {
-                throw new Error();
+                showToast('Something went wrong and cannot add.Try again.')
             }
         }
     })
-
-    useEffect(() => {
-        if (isSuccess && createdCoupon) {
-            toast.success('New coupon added successfully.')
-        }
-        if (isError) {
-            toast.error('Something went wrong and cannot add.Try again.')
-        }
-        
-    }, [isSuccess, isError, createdCoupon])
     
     return (
         <>

@@ -20,17 +20,6 @@ export const getBrands = createAsyncThunk('brand/get-brands', async(thunkApi) =>
     }
 });
 
-export const getSingleBrand = createAsyncThunk('brand/get-single-brand', async(_id, thunkApi) => {
-    try {
-        const response = await brandService.getBrand(_id);
-        return response;
-    } catch (error) {
-        console.log(error);
-        const errorMessage = error.message || "An error occurred.";
-        return thunkApi.rejectWithValue(errorMessage);
-    }
-});
-
 export const addBrand = createAsyncThunk('brand/add-brand', async(brandData, thunkApi) => {
     try {
         const response = await brandService.addBrand(brandData);
@@ -41,13 +30,25 @@ export const addBrand = createAsyncThunk('brand/add-brand', async(brandData, thu
     }
 });
 
+export const fetchBrand = createAsyncThunk('brand/get-singleBrand', async(id, thunkApi) => {
+    try {
+        const response = await brandService.getBrand(id);
+        return response;
+    } catch (error) {
+        console.log(error);
+        const errorMessage = error.message || "An error occurred.";
+        return thunkApi.rejectWithValue(errorMessage);
+    }
+});
+
 export const updateBrand = createAsyncThunk('brand/update-brand', async (data, thunkApi) => {
     try {
         const response = await brandService.updateBrand(data);
         return response;
     } catch (error) {
         console.log(error);
-        return thunkApi.rejectWithValue(error);
+        const errorMessage = error.message || "An error occurred.";
+        return thunkApi.rejectWithValue(errorMessage);
     }
 });
 
@@ -106,22 +107,22 @@ export const brandSlice = createSlice({
                 state.message = action.payload || "An error occurred.";
             })
             /* get single brand */
-            .addCase(getSingleBrand.pending, (state) => {
+            .addCase(fetchBrand.pending, (state) => {
                 state.isLoading = true;
             })
-            .addCase(getSingleBrand.fulfilled, (state, action) => {
-                state.brandName = action.payload.title;
+            .addCase(fetchBrand.fulfilled, (state, action) => {
                 state.isError = false;
                 state.isSuccess = true;
                 state.isLoading = false;
                 state.message = 'Success';
+                state.brandTitle = action.payload.title;
             })
-            .addCase(getSingleBrand.rejected, (state, action) => {
+            .addCase(fetchBrand.rejected, (state, action) => {
                 state.brands = null;
                 state.isError = true;
                 state.isSuccess = false;
                 state.isLoading = false;
-                state.message = action.error.message || "An error occurred.";
+                state.message = action.payload || "An error occurred.";
             })
             /* update Brand  */
             .addCase(updateBrand.pending, (state) => {

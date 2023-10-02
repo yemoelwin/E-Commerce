@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Table } from "antd";
-import { getProducts } from '../../../features/products/productSlice';
+import { deleteProduct, getProducts } from '../../../features/products/productSlice';
 import { MdDelete } from 'react-icons/md';
-// import { AiFillDelete } from 'react-icons/ai';
+import { CustomModal } from '../../../components/common/CustomModal';
+import { showToast } from '../../../components/common/ShowToast';
 
 const columns = [
     {
@@ -30,10 +31,6 @@ const columns = [
         dataIndex: "category",
         sorter: (a, b) => a.category.localeCompare(b.category) || b.category.localeCompare(a.category),
     },
-    // {
-    //     title: "Color",
-    //     dataIndex: 'color',
-    // },
     {
         title: "Price",
         dataIndex: "price",
@@ -51,27 +48,70 @@ const columns = [
 
 const ProductList = () => {
     const dispatch = useDispatch();
+    const [isLoading, setIsLoading] = useState(true);
+    const [open, setOpen] = useState(false);
+    const [productId, setProductId] = useState('');
+    const [selectedProduct, setSelectedProduct] = useState('');
     const productState = useSelector((state) => state.product.products);
+
     useEffect(() => {
-        dispatch(getProducts());
-    }, [dispatch]);
+        setIsLoading(true);
+        const fetchProducts = async () => {
+            try {
+                await dispatch(getProducts());
+            } catch (error) {
+                console.error('Error fetching products:', error);
+            } finally {
+                setIsLoading(false); // Set loading to false regardless of success or failure
+            }
+        }
+        fetchProducts();
+    }, []);
+
+    const handleDeleteProduct = async (e) => {
+        setIsLoading(true);
+        try {
+            setOpen(false);
+            await dispatch(deleteProduct(e));
+            await dispatch(getProducts());
+            showToast('Product has been deleted successfully.')
+        } catch (error) {
+            console.error('Error fetching products:', error);
+        } finally {
+            setIsLoading(false); // Set loading to false regardless of success or failure
+        }
+    }
+
+    const showModal = (e) => {
+        setOpen(true);
+        setProductId(e);
+        const fetchProduct = productState?.find((data) => data._id === (e));
+        setSelectedProduct(fetchProduct ? fetchProduct?.title : '')
+    }
+    
+    const handleCancel = () => {
+        setOpen(false);
+    }
+
     const data1 = [];
     let counter = 0;
-    for (let i = 0; i < productState.length; i++) {
+    for (let i = 0; i < productState?.length; i++) {
         counter++;
         data1.push({
             key: counter,
-            id: productState[i]._id,
-            title: productState[i].title,
-            brand: productState[i].brand,
-            category: productState[i].category,
+            id: productState[i]?._id,
+            title: productState[i]?.title,
+            brand: productState[i]?.brand,
+            category: productState[i]?.category,
             // color: productState[i].color,
-            price: `$ ${productState[i].price}`,
-            quantity: productState[i].quantity,
+            price: `$ ${productState[i]?.price}`,
+            quantity: productState[i]?.quantity,
             action:
                 <>
-                <Link className='fs-6 mb-2'>Edit</Link>
-                <Link className=' fs-5'><MdDelete className='mb-0 ms-2 text-danger'/></Link>
+                    <Link to={`/admin/edit-product/${productState[i]._id}`} >Edit</Link>
+                    <button onClick={() => showModal(productState[i]?._id)} className='ms-3 modalFix'>
+                        <MdDelete className='fs-4 text-danger mb-1 '/>
+                    </button>
                 </>
         });
     }
@@ -79,16 +119,22 @@ const ProductList = () => {
         <div>
                 <h3 className="mb-4 title">Product Lists</h3>
                 <div>
-                    <Table columns={columns} dataSource={data1} />
+                    {isLoading ? ( // Show loading indicator when isLoading is true
+                        <div className='loading gap-3'>
+                            <div className='loading-spinner'></div>
+                            <div className='load'>Loading ... </div>
+                        </div> 
+                    ) : (
+                        <Table columns={columns} dataSource={data1} />
+                    )}
                 </div>
-                {/* <CustomModal
-                    hideModal={hideModal}
+                <CustomModal
+                    title="Are you sure you want to delete this item?"
                     open={open}
-                    performAction={() => {
-                    deleteEnq(enqId);
-                    }}
-                    title="Are you sure you want to delete this enquiry?"
-                /> */}
+                    handleCancel={handleCancel}
+                    performAction={() => {handleDeleteProduct(productId)}}
+                    selectedProductName={selectedProduct}
+                />
             </div>
     )
 }

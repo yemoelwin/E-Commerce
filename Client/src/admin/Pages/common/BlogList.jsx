@@ -1,9 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Table } from "antd";
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { MdDelete } from 'react-icons/md';
-import { getBlog } from '../../../features/blog/blogSlice';
+import { deleteBlog, getAllBlog } from '../../../features/blog/blogSlice';
+import { CustomModal } from '../../../components/common/CustomModal';
+import { showToast } from '../../../components/common/ShowToast';
 
 const columns = [
     {
@@ -32,21 +34,65 @@ const columns = [
 
 const BlogList = () => {
     const dispatch = useDispatch();
-    const blogState = useSelector((state) => state.blog.blogs);
+    const [open, setOpen] = useState(false);
+    const [blogId, setBlogId] = useState("");
+    const [selectedBlog, setSelectedBlog] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const blogState = useSelector((state) => state?.blog?.blogs);
+
     useEffect(() => {
-        dispatch(getBlog());
-    }, [dispatch]);
+        setIsLoading(true);
+        const fetchBlogs = async () => {
+            try {
+                await dispatch(getAllBlog());
+            } catch (error) {
+                console.error('Error fetching all blogs:', error);
+            } finally {
+                setIsLoading(false); // Set loading to false regardless of success or failure
+            }
+        }
+        fetchBlogs();
+    }, []);
+
+    const showModal = (e) => {
+        setOpen(true);
+        setBlogId(e);
+        const selectedBlogItem = blogState?.find((blog) => blog._id === (e));
+        setSelectedBlog(selectedBlogItem ? selectedBlogItem.title : "");
+    };
+
+    const handleCancel = () => {
+        setOpen(false);
+    };
+
+    const deleteBlogItem = async (e) => {
+        setIsLoading(true);
+        try {
+            setOpen(false);
+            await dispatch(deleteBlog(e));
+            await dispatch(getAllBlog())
+            showToast('Blog item has been deleted successfully.');
+            
+        } catch (error) {
+            console.error('Error while deleting blog:', error);
+        } finally {
+            setIsLoading(false); // Set loading to false regardless of success or failure
+        }
+    }
+
     const data1 = [];
-    for (let i = 0; i < blogState.length; i++) {
-        data1.push({
+    for (let i = 0; i < blogState?.length; i++) {
+        data1?.push({
             key: i + 1,
-            name: blogState[i].title,
-            category: blogState[i].category,
-            views: blogState[i].numViews,
+            name: blogState[i]?.title,
+            category: blogState[i]?.category,
+            views: blogState[i]?.numViews,
             action: (
                 <>
-                    <Link to='' className=''>Edit</Link>
-                    <Link to='' className='ms-3'><MdDelete  className='fs-5 text-danger mb-1 '/></Link>
+                    <Link to={`/admin/edit-blog/${blogState[i]._id}`} className=''>Edit</Link>
+                    <button className='ms-3 modalFix' onClick={() => showModal(blogState[i]._id)}>
+                        <MdDelete className='fs-5 text-danger mb-1' />
+                    </button>
                 </>
             ),
         });
@@ -56,17 +102,22 @@ const BlogList = () => {
             <div>
                 <h3 className="mb-4 title">Blog Lists</h3>
                 <div>
-                    <Table columns={columns} dataSource={data1} />
+                    {isLoading ? ( // Show loading indicator when isLoading is true
+                        <div className='loading gap-3'>
+                            <div className='loading-spinner'></div>
+                            <div className='load'>Loading ... </div>
+                        </div> 
+                    ) : (
+                        <Table columns={columns} dataSource={data1} />
+                    )}
                 </div>
-                {/* <CustomModal
-                    hideModal={hideModal}
+                <CustomModal
+                    title="Are you sure you want to delete this brand?"
                     open={open}
-                    performAction={() => {
-                    deleteEnq(enqId);
-                    }}
-                    title="Are you sure you want to delete this enquiry?"
-                /> */}
-                
+                    handleCancel={handleCancel}
+                    performAction={() => {deleteBlogItem(blogId)}}
+                    selectedBlog={selectedBlog}
+                />
             </div>
         </>
     )

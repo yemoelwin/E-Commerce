@@ -10,7 +10,7 @@ router.put('/update/:id', protect, isAdmin, Inquiry.updateInquiry); /* finished 
 
 router.get('/:id', protect, isAdmin, Inquiry.getInquiry); /* finished */
 
-router.get('/', Inquiry.getAllInquiry); /* finished */
+router.get('/', protect, isAdmin, Inquiry.getAllInquiry); /* finished */
 
 router.delete('/delete/:id', protect, isAdmin, Inquiry.deleteInquiry); /* finished */
 

@@ -8,14 +8,22 @@ const api =  axios.create({
     baseURL: base_url,
 });
 
+const getTokenFromLocalStorage = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null;
+
 api.interceptors.request.use((req) => {
-    if (localStorage.getItem("user")) {
-        req.headers.Authorization = `Bearer ${
-            JSON.parse(localStorage.getItem("user")).token
-        }`;
+    if (getTokenFromLocalStorage) {
+        req.headers.Authorization = `Bearer ${getTokenFromLocalStorage !== null ? getTokenFromLocalStorage.token : null}`
     }
     return req;
-});
+})
+// api.interceptors.request.use((req) => {
+//     if (localStorage.getItem("user")) {
+//         req.headers.Authorization = `Bearer ${
+//             JSON.parse(localStorage.getItem("user")).token
+//         }`;
+//     }
+//     return req;
+// });
 
 api.interceptors.request.use((response) => response, (error) => {
     if (error.response && error.response.status === 401) {

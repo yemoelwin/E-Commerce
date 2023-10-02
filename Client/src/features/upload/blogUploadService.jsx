@@ -3,7 +3,6 @@ import api from '../../app/api/currentApi';
 const blogUploadImg = async (formData) => {
     try {
         const response = await api.post(`/upload/blog/images`, formData);
-        console.log('image response', response);
         return response.data;
     } catch (error) {
         console.error("An error occurred during uploading image to cloudinary:", error);

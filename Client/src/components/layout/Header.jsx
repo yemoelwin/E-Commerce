@@ -1,5 +1,5 @@
 import React from 'react'
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { BsSearch } from 'react-icons/bs'
 import compare from '../../images/compare.svg'
 import wishlist from '../../images/wishlist.svg'
@@ -8,7 +8,9 @@ import cart from '../../images/cart.svg'
 import { useSelector } from 'react-redux';
 
 const Header = () => {
-  const isAuthenticated = useSelector(state => state.auth.isSuccess);
+  const navigate = useNavigate();
+  const { userRole, isLoggedIn } = useSelector(state => state.auth);
+  console.log(userRole)
   return (
   <>
       <header className='header-top-strip py-3'>
@@ -32,11 +34,18 @@ const Header = () => {
         <div className='container-xxl'>
           <div className='row align-items-center'>
 
-            <div className='col-2'>
-              <h2>
-                <Link to='admin' className='text-white'>Dev Corner</Link>
-              </h2>
-            </div>
+            {userRole === 'admin' ?
+              <div className='col-2'>
+                <h2>
+                  <Link to='admin' className='dashboardBanner'>DashBoard</Link>
+                </h2>
+              </div> :
+              <div className='col-2'>
+                <h2>
+                  <div className='navBanner'>ShopSphere</div>
+                </h2>
+              </div>}
+            
 
             <div className='col-5'>
               <div className="input-group">
@@ -76,7 +85,13 @@ const Header = () => {
                   </Link>                                    
                 </div>
 
-                {isAuthenticated ? (
+                {/* <div>
+                    <Link to='/login' className='d-flex align-items-center gap-10 text-white'>
+                      <img src={user} alt='user'></img>
+                      <p className='mb-0'>Log in <br /> My Account</p>
+                    </Link>
+                  </div> */}
+                {isLoggedIn ? (
                   <button
                     onClick={() => {
                                         

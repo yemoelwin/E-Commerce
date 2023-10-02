@@ -28,6 +28,16 @@ export const createNewCoupon = createAsyncThunk('coupon/create-coupon', async(co
     }
 });
 
+export const deleteCoupon = createAsyncThunk('coupon/delete-coupon', async(id, thunkApi) => {
+    try {
+        const response = await couponService.deleteCoupon(id);
+        return response;
+    } catch (error) {
+        const errorMessage = error.message || "An error occurred.";
+        return thunkApi.rejectWithValue(errorMessage);
+    }
+});
+
 export const couponResetState = createAction("reset_all")
 
 export const couponSlice = createSlice({
@@ -53,6 +63,7 @@ export const couponSlice = createSlice({
                 state.isLoading = false;
                 state.message = action.payload || "An error occurred.";
             })
+            /* Create Coupon */
             .addCase(createNewCoupon.pending, (state) => {
                 state.isLoading = true;
             })
@@ -64,6 +75,24 @@ export const couponSlice = createSlice({
                 state.message = 'Success';
             })
             .addCase(createNewCoupon.rejected, (state, action) => {
+                state.coupons = null;
+                state.isError = true;
+                state.isSuccess = false;
+                state.isLoading = false;
+                state.message = action.payload || "An error occurred.";
+            })
+            /* Delete Coupon */
+            .addCase(deleteCoupon.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(deleteCoupon.fulfilled, (state, action) => {
+                state.isError = false;
+                state.isSuccess = true;
+                state.isLoading = false;
+                state.message = 'Success';
+                state.deletedCoupon = action.payload;
+            })
+            .addCase(deleteCoupon.rejected, (state, action) => {
                 state.coupons = null;
                 state.isError = true;
                 state.isSuccess = false;

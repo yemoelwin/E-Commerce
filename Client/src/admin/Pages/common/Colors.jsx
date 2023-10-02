@@ -3,7 +3,7 @@ import { Table } from "antd";
 import { Link } from 'react-router-dom';
 import { MdDelete } from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
-import { getColors, deleteColor } from '../../../features/color/colorSlice';
+import { getColors, deleteColor, colorResetState } from '../../../features/color/colorSlice';
 import { CustomModal } from '../../../components/common/CustomModal';
 import { showToast } from '../../../components/common/ShowToast';
 
@@ -32,11 +32,23 @@ const Colors = () => {
     const [open, setOpen] = useState(false);
     const [colorId, setColorId] = useState('');
     const [selectedColor, setSelectedColor] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
     const colorState = useSelector((state) => state.color.colors);
 
     useEffect(() => {
-        dispatch(getColors());
-    }, [dispatch]);
+        setIsLoading(true);
+        const fetchColors = async () => {
+            try {
+                await dispatch(getColors());
+                // dispatch(colorResetState());
+            } catch (error) {
+                console.error('Error fetching all colors:', error);
+            } finally {
+                setIsLoading(false); // Set loading to false regardless of success or failure
+            }
+        }
+        fetchColors();
+    }, []);
 
     const showModal = (e) => {
         setOpen(true);
@@ -85,7 +97,14 @@ const Colors = () => {
         <div>
                 <h3 className="mb-4 title">Color Lists</h3>
                 <div>
-                    <Table columns={columns} dataSource={data1} />
+                    {isLoading ? ( // Show loading indicator when isLoading is true
+                        <div className='loading gap-3'>
+                            <div className='loading-spinner'></div>
+                            <div className='load'>Loading ... </div>
+                        </div> 
+                    ) : (
+                        <Table columns={columns} dataSource={data1} />
+                    )}
                 </div>
                 <CustomModal
                     title="Are you sure you want to delete this Category?"

@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.post('/create-blog', protect, isAdmin, Blog.createBlog); /* finished */
 
-router.put('/update/:id', protect, Blog.updateBlog); /* finished */
+router.put('/updateBlog/:id', protect, Blog.updateBlog); /* finished */
 
 // router.put('/upload/:id', protect, isAdmin, blogMiddleware.array('images',2),  Blog.uploadBlogImages); /* under development process( now works as local storage but cannot upload to cloud server ) */
 

@@ -42,11 +42,11 @@ const createBlog = asyncHandler(async (req, res) => {
 const updateBlog = asyncHandler(async (req, res) => {
     const { id } = req.params;
     validateMongodbID(id);
-    const { title, category, description } = req.body;
+    const { title, category, description, images } = req.body;
     try {
         const blog = await BlogModel.findByIdAndUpdate(
             id,
-            { title, category, description },
+            { title, category, description, images },
             { new: true }
         )
         if (!blog) {

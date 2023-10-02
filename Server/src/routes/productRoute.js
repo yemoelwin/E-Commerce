@@ -8,13 +8,15 @@ const router = express.Router();
 
 router.post('/create-product', protect, isAdmin, productController.createProduct); /* finished */
 
-router.get('/:id', protect, productController.getProductById); /* finished */
+router.get('/:id', protect, isAdmin, productController.getProductById); /* finished */
 
 router.put('/update/:id', protect, isAdmin, productController.updateProduct); /* finished */
 
 router.get('/', productController.fetchAllProduct); /* finished */
 
 router.put('/wishlist', protect, productController.addToWishlist); /* finished */
+
+router.put('/remove_wishlist', protect, productController.removeFromWishlist); /* finished */
 
 router.put('/star-rating/comment', protect, productController.starRating); /* finished */
 

@@ -12,7 +12,8 @@ const initialState = {
 export const blogImgUpload = createAsyncThunk('blog/uploadImages', async (formData, thunkApi) => {
     try {
         // const folderName = "products"
-        return await blogUploadService.blogUploadImg(formData);
+        const response = await blogUploadService.blogUploadImg(formData);
+        return response;
     } catch (error) {
         console.log("error while uploading",error);
         return thunkApi.rejectWithValue(error);
@@ -21,8 +22,8 @@ export const blogImgUpload = createAsyncThunk('blog/uploadImages', async (formDa
 
 export const deleteImages = createAsyncThunk('delete/uploadImages', async (id, thunkApi) => {
     try {
-        
-        return await blogUploadService.deleteImg(id);
+        const response = await blogUploadService.deleteImg(id);
+        return response;
     } catch (error) {
         console.log("error while uploading",error);
         return thunkApi.rejectWithValue(error);

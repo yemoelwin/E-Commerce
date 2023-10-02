@@ -5,7 +5,8 @@ import { getBrands, deleteBrand, brandResetState } from '../../../features/brand
 import { Link } from 'react-router-dom';
 import { MdDelete } from 'react-icons/md';
 import { CustomModal } from '../../../components/common/CustomModal';
-import { toast } from 'react-toastify';
+import { showToast } from '../../../components/common/ShowToast';
+// import { toast } from 'react-toastify';
 
 const columns = [
     {
@@ -35,21 +36,22 @@ const BrandList = () => {
     const dispatch = useDispatch();
     const [open, setOpen] = useState(false);
     const [brandId, setBrandId] = useState("");
+    const [isLoading, setIsLoading] = useState(true);
     const [selectedBrandName, setSelectedBrandName] = useState("");
     const brandState = useSelector((state) => state.brand.brands);
-    const Brand = useSelector((state) => state.brand);
-    const { isSuccess, isError, deletedBrand } = Brand;
-    
+    // const Brand = useSelector((state) => state.brand);
+    // const { isSuccess, isError, deletedBrand } = Brand;
+
     useEffect(() => {
-        if (isSuccess && deletedBrand) {
-            toast.success('Item successfully deleted.');
-            dispatch(brandResetState());
-            // setBrandData((prevData) => prevData.filter((brand) => brand._id !== brandId));
-        }
-        if (isError) {
-            toast.error('Something went wrong and cannot add.Try again.');
-        }
-    }, [isSuccess, isError, deletedBrand, brandId]);
+        setIsLoading(true);
+            try {
+                dispatch(getBrands());
+            } catch (error) {
+                console.error('Error fetching brands:', error);
+            } finally {
+                setIsLoading(false); // Set loading to false regardless of success or failure
+            }
+    }, []);
 
     const showModal = (e) => {
         setOpen(true);
@@ -62,23 +64,19 @@ const BrandList = () => {
         setOpen(false);
     };
 
-    useEffect(() => {
-        dispatch(getBrands())
-    }, [dispatch]);
-
     const data1 = [];
     let count = 0;
-    for (let i = 0; brandState?.length && i < brandState.length; i++) {
+    for (let i = 0; brandState?.length && i < brandState?.length; i++) {
         count++;
         data1.push({
             no: count,
-            key: brandState[i]._id,
-            name: brandState[i].title,
-            views: brandState[i].numSearchs,
+            key: brandState[i]?._id,
+            name: brandState[i]?.title,
+            views: brandState[i]?.numSearchs,
             action: (
                 <>
-                    <Link to={`/admin/edit-product-brand/${brandState[i]._id}`} className=''>Edit</Link>
-                    <button className='ms-3 modalFix' onClick={() => showModal(brandState[i]._id)}>
+                    <Link to={`/admin/edit-product-brand/${brandState[i]?._id}`} className=''>Edit</Link>
+                    <button className='ms-3 modalFix' onClick={() => showModal(brandState[i]?._id)}>
                         <MdDelete className='fs-5 text-danger mb-1' />
                     </button>
                 </>
@@ -86,21 +84,33 @@ const BrandList = () => {
         });
     }
 
-    const deleteBrandItem = (e) => {
-        dispatch(deleteBrand(e))
-            .then(() => {
-                dispatch((getBrands()))
-            })
-            .catch(error => console.log(error))
-        setOpen(false);
-}
+    const deleteBrandItem = async (e) => {
+        setIsLoading(true);
+        try {
+            setOpen(false);
+            await dispatch(deleteBrand(e));
+            await dispatch((getBrands()));
+            showToast('Item has been deleted successfully.');
+        } catch (error) {
+            console.error('Error while deleting brand:', error);
+        } finally {
+            setIsLoading(false); // Set loading to false regardless of success or failure
+        }
+    }
 
     return (
         <div>
-                <h3 className="mb-4 title">Brand Lists</h3>
-                <div>
+            <h3 className="mb-4 title">Brand Lists</h3>
+            <div>
+                {isLoading ? ( // Show loading indicator when isLoading is true
+                    <div className='loading-container gap-3'>
+                        <div className='loading-spinner'></div>
+                        <div className='load'>Loading ... </div>
+                    </div> 
+                ) : (
                     <Table columns={columns} dataSource={data1} />
-                </div>
+                )}
+            </div>
             <CustomModal
                 title="Are you sure you want to delete this brand?"
                 open={open}

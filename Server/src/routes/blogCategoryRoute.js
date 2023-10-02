@@ -8,10 +8,10 @@ router.post('/create-blogcategory', protect, isAdmin, BlogCategory.createBlogCat
 
 router.put('/update/:id', protect, isAdmin, BlogCategory.updateBlogCategory); /* finished */
 
-router.get('/:id', protect, BlogCategory.getBlogCategoryById); /* finished */
+router.get('/:id', protect, isAdmin, BlogCategory.getBlogCategoryById); /* finished */
 
-router.get('/', BlogCategory.getAllBlogCategory); /* finished */
+router.get('/', protect, isAdmin, BlogCategory.getAllBlogCategory); /* finished */
 
-router.delete('/delete/:id', BlogCategory.deleteBlogCategory); /* finished */
+router.delete('/delete/:id', protect, isAdmin, BlogCategory.deleteBlogCategory); /* finished */
 
 export default router;

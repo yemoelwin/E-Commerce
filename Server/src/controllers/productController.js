@@ -150,24 +150,27 @@ const fetchAllProduct = asyncHandler(async (req, res) => {
 
 const updateProduct = asyncHandler(async (req, res) => {
     const { id } = req.params;
+    const { title, description, price, brand, category, quantity, color, images, tags } = req.body;
     try {
-        const { title } = req.body;
         console.log('Request body:', req.body);
-        console.log('Title:', title);
         if (typeof title !== 'string' || !title.trim()) {
             return res.status(400).json({ message: 'Invalid or missing title.' });
         }
         const slug = slugify(title, { lower: true, strict: true });
         req.body.slug = slug;
-        const updatedProduct = await Product.findOneAndUpdate({ _id: id }, req.body, { new: true })
-        if (!updatedProduct) {
+        const product = await Product.findByIdAndUpdate(
+            id,
+            { title, description, price, brand, category, quantity, color, images, tags },
+            { new: true }
+        )
+        if (!product) {
             return res.status(404).json({
                 status: 'FAILED',
                 message: 'No product found.'
             });
         }
         res.status(200).json({
-            product: updatedProduct,
+            product: product,
             status: 'SUCCESS',
             message: 'Product successfully updated.'
         })
@@ -208,7 +211,6 @@ const addToWishlist = asyncHandler(async (req, res) => {
     const { prodId } = req.body;
     try {
         const user = await User.findById(_id);
-        console.log("user", user);
         if (!user) {
             return res.status(404).json({ message: "User not found." });
         }
@@ -217,21 +219,42 @@ const addToWishlist = asyncHandler(async (req, res) => {
 
         await User.findByIdAndUpdate(_id )
         if (alreadyAdded) {
-            const updatedUser = await User.findByIdAndUpdate(
-                _id,
-                { $pull: { wishlist: prodId } },
-                { new: true });
-            res.json({ message: 'Product removed from wishlist.', updatedUser });
+            res.json({ message: 'Product already exists in the wishlist.' });
         } else {
-            const updatedUser = await User.findByIdAndUpdate(
+            const updatedItemWishlist = await User.findByIdAndUpdate(
                 _id,
                 { $push: { wishlist: prodId } },
                 { new: true }
             );
-            res.json({ message: 'Product added to wishlist.', updatedUser });
+            res.json({ message: 'Product added to wishlist.', updatedItemWishlist });
         }
     } catch (error) {
         res.status(500).json({ message: "Error Occurred while adding the product to the user's wishlist" });
+    }
+})
+
+const removeFromWishlist = asyncHandler(async (req, res) => {
+    const { _id } = req.user;
+    const { prodId } = req.body;
+    try {
+        const user = await User.findById(_id);
+        if (!user) return res.status(404).json({ message: 'User does not exists.' });
+        const findItemIndex = user.wishlist.indexOf(prodId);
+        if (findItemIndex === -1) return res.status(404).json({ message: 'Item not found in the wishlist.' });
+
+        // Remove the product from the wishlist array
+        user.wishlist.splice(findItemIndex, 1);
+
+        // Save the updated user document
+        const updatedUser = await user.save();
+
+        res.json({ message: 'Item removed from wishlist', updatedUser });
+    } catch (error) {
+        console.error('Error removing product from wishlist:', error);
+        res.status(500).json({
+            status: 'ERROR',
+            message: 'Internal Server Error. Please try again.'
+        })
     }
 })
 
@@ -313,7 +336,7 @@ const filterProduct = asyncHandler(async (req, res) => {
     }
 })
 
-export const productController = { createProduct, getProductById, fetchAllProduct, deleteProduct, addToWishlist, updateProduct, starRating };
+export const productController = { createProduct, getProductById, fetchAllProduct, deleteProduct, addToWishlist, removeFromWishlist, updateProduct, starRating };
 
 
 // const generateUniqueSlug = async (title) => {

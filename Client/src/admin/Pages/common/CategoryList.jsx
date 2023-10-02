@@ -32,13 +32,19 @@ const CategoryList = () => {
     const [open, setOpen] = useState(false);
     const [categoryId, setCategoryId] = useState('');
     const [selectedCategoryName, setSelectedCategoryName] = useState("");
+    const [isLoading, setIsLoading] = useState(true);
     const categoryState = useSelector((state) => state.category.categories);
-    // const newCategory = useSelector((state) => state.category);
-    // const { isSuccess, isError, deletedCategory } = newCategory;
 
     useEffect(() => {
-        dispatch(getAllCategory());
-    }, [dispatch]);
+        setIsLoading(true);
+            try {
+                dispatch(getAllCategory());
+            } catch (error) {
+                console.error('Error fetching all categories:', error);
+            } finally {
+                setIsLoading(false); // Set loading to false regardless of success or failure
+            }
+    }, []);
 
     const showModal = (e) => {
         setOpen(true);
@@ -85,7 +91,14 @@ const CategoryList = () => {
         <div>
                 <h3 className="mb-4 title">Product Category Lists</h3>
                 <div>
-                    <Table columns={columns} dataSource={data1} />
+                    {isLoading ? ( // Show loading indicator when isLoading is true
+                        <div className='loading gap-3'>
+                            <div className='loading-spinner'></div>
+                            <div className='load'>Loading ... </div>
+                        </div> 
+                    ) : (
+                        <Table columns={columns} dataSource={data1} />
+                    )}
                 </div>
                 <CustomModal
                     title="Are you sure you want to delete this Category?"
