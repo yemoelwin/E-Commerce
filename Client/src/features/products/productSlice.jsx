@@ -102,7 +102,7 @@ export const productSlice = createSlice({
                 state.isError = false;
                 state.isSuccess = true;
                 state.isLoading = false;
-                state.message = 'Success';
+                state.message = "Success"
             })
             .addCase(getProducts.rejected, (state, action) => {
                 state.products = null;
@@ -193,7 +193,7 @@ export const productSlice = createSlice({
                 state.isError = false;
                 state.isSuccess = true;
                 state.isLoading = false;
-                state.message = 'Product successfully added to wishlist';
+                state.message = 'Success';
             })
             .addCase(addToWishlistProduct.rejected, (state, action) => {
                 state.products = null;
@@ -211,7 +211,7 @@ export const productSlice = createSlice({
                 state.isError = false;
                 state.isSuccess = true;
                 state.isLoading = false;
-                state.message = 'Product successfully added to wishlist';
+                state.message = 'Success';
             })
             .addCase(removeWishlist.rejected, (state, action) => {
                 state.products = null;

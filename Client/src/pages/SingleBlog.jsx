@@ -1,37 +1,65 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Meta from '../components/common/Meta'
 import BreadCrumb from '../components/common/BreadCrumb'
 import Container from '../components/common/Container'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { HiOutlineArrowLeft } from "react-icons/hi";
-import blog from '../images/blog-3.webp'
+import { useDispatch, useSelector } from 'react-redux';
+import { getBlog } from '../features/blog/blogSlice';
+import { PiGitlabLogoFill } from 'react-icons/pi';
 
 const SingleBlog = () => {
+    const dispatch = useDispatch();
+    const location = useLocation();
+    const blogId = location.pathname.split('/')[2];
+    const [isLoading, setIsLoading] = useState(true);
+    const singleBlog = useSelector((state) => state?.blog?.singleBlogData)
+
+    useEffect(() => {
+        const data = async () => {
+            setIsLoading(true);
+            try {
+                await dispatch(getBlog(blogId))
+            } catch (error) {
+                console.error('error', error);
+                throw new Error('Something went wrong while retrieving data.')
+            } finally {
+                setIsLoading(false);
+            }
+        }
+        data();
+    },[blogId])
+
     return (
         <>
             <Meta title={"Dynamic Blog Name"} />
-            <BreadCrumb title='Dynamic Blog Name'></BreadCrumb>
+            <BreadCrumb title={<PiGitlabLogoFill />}></BreadCrumb>
             <Container class1="blog-wrapper home-wrapper-2 py-5">
-                <div className="row">
-                <div className="col-12">
-                    <div className="single-blog-card">
-                    <Link to="/blog" className="d-flex align-items-center gap-10">
-                        <HiOutlineArrowLeft className="fs-4" /> Go back to Blogs
-                    </Link>
-                    <h3 className="title">A Beautiful Sunday Morning Renaissance</h3>
-                    <img src={blog} className="img-fluid my-4" alt="blog" />
-                    <p>
-                        You’re only as good as your last collection, which is an
-                        enormous pressure. I think there is something about luxury –
-                        it’s not something people need, but it’s what they want. It
-                        really pulls at their heart. I have a fantastic relationship
-                        with money.Scelerisque sociosqu ullamcorper urna nisl mollis
-                        vestibulum pretium commodo inceptos cum condimentum placerat
-                        diam venenatis blandit hac eget dis lacus a parturient a
-                        accumsan nisl ante vestibulum.
-                    </p>
+                <div className="single-blogX">
+
+                    <div className="col-9" >
+                        {isLoading ? ( // Show loading indicator when isLoading is true
+                            <div className='loadingX gap-3'>
+                                <div className='loading-spinner'></div>
+                                <div className='load'>Loading ... </div>
+                            </div>
+                        ) : (
+                            <div className="single-blog-card">
+                                <Link to={`/blog`} className="d-flex align-items-center gap-10">
+                                    <HiOutlineArrowLeft className="fs-4" /> Go back to Blogs
+                                </Link>
+
+                                <h3 className="title">{singleBlog?.title}</h3>
+                                    
+                                <div className='blogImg'>
+                                    <img src={singleBlog?.images[0].url} className="img-fluid my-4" alt="blog" />
+                                </div>
+                                        
+                                <p>{singleBlog?.description}</p>
+                            </div>
+                        )}
                     </div>
-                </div>
+
                 </div>
             </Container>
         </>

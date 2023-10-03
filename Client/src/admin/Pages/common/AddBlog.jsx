@@ -8,6 +8,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { deleteImages, blogImgUpload, clearImageState } from '../../../features/upload/blogUploadSlice';
 import { getAllBlogCategory } from '../../../features/blogCategory/blogCategorySlice'
 import { blogResetState, createNewBlog, getBlog, updateABlog } from '../../../features/blog/blogSlice';
+import { RxCross2 } from 'react-icons/rx';
+
 
 let schema = yup.object().shape({
     title: yup.string().required("Title is Required"),
@@ -28,20 +30,14 @@ const AddBlog = () => {
     const blogIdSegment = location?.pathname?.split('/')[3];
     const blogId = blogIdSegment === 'undefined' ? undefined : blogIdSegment;
 
-    const img = useMemo(() => {
-        if (!Array.isArray(imageState)) {
-            return [];
-        }
-        return imageState?.map((i) => ({
-            url: i.url,
-            asset_id: i.asset_id,
-            public_id: i.public_id,
-        }));
-    }, [imageState]);
+    // const [isEditing, setIsEditing] = useState(blogId !== undefined);
     
-    useEffect(() => {
-        formik.values.images = img;
-    }, [img]);
+    const initialValues = {
+            title: singleBlogData?.title || "",
+            category: singleBlogData?.category || "",
+            description: singleBlogData?.description || "",
+            images: singleBlogData?.images || [],
+        }
 
     useEffect(() => {
         dispatch(getAllBlogCategory());
@@ -54,15 +50,14 @@ const AddBlog = () => {
 
     const formik = useFormik({
         enableReinitialize: true,
-        initialValues: {
-            title: singleBlogData?.title || "",
-            category: singleBlogData?.category || "",
-            description: singleBlogData?.description || "",
-            images: singleBlogData?.images || "",
-        },
+        initialValues,
         validationSchema: schema,
         onSubmit: async(values) => {
             try {
+                // const blogFormData = {
+                //     ...values,
+                //     images: images
+                // }
                 if (blogId !== undefined) {
                     const data = {id: blogId, updatedBlog: values}
                     await dispatch(updateABlog(data));
@@ -93,39 +88,54 @@ const AddBlog = () => {
         if (isError) {
             toast.error('Something went wrong, Try again.')
         }
-    }, [ isError, isSuccess, updatedBlogData])
+    }, [isError, isSuccess, updatedBlogData])
     
-    const onDrop = useCallback(acceptedFiles => {
+    /* --------------------Image Part------------------------ */
+
+    const img = useMemo(() => {
+        if (!Array.isArray(imageState)) {
+            return [];
+        }
+        return imageState?.map((i) => ({
+            url: i.url,
+            asset_id: i.asset_id,
+            public_id: i.public_id,
+        }));
+    }, [imageState]);
+
+    useEffect(() => {
+        formik.setFieldValue('images', img)
+    },[img])
+    
+    const onDrop = useCallback(async(acceptedFiles) => {
         const formData = new FormData();
         for (let i = 0; i < acceptedFiles.length; i++) {
             formData.append('images', acceptedFiles[i]);
         }
         try {
             setImageStateLoading(true);
-            dispatch(blogImgUpload(formData)).finally(() => {
-                setImageStateLoading(false);
-            });
+            await dispatch(blogImgUpload(formData));
         } catch (error) {
             console.log('Error while Uploading to Cloudinary', error);
-        }
+        } finally {
+            setImageStateLoading(false);
+        };
     }, []);
 
-    const handleRemoveImage = (public_id, index) => {
-        // Dispatch the delete function to remove the image from Cloudinary
-        dispatch(deleteImages(public_id))
-            .then(() => {
-                // Update the UI by removing the image from formik values
-                const updatedImages = [...formik.values.images];
-                updatedImages.splice(index, 1);
-                formik.setFieldValue("images", updatedImages);
-            })
-            .catch((error) => {
-                console.error("Error deleting image from Cloudinary", error);
-            });
-    };
-    
     const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
+
+    const handleRemoveImage = async (public_id, index) => {
+        try {
+            await dispatch(deleteImages(public_id));
+            const updatedImages = [...formik.values.images];
+            updatedImages.splice(index, 1);
+            formik.setFieldValue("images", updatedImages);
+        } catch (error) {
+            console.error("Error deleting image from Cloudinary", error);
+        }
+    };
+    
     const handleImageLoad = (index) => {
         setLoadedImagesCount((prevCount) => prevCount + 1);
     };
@@ -135,6 +145,8 @@ const AddBlog = () => {
             setImageStateLoading(false);
         }
     }, [loadedImagesCount, imageState]);
+
+    /* ----------------------Image Part----------------------- */
 
     return (
         <>
@@ -207,31 +219,29 @@ const AddBlog = () => {
                             </div>
                                 
                             <div className="showimages d-flex flex-wrap gap-3 product-border bg-white p-3">
-                                {(Array.isArray(formik.values.images) && formik.values.images.length > 0) ? (
+                                {formik.values.images.length > 0 ? (
                                     formik.values.images.map((image, index) => (
-                                        <div className="position-relative" key={index}>
-                                            <button
-                                                type="button"
-                                                onClick={() => handleRemoveImage(image.public_id, index)}
-                                                className="btn-close position-absolute btn-hover"
-                                                style={{ top: "5px", right: "5px" }}
-                                            ></button>
-                                            <img
-                                                className='dropzone_image'
-                                                src={image.url}
-                                                alt=""
-                                                width={200}
-                                                height={200}
-                                                onLoad={() => handleImageLoad(index)}
-                                            />
+                                        <div key={index} className="position-relative display">
+                                        <RxCross2
+                                            type="button"
+                                            onClick={() => handleRemoveImage(image.public_id, index)}
+                                            className="btn-cross position-absolute"
+                                            style={{ top: "10px", right: "10px" }}
+                                        />
+                                        <img
+                                            src={image.url}
+                                            alt=""
+                                            style={{ maxWidth: '200px', height: '160px', margin: '5px' }}
+                                            onLoad={() => handleImageLoad(index)}
+                                        />
                                         </div>
                                     ))
-                                ) : imageStateLoading ? (
+                                    ) : imageStateLoading ? (
                                     <p className='pt-2 fs-6 display_color2'>Loading images...</p>
-                                ) : (
-                                    <p className='pt-2 fs-6 display_color1'>Upload image to display</p>
+                                    ) : (
+                                    <p className='pt-2 fs-6 display_color1'>No images to display</p>
                                 )}
-                            </div> 
+                            </div>
 
                             {/* Blog Description */}
                             <div className='mt-2'>
@@ -262,38 +272,6 @@ const AddBlog = () => {
 };
 
 export default AddBlog;
-
-
-// {/* {(Array.isArray(imageState) && imageState?.length > 0) ? (
-//                                     imageState?.map((i, j) => (
-//                                         <div className=" position-relative" key={j}>
-//                                             <button
-//                                                 type="button"
-//                                                 onClick={() => dispatch(deleteImages(i.public_id))}
-//                                                 className="btn-close position-absolute btn-hover"
-//                                                 style={{ top: "5px", right: "5px" }}
-//                                             ></button>
-//                                             <img
-//                                                 className='dropzone_image'
-//                                                 src={i.url}
-//                                                 alt=""
-//                                                 width={200}
-//                                                 height={200}
-//                                                 onLoad={() => handleImageLoad(j)}
-//                                             />
-//                                         </div>
-//                                     ))
-//                                 ) : imageStateLoading ? (
-//                                     <p className='pt-2 fs-6 display_color2'>Loading images...</p>
-//                                 ) : (
-//                                     <p className='pt-2 fs-6 display_color1'>Upload image to display</p>
-//                                 )} */}
-
-//                                 {/* // onClick={() => {
-//                                                 //     // Remove the image from the form values
-//                                                 //     const updatedImages = formik.values.images.filter((_, i) => i !== index);
-//                                                 //     formik.setFieldValue("images", updatedImages);
-//                                                 // }} */}
 
 
 

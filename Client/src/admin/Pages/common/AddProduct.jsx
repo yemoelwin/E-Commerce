@@ -14,6 +14,7 @@ import { useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
 import { showToast } from '../../../components/common/ShowToast';
+import { RxCross2 } from 'react-icons/rx';
 
 let schema = yup.object().shape({
     title: yup.string().required("Title is Required"),
@@ -47,6 +48,18 @@ const AddProduct = () => {
     const { isSuccess, isError, createdProduct, singleData } = newProduct;
     
     const singleDataOrDefault = singleData || {};
+
+    const initialValues = {
+            title: singleDataOrDefault.title || "",
+            description: singleDataOrDefault.description || "",
+            price: singleDataOrDefault.price || "",
+            brand: singleDataOrDefault.brand || "",
+            category: singleDataOrDefault.category || "",
+            tags: singleDataOrDefault.tags || "",
+            color: singleDataOrDefault.color || "",
+            quantity: singleDataOrDefault.quantity || "",
+            images: singleDataOrDefault.images || [],
+    }
 
     useEffect(() => {
         try {
@@ -84,20 +97,9 @@ const AddProduct = () => {
     
     const formik = useFormik({
         enableReinitialize: true,
-        initialValues: {
-            title: singleDataOrDefault.title || "",
-            description: singleDataOrDefault.description || "",
-            price: singleDataOrDefault.price || "",
-            brand: singleDataOrDefault.brand || "",
-            category: singleDataOrDefault.category || "",
-            tags: singleDataOrDefault.tags || "",
-            color: singleDataOrDefault.color || "",
-            quantity: singleDataOrDefault.quantity || "",
-            images: singleDataOrDefault.images || "",
-        },
+        initialValues,
         validationSchema: schema,
         onSubmit: async (values) => {
-            // alert(JSON.stringify(values));
             setSelectedColors(null);
             if (productId !== undefined) {
                 try {
@@ -134,7 +136,8 @@ const AddProduct = () => {
         }
     }, [createdProduct, isError, isSuccess]);
 
-/*  --------------Image Part---------------  */
+    /*  --------------Image Part---------------  */
+    
     const img = useMemo(() => {
         if (!Array.isArray(imageState)) {
             return []; // Return an empty array if imageState is not an array
@@ -147,7 +150,7 @@ const AddProduct = () => {
     }, [imageState]);
 
     useEffect(() => {
-        formik.values.images = img;
+        formik.setFieldValue('images', img);
     }, [img])
 
     const onDrop = useCallback(acceptedFiles => {
@@ -165,6 +168,8 @@ const AddProduct = () => {
         }
     }, []);
 
+    const { getRootProps, getInputProps } = useDropzone({ onDrop });
+
     const handleRemoveImage = async(public_id, index) => {
         await dispatch(deleteImages(public_id))
             .then(() => {
@@ -176,8 +181,6 @@ const AddProduct = () => {
                 console.error("Error deleting image from Cloudinary", error);
             });
     };
-
-    const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
     const handleImageLoad = (index) => {
         setLoadedImagesCount((prevCount) => prevCount + 1);
@@ -410,32 +413,28 @@ const AddProduct = () => {
                                         </div>
                                 </div>
                                 <div className="showimages d-flex flex-wrap gap-3 product-border bg-white p-3">
-                                        {(Array.isArray(formik.values.images) && formik.values.images.length > 0) ? (
-                                            formik.values.images.map((image, index) => (
-                                                <div className=" position-relative" key={index}>
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => handleRemoveImage(image.public_id, index)}
-                                                        className="btn-close position-absolute btn-hover"
-                                                        style={{ top: "5px", right: "5px" }}
-                                                    ></button>
-                                                    <img
-                                                        src={image.url}
-                                                        alt=""
-                                                        width={200}
-                                                        height={200}
-                                                        onLoad={() => handleImageLoad(index)}
-                                                    />
-                                                </div>
-                                            ))
+                                    {formik.values.images.length > 0 ? (
+                                        formik.values.images.map((image, index) => (
+                                            <div key={index} className="position-relative display">
+                                            <RxCross2
+                                                type="button"
+                                                onClick={() => handleRemoveImage(image.public_id, index)}
+                                                className="btn-cross position-absolute"
+                                                style={{ top: "10px", right: "10px" }}
+                                            />
+                                            <img
+                                                src={image.url}
+                                                alt=""
+                                                style={{ maxWidth: '200px', height: '160px', margin: '5px' }}
+                                                onLoad={() => handleImageLoad(index)}
+                                            />
+                                            </div>
+                                        ))
                                         ) : imageStateLoading ? (
-                                            // Show loading message if images are still loading
-                                            <p className='pt-2 fs-6 display_color2'>Loading images...</p>
+                                        <p className='pt-2 fs-6 display_color2'>Loading images...</p>
                                         ) : (
-                                            // Show "No images to display" message if no images
-                                            <p className='pt-2 fs-6 display_color1'>No images to display</p>
-                                        )}
-
+                                        <p className='pt-2 fs-6 display_color1'>No images to display</p>
+                                    )}    
                                 </div>
 
                                 {/* Description */}
@@ -486,3 +485,5 @@ export default AddProduct;
     //     setImageStateLoading(false);
     //     }
     // };   
+
+    

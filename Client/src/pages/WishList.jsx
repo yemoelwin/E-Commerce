@@ -1,25 +1,29 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Container from '../components/common/Container';
 import Meta from '../components/common/Meta';
 import BreadCrumb from '../components/common/BreadCrumb';
 import { useDispatch, useSelector } from 'react-redux';
 import { getWishlist } from '../features/users/userSlice';
 // import { remove } from '../features/products/productSlice';
-import { removeWishlist } from '../features/products/productSlice';
+import { productResetState, removeWishlist } from '../features/products/productSlice';
 import { showToast } from '../components/common/ShowToast';
 
 const WishList = () => {
 
     const dispatch = useDispatch();
+    const [isLoading, setIsLoading] = useState(true);
     const wishlistState = useSelector((state) => state?.user?.wishlist?.user?.wishlist);
     
     useEffect(() => {
         const getData = async () => {
+            setIsLoading(true);
             try {
                 await dispatch(getWishlist());
             } catch (error) {
                 console.error("error", error);
                 throw new Error('An error occurred while fetching all user wishlist.'); // Fallback error message
+            } finally {
+                setIsLoading(false); // Set loading to false regardless of success or failure
             }
         }
         getData();
@@ -27,14 +31,17 @@ const WishList = () => {
 
     const removeWishlistItem = async (id) => {
         try {
-            await dispatch(removeWishlist(id));
+            await dispatch(removeWishlist(id));          
+            dispatch(getWishlist());
+            dispatch(productResetState());
             setTimeout(() => {
-                showToast('You removed the item from wishlist.')
-                dispatch(getWishlist());
-            },[400])
+                showToast('You removed the item from wishlist.', 'success')
+            },[1500])
         } catch (error) {
             console.error('error', error);
             throw new Error('something went wrong while deleting the item from wishlist')
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -43,8 +50,16 @@ const WishList = () => {
             <Meta title={'Wishlist'}></Meta>
             <BreadCrumb title='Wishlist'></BreadCrumb>
             <Container class1="wishlist-wrapper home-wrapper-2 py-5">
-                <div className="row">
-
+                {isLoading ? ( // Show loading indicator when isLoading is true
+                    <div className='loadingX gap-3'>
+                        <div className='loading-spinner'></div>
+                        <div className='load'>Loading ... </div>
+                    </div> 
+                ) : (
+                    <div className="row">
+                    {wishlistState?.length === 0 && (
+                        <div className='text-center fs-5 text-secondary'>Empty Wishlist</div>
+                    )}
                     {
                         wishlistState?.map((item, index) => {
                             return (
@@ -82,6 +97,8 @@ const WishList = () => {
                     
 
                 </div>
+                )}
+                
             </Container>
         </>
     )

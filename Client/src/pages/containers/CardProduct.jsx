@@ -3,7 +3,6 @@ import ReactStars from "react-rating-stars-component";
 import { Link, useLocation } from 'react-router-dom';
 import prodcompare from "../../images/prodcompare.svg";
 import wish from '../../images/wish.svg'
-// import wishlist from "../images/wishlist.svg";
 import watch2 from "../../images/watch-1.avif";
 import addcart from "../../images/add-cart.svg";
 import view from "../../images/view.svg";
@@ -15,30 +14,31 @@ const CardProduct = (props) => {
     const { grid, prodData } = props;
     let location = useLocation();
     const dispatch = useDispatch();
-    const wishlistState = useSelector((state) => state.product.wishlistProduct)
+    const [showMessage, setShowMessage] = useState(false);
+    const addUserWishList = useSelector((state) => state?.product?.wishlistProduct);
 
     const handleWishlist = async (prodId) => {
         alert(prodId);
         try {
             await dispatch(addToWishlistProduct(prodId));
-            if (wishlistState.message) {
-                showToast(wishlistState.message, 'info');
-            } 
         } catch (error) {
             console.error('error', error);
             throw new Error('Something went wrong while adding item to wishlist')
         }
     }
 
-    // useEffect(() => {
-    //     if (wishlistState.message) {
-    //         showToast(wishlistState.message);
-    //     } else {
-    //         dispatch(productResetState());
-    //     }
-    // }, [wishlistState]);
+    useEffect(() => {
+        if (!addUserWishList && showMessage) {
+            dispatch(productResetState());
+        }
+        showToast(addUserWishList?.message, 'info');
+        setShowMessage(false);
+    }, [addUserWishList])
+    
+    const handleShowMessage = () => {
+        setShowMessage(true);
+    }
 
-    // alert (location)
     return (
         <>
             {
@@ -56,14 +56,7 @@ const CardProduct = (props) => {
                                 // : ":id"}`}
                                 className="product-card position-relative">
 
-                                <div className="wishlist-icon position-absolute">
-                                    <button
-                                        className='border-0 bg-transparent'
-                                        onClick={(e) => handleWishlist(item?._id)}
-                                    >
-                                        <img src={wish} alt="wishlist" />
-                                    </button>
-                                </div>
+                                
 
                                 <div className="product-image">
                                     <img src={item.images[0].url} className='img-fluid mx-auto' alt='product' />
@@ -88,13 +81,26 @@ const CardProduct = (props) => {
                                 </div>
 
                                 <div className="action-bar position-absolute">
+                                    
                                     <div className="d-flex flex-column">
+                                        <button
+                                            className='border-0 bg-transparent '
+                                            onClick={(e) => {
+                                                handleWishlist(item?._id);
+                                                handleShowMessage();
+                                            }}
+                                        >
+                                            <img src={wish} alt="wishlist"/>
+                                        </button>
+
                                         <button className='mb-1 border-0 bg-transparent'>
                                             <img src={prodcompare} alt="addcart" />
                                         </button>
+
                                         <button className='mb-1 border-0 bg-transparent'>
                                             <img src={view} alt="addcart" />
                                         </button>
+
                                         <button className='mb-1 border-0 bg-transparent'>
                                             <img src={addcart} alt="addcart" />
                                         </button>

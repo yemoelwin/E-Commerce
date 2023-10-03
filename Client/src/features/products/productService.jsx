@@ -31,7 +31,6 @@ const addToWishlist = async (prodId) => {
 }
 
 const removeFromToWishlist = async (prodId) => {
-    console.log(prodId);
     try {
         const response = await api.put(`/product/remove_wishlist`, {prodId});
         return response.data;

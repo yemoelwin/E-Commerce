@@ -228,24 +228,32 @@ footer .input-group-text{
 
 /* Blog Part */
 
+.grid-container{
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 20px;
+  max-width: auto;
+}
 
 .blog-card{
   background-color: white;
-  /* padding: 20px; */
   border-radius: 10px;
+  border: 1px solid rgb(232, 231, 231);
 }
 
 .blog-card img{
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
+  height: 350px;
 }
 
 .blog-content{
   padding: 15px;
+  /* max-height: 300px; */
 }
 
 .blog-content p.date{
-  font-size: 16px;
+  font-size: 14px;
   line-height: 24px;
   text-transform: uppercase;
   letter-spacing: 0;
@@ -255,14 +263,23 @@ footer .input-group-text{
 } 
 
 .blog-content h5{
-  font-size: 20px;
+  font-family: 'Roboto', sans-serif !important;
+  font-size: 23px;
+  font-weight: 500;
   color: var(--color-131921);
 }
 
-.blog-content p.desc{
+.blog-content p.description{
   font-size: 15px;
   line-height: 20px;
+  letter-spacing: 0.2px;
   color: var(--color-777777);
+}
+
+.single-blogX{
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .single-blog-card a {
@@ -271,20 +288,41 @@ footer .input-group-text{
   margin-bottom: 20px;
 }
 
+/* .single-blog-card .title{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+} */
+
 .single-blog-card h3 {
-  font-size: 34px;
-  font-weight: 600;
+  font-size: 30px;
+  font-family: 'Roboto', sans-serif !important; 
+  font-weight: 500;
   color: var(--color-1c1c1b);
 }
 
 .single-blog-card p {
   color: var(--color-777777);
-  font-size: 20px;
+  font-size: 18px;
+}
+
+.blogImg{
+  display: flex;
+  justify-content: center;
 }
 
 .blog-wrapper .single-blog-card img {
-  width: 80%;
+  width: 70%;
+  border: 1px solid white;
+  box-shadow: 0 0px 8px rgb(176, 176, 176);
 }
+
+.blogCart{
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+}
+
 /* Blog Part Ends Here */
 
 
@@ -343,16 +381,17 @@ footer .input-group-text{
 }
 
 .action-bar{
-  top: 10%;
+  top: 6%;
   right: -22px;
   transition: .3s;
 }
 
-.wishlist-icon{
+.wishlist-icon {
+  /* opacity: 0; */
   top: 4%;
   right: 15px;
+  /* transition: opacity 0.1s; */
 }
-
 
 /* Card Product ends here */
 
@@ -445,12 +484,25 @@ footer .input-group-text{
   color: blue
 }
 
-.btn-hover{
+/* .btn-hover{
   color: white !important;
+  opacity: 1 !important;
+} */
+
+.btn-cross{
+  background-color: white;
+  border-radius: 5px;
+  border: none;
+  opacity: 0;
+  transition: opacity 0.1s;
+  width: 20px;
+    /* Adjust the width to make it larger */
+  height: 20px;
 }
 
-.btn-close{
-  background-color: white;
+.display:hover .btn-cross{
+  opacity: 1;
+  color: rgb(249, 14, 14);
 }
 
 .modalFix{
@@ -509,6 +561,13 @@ footer .input-group-text{
 .loading{
   display: flex;
   justify-content: flex-start;
+  align-items: center;
+  font-size: 17px;
+}
+
+.loadingX {
+  display: flex;
+  justify-content: center;
   align-items: center;
   font-size: 17px;
 }

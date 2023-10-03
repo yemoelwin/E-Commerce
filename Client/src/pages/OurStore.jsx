@@ -13,7 +13,6 @@ const ProductPage = () => {
     const [grid, setGrid] = useState(4);
     const [isChecked, setIsChecked] = useState(false);
     const productState = useSelector((state) => state.product.products);
-
     useEffect(() => {
         const getAllProducts = async () => {
             try {
