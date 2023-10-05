@@ -82,9 +82,25 @@ const BlogList = () => {
 
     const data1 = [];
     for (let i = 0; i < blogState?.length; i++) {
+
+        const title = blogState[i]?.title;
+        if (!title) {
+            continue;
+        }
+        let truncatedTitle = title;
+        if (title.length > 15) {
+            // Truncate title if it's longer than 15 characters
+            truncatedTitle = title.substr(0, 50);
+            const lastSpaceIndex = truncatedTitle.lastIndexOf(" ");
+            if (lastSpaceIndex !== -1) {
+                truncatedTitle = truncatedTitle.substring(0, lastSpaceIndex); // Trim to the last space
+            }
+            truncatedTitle += "..."; // Add ellipsis
+        }
+
         data1?.push({
             key: i + 1,
-            name: blogState[i]?.title,
+            name: truncatedTitle,
             category: blogState[i]?.category,
             views: blogState[i]?.numViews,
             action: (

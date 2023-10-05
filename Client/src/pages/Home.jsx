@@ -10,22 +10,27 @@ import BannerProduct from './containers/BannerProduct';
 import Container from '../components/common/Container';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllBlog } from '../features/blog/blogSlice';
+import { addToWishListReset, getProducts,} from '../features/products/productSlice';
 
 const Home = () => {
   
   const dispatch = useDispatch();
   const indexBlogData = useSelector((state) => state?.blog?.blogs);
+  const indexProductData = useSelector((state) => state?.product.products);
+
   useEffect(() => {
-        const homeBlogPosts = async () => {
+        const indexPosts = async () => {
             try {
-                await dispatch(getAllBlog());
+              await dispatch(getAllBlog());
+              await dispatch(getProducts());
+              // dispatch(addToWishListReset());
                 // setIsLoading(false);
             } catch (error) {
                 console.error('error', error);
                 throw new Error('Something went wrong while fetching blog data');
             }
         };
-        homeBlogPosts();
+        indexPosts();
   }, []);
 
   const sortedBlogData = [...(indexBlogData || [])].sort((a, b) => {
@@ -33,9 +38,15 @@ const Home = () => {
     const dateB = new Date(b.createdAt);
     return dateB - dateA;
   });
-
+  
   const latest4Blogs = sortedBlogData.slice(0, 4);
   
+  const popularProducts = indexProductData ? indexProductData.filter(item => item?.tags === 'popular') : [];
+
+  const featuredProducts = indexProductData ? indexProductData.filter(item => item?.tags === 'featured') : [];
+  
+  const lasted8Products = popularProducts.slice(0, 8);
+
   return (
     <>
       <BannerProduct />
@@ -48,17 +59,10 @@ const Home = () => {
         <div className="row">
             <div className="col-12">
               <h3 className="section-heading">
-                Featured Collections
+                Featured Product Collections
               </h3>
             </div>
-            <CardProduct />
-            <CardProduct />
-            <CardProduct />
-            <CardProduct />
-            <CardProduct />
-            <CardProduct />
-            <CardProduct />
-            <CardProduct />
+          <CardProduct prodData={featuredProducts} />
         </div>
       </Container>
 
@@ -70,12 +74,9 @@ const Home = () => {
               <div className="section-heading">Special Products</div>
             </div>
           </div>
-
-          <div className="row">
-            <SpecialProduct />
-            <SpecialProduct />
-            <SpecialProduct />
-            <SpecialProduct />
+        
+          <div className="">
+          <SpecialProduct specialData={indexProductData ? indexProductData : []} />
           </div>
       </Container>
 
@@ -83,14 +84,13 @@ const Home = () => {
           <div className="row">
             <div className="col-12">
               <h3 className="section-heading">
-                Our Popular Products 1
+                Our Popular Products
               </h3>
-            </div>
-          
-            <CardProduct />
-            <CardProduct />
-            <CardProduct />
-            <CardProduct />
+          </div>
+
+              <div className="col-12 popular-product">
+                <CardProduct prodData={lasted8Products ? lasted8Products : []}/>
+              </div>
 
           </div>
       </Container>
@@ -107,7 +107,7 @@ const Home = () => {
             </div>
             
             <div className="d-flex gap-20 blogCart">
-              <BlogCart className='blogCart' blogData={latest4Blogs ? latest4Blogs : []} />
+            <BlogCart className='blogCart' blogData={latest4Blogs ? latest4Blogs : []} />
             </div>
           </div>
         

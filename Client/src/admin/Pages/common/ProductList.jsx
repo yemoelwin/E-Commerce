@@ -97,10 +97,25 @@ const ProductList = () => {
     let counter = 0;
     for (let i = 0; i < productState?.length; i++) {
         counter++;
+        const title = productState[i]?.title;
+        if (!title) {
+            continue;
+        }
+        let truncatedTitle = title;
+        if (title.length > 15) {
+            // Truncate title if it's longer than 15 characters
+            truncatedTitle = title.substr(0, 15);
+            const lastSpaceIndex = truncatedTitle.lastIndexOf(" ");
+            if (lastSpaceIndex !== -1) {
+                truncatedTitle = truncatedTitle.substring(0, lastSpaceIndex); // Trim to the last space
+            }
+            truncatedTitle += "..."; // Add ellipsis
+        }
+
         data1.push({
             key: counter,
             id: productState[i]?._id,
-            title: productState[i]?.title,
+            title: truncatedTitle,
             brand: productState[i]?.brand,
             category: productState[i]?.category,
             // color: productState[i].color,

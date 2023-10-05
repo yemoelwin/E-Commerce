@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 
 
 const BreadCrumb = (props) => {
-    const {title} = props
+    const { title } = props;
     return (
         <div className='breadcrumb py-3'>
             <div className="container-xxl">

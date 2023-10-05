@@ -4,7 +4,6 @@ import BreadCrumb from '../../components/common/BreadCrumb'
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
-// import { useNavigate } from 'react-router-dom';
 import { register } from '../../features/auth/AuthSlice';
 import { toast } from 'react-toastify';
 

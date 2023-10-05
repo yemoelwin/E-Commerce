@@ -1,5 +1,15 @@
 import api from '../../app/api/currentApi';
 
+const createInquiry = async (data) => {
+    try {
+        const response = await api.post('/inquiry/create-inquiry', data)
+        return response.data;
+    } catch (error) {
+        console.error("An error occurred while creating inquiry inform :", error);
+        throw new Error(); // Re-throw the error for higher-level handlings
+    }
+}
+
 const getEnquiries = async () => {
     try {
         const response = await api.get('/inquiry/')
@@ -41,6 +51,7 @@ const deleteInquiry = async (id) => {
 };
 
 const inquiryService = {
+    createInquiry,
     getEnquiries,
     getInquiry,
     updateInquiry,

@@ -1,12 +1,52 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 // import Maps from './Maps';
 import { AiOutlineHome, AiOutlineMail } from 'react-icons/ai'
 import { BiPhoneCall, BiInfoCircle } from 'react-icons/bi'
 import Container from '../components/common/Container';
 import Meta from '../components/common/Meta';
 import BreadCrumb from '../components/common/BreadCrumb';
+import { Link } from 'react-router-dom';
+import { useFormik } from 'formik';
+import * as yup from 'yup';
+import { useDispatch, useSelector } from 'react-redux';
+import { createContact } from '../features/inquiry/inquirySlice';
+import { showToast } from '../components/common/ShowToast';
 
+let schema = yup.object().shape({
+    name: yup.string().required("Name is Required"),
+    email: yup.string().nullable().required('Email is required').email('please include an `@` in an email address'),
+    mobile: yup.string().required("Mobile number is Required"),
+    comments: yup.string().required('Fill the comment box that you want to know!')
+})
 const ContactUs = () => {
+    const dispatch = useDispatch();
+    const { isLoading, isError, isSuccess } = useSelector((state) => state.inquiry);
+    console.log('isloading', isLoading)
+
+    const formik = useFormik({
+        initialValues : {
+            name: '',
+            email: '',
+            mobile: '',
+            comments: '',
+        },
+        validationSchema: schema,
+        onSubmit: async (values) => {
+            try {
+                const response = await dispatch(createContact(values));
+                if (response.error) {
+                    showToast('Something went wrong.', 'error')
+                } else {
+                    showToast('Your inquiry has been sent successfully.')
+                    formik.resetForm();
+                }
+            } catch (error) {
+                console.error('Error', error);
+                throw new Error('Error occurred while sending inquiry')
+            }
+        }
+    })
+
     return (
         <>
             <Meta title={"Contact Us" }/>
@@ -21,25 +61,98 @@ const ContactUs = () => {
                             <div className="contact-inner-wrapper d-flex justify-content-between">
                                 <div>
                                     <h3 className='contact-title mt-4'>Contact</h3>
-                                    <form action="" className='d-flex flex-column gap-15 mt-4'>
+                                    <form onSubmit={formik.handleSubmit} className='d-flex flex-column gap-15 mt-4'>
                                         <div>
-                                            <input type="text" className='form-control' style={{'height':"50px"}} placeholder='Name'/>
+                                            <input
+                                                type="name"
+                                                className="form-control"
+                                                placeholder="Name"
+                                                style={{ 'height': "50px" }}
+                                                id='name'
+                                                name='name'
+                                                onChange={formik.handleChange("name")}
+                                                onBlur={formik.handleBlur("name")}
+                                                value={formik.values.name}
+                                                required
+                                            />
+                                            {formik.touched.name && formik.errors.name && (
+                                                <div className='error_message labelName'>
+                                                    {formik.errors.name}
+                                                </div>
+                                            )}
                                         </div>
+                                    
                                         <div>
-                                            <input type="email" className='form-control' style={{'height':'50px'}} placeholder='Email'/>
+                                            <input
+                                                type="email"
+                                                className="form-control"
+                                                placeholder="Email"
+                                                style={{ 'height': "50px" }}
+                                                id='email'
+                                                name='email'
+                                                onChange={formik.handleChange("email")}
+                                                onBlur={formik.handleBlur("email")}
+                                                value={formik.values.email}
+                                                required
+                                            />
+                                            {formik.touched.email && formik.errors.email && (
+                                                <div className='error_message labelName'>
+                                                    {formik.errors.email}
+                                                </div>
+                                            )}
                                         </div>
+                                    
                                         <div>
-                                            <input type="number" className='form-control' style={{'height':'50px'}} placeholder='Phone Number'/>
+                                            <input
+                                                type="mobile"
+                                                className="form-control"
+                                                placeholder="Mobile"
+                                                style={{ 'height': "50px" }}
+                                                id='mobile'
+                                                name='mobile'
+                                                onChange={formik.handleChange("mobile")}
+                                                onBlur={formik.handleBlur("mobile")}
+                                                value={formik.values.mobile}
+                                                required
+                                            />
+                                            {formik.touched.mobile && formik.errors.mobile && (
+                                                <div className='error_message labelName'>
+                                                    {formik.errors.mobile}
+                                                </div>
+                                            )}
                                         </div>
+                                    
                                         <div>
-                                            <textarea name="" id=""  className='w-100 form-control' cols="30" rows="5" style={{'height':'150px'}} placeholder='Comments'></textarea>
+                                            <textarea
+                                                name="comments"
+                                                id="comments"
+                                                className='w-100 form-control'
+                                                cols="30"
+                                                rows="5"
+                                                style={{ 'height': '150px' }}
+                                                placeholder='Comments'
+                                                onChange={formik.handleChange("comments")}
+                                                onBlur={formik.handleBlur("comments")}
+                                                value={formik.values.comments}
+                                                required
+                                            >
+                                            </textarea>
+                                            {formik.touched.comments && formik.errors.comments && (
+                                                    <div className='error_message labelName'>
+                                                        {formik.errors.comments}
+                                                    </div>
+                                            )}
                                         </div>
+                                    
                                         <div>
-                                            <button className='button border-0'>Submit</button>
+                                            <button type='submit' className='button border-0'>
+                                            {isLoading ? 'Submitting...' : 'Submit'}
+                                        </button>
                                         </div>
                                     </form>
                                 </div>
 
+                            {/* Location email and mobile number */}
                                 <div>
                                     <h3 className='contact-title mt-4'>Get in Touch With Us</h3>
                                     <div className='mt-4'>
@@ -50,11 +163,11 @@ const ContactUs = () => {
                                             </li>
                                             <li className='mb-3 d-flex align-items-center gap-15'>
                                                 <BiPhoneCall className='fs-5 ' />
-                                                <a href="tel:+95 9257879097" >+95 9257879097</a>
+                                                <Link to="tel:+95 9257879097" >+95 9257879097</Link>
                                             </li>
                                             <li className='mb-3 d-flex align-items-center gap-15'>
                                                 <AiOutlineMail className='fs-5' />
-                                                <a href="mailto:yemoelwin142@gmail.com">yemoelwin142@gmail.com</a>
+                                                <Link to="mailto:yemoelwin142@gmail.com">yemoelwin142@gmail.com</Link>
                                             </li>
                                             <li className='mb-3 d-flex align-items-center gap-15'>
                                                 <BiInfoCircle className='fs-5' />

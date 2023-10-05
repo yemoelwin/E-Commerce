@@ -152,7 +152,7 @@ const updateProduct = asyncHandler(async (req, res) => {
     const { id } = req.params;
     const { title, description, price, brand, category, quantity, color, images, tags } = req.body;
     try {
-        console.log('Request body:', req.body);
+        // console.log('Request body:', req.body);
         if (typeof title !== 'string' || !title.trim()) {
             return res.status(400).json({ message: 'Invalid or missing title.' });
         }

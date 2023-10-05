@@ -9,6 +9,17 @@ const initialState = {
     message: '',
 };
 
+export const createContact = createAsyncThunk('inquiry/create-contact', async(data, thunkApi) => {
+    try {
+        const response = await inquiryService.createInquiry(data);
+        return response;
+    } catch (error) {
+        console.log(error);
+        const errorMessage = error.message || "An error occurred.";
+        return thunkApi.rejectWithValue(errorMessage);
+    }
+});
+
 export const getAllInquiries = createAsyncThunk('inquiry/get-all-Inquiry', async(thunkApi) => {
     try {
         const response = await inquiryService.getEnquiries();
@@ -72,6 +83,24 @@ export const inquirySlice = createSlice({
                 state.message = 'Success';
             })
             .addCase(getAllInquiries.rejected, (state, action) => {
+                state.inquiries = null;
+                state.isError = true;
+                state.isSuccess = false;
+                state.isLoading = false;
+                state.message = action.payload || "An error occurred.";
+            })
+            /* Create Contact */
+            .addCase(createContact.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(createContact.fulfilled, (state, action) => {
+                state.isError = false;
+                state.isSuccess = true;
+                state.isLoading = false;
+                state.message = 'Success';
+                state.inquiries = action.payload;
+            })
+            .addCase(createContact.rejected, (state, action) => {
                 state.inquiries = null;
                 state.isError = true;
                 state.isSuccess = false;

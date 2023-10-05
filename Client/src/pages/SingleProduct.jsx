@@ -1,35 +1,53 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Meta from '../components/common/Meta'
 import BreadCrumb from '../components/common/BreadCrumb'
 import CardProduct from './containers/CardProduct';
 import ReactStars from "react-rating-stars-component";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import ReactImageZoom from 'react-image-zoom';
-// import Container from '../components/NavbarLink/Container'
 import Colors from "../components/common/Colors";
 import { TbGitCompare } from "react-icons/tb";
 import { AiOutlineHeart } from "react-icons/ai";
-import watch from '../images/watch.jpg'
 import Container from "../components/common/Container";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProductData } from "../features/products/productSlice";
+import { showToast } from "../components/common/ShowToast";
+import copy from 'copy-to-clipboard';
 
 const SingleProduct = () => {
+    const dispatch = useDispatch();
+    const { id } = useParams();
+    const product = useSelector((state) => state?.product?.singleData);
+
+    useEffect(() => {
+        const fetchProduct = async () => {
+            try {
+                await dispatch(fetchProductData(id));
+            } catch (error) {
+                console.error('error', error);
+                showToast('Something went wrong!')
+            }
+        }
+        fetchProduct();
+    },[id])
+
     const props = {
         width: 600,
         height: 720,
         zoomWidth: 600,
-        img: "https://images.pexels.com/photos/190819/pexels-photo-190819.jpeg?cs=srgb&dl=pexels-fernando-arcos-190819.jpg&fm=jpg"
+        img: product?.images[0].url,
     };
     // setorderedProduct
     const [orderedProduct ] = useState(true)
-    const copyToClipboard = (text) => {
-    console.log("text", text);
-    var textField = document.createElement("textarea");
-    textField.innerText = text;
-    document.body.appendChild(textField);
-    textField.select();
-    document.execCommand("copy");
-    textField.remove();
-    };
+    // const copyToClipboard = (text) => {
+    // console.log("text", text);
+    // var textField = document.createElement("textarea");
+    // textField.innerText = text;
+    // document.body.appendChild(textField);
+    // textField.select();
+    // document.execCommand("copy");
+    // textField.remove();
+    // };
     
 //   const closeModal = () => {};
 
@@ -49,13 +67,11 @@ const SingleProduct = () => {
                             </div>
 
                             <div className="other-product-images d-flex flex-wrap gap-15">
-                                <div><img src={watch} className='img-fluid' alt="" /></div>
-                                <div><img src={watch} className='img-fluid' alt="" /></div>
-                                <div><img src={watch} className='img-fluid' alt="" /></div>
-                                <div><img src={watch} className='img-fluid' alt="" /></div>
-                                {/* <div><img src="https://images.pexels.com/photos/190819/pexels-photo-190819.jpeg?cs=srgb&dl=pexels-fernando-arcos-190819.jpg&fm=jpg" className='img-fluid' alt="" /></div>
-                                <div><img src="https://images.pexels.com/photos/190819/pexels-photo-190819.jpeg?cs=srgb&dl=pexels-fernando-arcos-190819.jpg&fm=jpg" className='img-fluid' alt="" /></div>
-                                <div><img src="https://images.pexels.com/photos/190819/pexels-photo-190819.jpeg?cs=srgb&dl=pexels-fernando-arcos-190819.jpg&fm=jpg" className='img-fluid' alt="" /></div> */}
+                                <div><img src={product?.images[0].url} className='img-fluid' alt="" /></div>
+                                <div><img src={product?.images[0].url} className='img-fluid' alt="" /></div>
+                                <div><img src={product?.images[0].url} className='img-fluid' alt="" /></div>
+                                <div><img src={product?.images[0].url} className='img-fluid' alt="" /></div>
+                                
                             </div>
 
                         </div>
@@ -65,46 +81,46 @@ const SingleProduct = () => {
                             <div className="main-product-details">
                                 <div className="border-bottom">
                                     <h3 className="title">
-                                    Kids Headphones Bulk 10 Pack Multi Colored For Students
+                                    {product?.title}
                                     </h3>
                                 </div>
                             
                                 <div className="border-bottom py-3">
-                                    <p className="price">$ 100</p>
+                                <p className="price">$ {product?.price}</p>
                                     <div className="d-flex align-items-center gap-10">
                                         <ReactStars
                                             count={5}
                                             size={24}
-                                            value={4}
+                                            value={parseFloat(product?.totalrating)}
                                             edit={false}
                                             activeColor="#ffd700"
                                         />
                                         <p className="mb-0 t-review">( 2 Reviews )</p>
                                     </div>
                                     <a className="review-btn" href="#review">
-                                    Write a Review
+                                        Write a Review
                                     </a>
                                 </div>
 
                                 <div className=" py-3">
                                     <div className="d-flex gap-10 align-items-center my-2">
                                         <h3 className="product-heading">Type :</h3>
-                                        <p className="product-data">Watch</p>
+                                    <p className="product-data">{product?.category}</p>
                                     </div>
 
                                     <div className="d-flex gap-10 align-items-center my-2">
                                         <h3 className="product-heading">Brand :</h3>
-                                        <p className="product-data">Havells</p>
+                                    <p className="product-data">{product?.brand}</p>
                                     </div>
 
                                     <div className="d-flex gap-10 align-items-center my-2">
                                         <h3 className="product-heading">Category :</h3>
-                                        <p className="product-data">Watch</p>
+                                        <p className="product-data">{product?.category}</p>
                                     </div>
 
                                     <div className="d-flex gap-10 align-items-center my-2">
                                         <h3 className="product-heading">Tags :</h3>
-                                        <p className="product-data">Watch</p>
+                                        <p className="product-data">{product?.tags}</p>
                                     </div>
 
                                     <div className="d-flex gap-10 align-items-center my-2">
@@ -188,9 +204,10 @@ const SingleProduct = () => {
                                         <Link
                                             to=""
                                             onClick={() => {
-                                            copyToClipboard(
-                                                "https://images.pexels.com/photos/190819/pexels-photo-190819.jpeg?cs=srgb&dl=pexels-fernando-arcos-190819.jpg&fm=jpg"
-                                            );
+                                                copy(window.location.href);
+                                                showToast('Product link copied to clipboard', 'success');
+                                            // copyToClipboard(
+                                            // );
                                             }}
                                         >
                                             Copy Product Link
@@ -211,7 +228,7 @@ const SingleProduct = () => {
                             <h4>Description</h4>
                             <div className='bg-white p-3 description-inner-wrapper'>
                                 <p>
-                                    Lorem ipsum, dolor sit amet consectetur adipisicing elit. Praesentium ipsum dolore temporibus sed, est voluptate ea laborum saepe, veniam adipisci ab commodi quas, accusantium pariatur aspernatur quae atque reprehenderit facilis? Culpa a natus corrupti! Assumenda doloribus ea facilis esse asperiores totam animi nam omnis culpa expedita.
+                                    {product?.description}
                                 </p>
                             </div>
                         </div>

@@ -18,11 +18,6 @@ const BlogCart = (props) => {
                             <div className='blog-content'>
                                 <p className='date'>{moment(item?.createdAt).format('MMMM Do YYYY, h:mm a')}</p>
                                 <h5 className="title">
-                                    {/* {item?.title.length > 22
-                                        ? `${item?.title.substr(0, 22)}...`
-                                        : item?.title
-                                    } */}
-
                                     {item?.title.length > 15
                                         ? (() => {
                                             const truncatedTitle = item?.title.substr(0, 30);

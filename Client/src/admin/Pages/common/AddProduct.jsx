@@ -420,11 +420,12 @@ const AddProduct = () => {
                                                 type="button"
                                                 onClick={() => handleRemoveImage(image.public_id, index)}
                                                 className="btn-cross position-absolute"
-                                                style={{ top: "10px", right: "10px" }}
+                                                style={{ top: "7px", right: "7px" }}
                                             />
                                             <img
                                                 src={image.url}
                                                 alt=""
+                                                className='add_productImage'
                                                 style={{ maxWidth: '200px', height: '160px', margin: '5px' }}
                                                 onLoad={() => handleImageLoad(index)}
                                             />

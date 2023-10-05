@@ -3,6 +3,7 @@ import productService from './productService';
 
 const initialState = {
     products: [],
+    addToWishList:[],
     isError: false,
     isLoading: false,
     isSuccess: false,
@@ -87,6 +88,7 @@ export const deleteProduct = createAsyncThunk('product/deleteProduct', async (id
 })
 
 export const productResetState = createAction('reset_all');
+export const addToWishListReset = createAction('reset_addToWishlists');
 
 export const productSlice = createSlice({
     name: 'product',
@@ -189,11 +191,11 @@ export const productSlice = createSlice({
                 state.isLoading = true;
             })
             .addCase(addToWishlistProduct.fulfilled, (state, action) => {
-                state.wishlistProduct = action.payload;
                 state.isError = false;
                 state.isSuccess = true;
                 state.isLoading = false;
-                state.message = 'Success';
+                state.message = "Success";
+                state.addToWishList = action.payload;
             })
             .addCase(addToWishlistProduct.rejected, (state, action) => {
                 state.products = null;
@@ -220,7 +222,10 @@ export const productSlice = createSlice({
                 state.isLoading = false;
                 state.message = action.error.message || "An error occurred.";
             })
-            .addCase(productResetState, () => initialState);
+            .addCase(productResetState, () => initialState)
+            .addCase(addToWishListReset, (state) => {
+                state.addToWishList = null;
+            })
     }
 });
 
