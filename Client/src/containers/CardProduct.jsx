@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import ReactStars from "react-rating-stars-component";
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import prodcompare from "../../images/prodcompare.svg";
-import wish from '../../images/wish.svg'
-import addcart from "../../images/add-cart.svg";
-import view from "../../images/view.svg";
+import prodcompare from "../images/prodcompare.svg";
+import wish from '../images/wish.svg'
+import addcart from "../images/add-cart.svg";
+import view from "../images/view.svg";
 import { useDispatch, useSelector } from 'react-redux';
-import { addToWishlistProduct, addToWishListReset } from '../../features/products/productSlice';
-import { showToast } from '../../components/common/ShowToast';
+import { addToWishlistProduct, addToWishListReset } from '../features/products/productSlice';
+import { showToast } from '../components/common/ShowToast';
 
 const CardProduct = (props) => {
     const { grid, prodData } = props;
@@ -47,7 +47,9 @@ const CardProduct = (props) => {
                             <div className="product-card position-relative">
 
                                 <div className="product-image">
-                                    <img src={item.images[0].url} className='img-fluid mx-auto' alt='product' />
+                                    {item.images && item.images.length > 0 && (
+                                        <img src={item.images[0].url} className='img-fluid mx-auto' alt='product' />
+                                    )}
                                     {/* <img src={watch2} className='img-fluid mx-auto' alt='product' /> */}
                                 </div>
 
@@ -83,10 +85,10 @@ const CardProduct = (props) => {
                                         <button className='mb-1 border-0 bg-transparent'>
                                             <img src={prodcompare} alt="addcart" />
                                         </button>
-
-                                        <button className='mb-1 border-0 bg-transparent'>
-                                            <img onClick={() => navigate(`/product/${item._id}`)} src={view} alt="addcart" />
-                                        </button>
+                                        {/* onClick={() => navigate(`/product/${item?._id}`)} */}
+                                        <Link to={`/product/${item?._id}`} className='mb-1 border-0 bg-transparent'>
+                                            <img src={view} alt="addcart" />
+                                        </Link>
 
                                         <button className='mb-1 border-0 bg-transparent'>
                                             <img src={addcart} alt="addcart" />

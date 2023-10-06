@@ -1,6 +1,6 @@
 import React from 'react';
 import Marquee from 'react-fast-marquee';
-import Container from '../../components/common/Container';
+import Container from '../components/common/Container';
 
 const MarqueeSlider = () => {
     return (

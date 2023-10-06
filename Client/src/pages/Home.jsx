@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react'
-import BlogCart from './containers/BlogCart';
-import CardProduct from './containers/CardProduct';
-import SpecialProduct from './containers/SpecialProduct';
-import FamousProduct from './containers/FamousProduct';
-import MarqueeSlider from './containers/Marquee';
-import Offer from './containers/Offer';
-import Items from './containers/Items';
-import BannerProduct from './containers/BannerProduct';
+import React, { useEffect } from 'react'
+import BlogCart from '../containers/BlogCart';
+import CardProduct from '../containers/CardProduct';
+import SpecialProduct from '../containers/SpecialProduct';
+import FamousProduct from '../containers/FamousProduct';
+import MarqueeSlider from '../containers/Marquee';
+import Offer from '../containers/Offer';
+import Items from '../containers/Items';
+import BannerProduct from '../containers/BannerProduct';
 import Container from '../components/common/Container';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllBlog } from '../features/blog/blogSlice';
-import { addToWishListReset, getProducts,} from '../features/products/productSlice';
+import { getProducts,} from '../features/products/productSlice';
 
 const Home = () => {
   

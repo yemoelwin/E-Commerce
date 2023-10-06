@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import BlogCart from './containers/BlogCart';
+import BlogCart from '../containers/BlogCart';
 import Container from '../components/common/Container';
 import Meta from '../components/common/Meta';
 import BreadCrumb from '../components/common/BreadCrumb';

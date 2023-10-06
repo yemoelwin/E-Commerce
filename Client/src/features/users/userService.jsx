@@ -6,7 +6,7 @@ const getUserWishlist = async () => {
         return response.data;
     } catch (error) {
         if (error.response && error.response.data && error.response.data.message) {
-      // Extract and return the error message from the backend
+            // Extract and return the error message from the backend
             throw new Error(error.response.data.message);
         } else {
             console.error("error", error);
@@ -15,8 +15,24 @@ const getUserWishlist = async () => {
     }
 };
 
+const addToCart = async (data) => {
+    try {
+        const response = await api.post('/user/addtocart', data);
+        return response.data;
+    } catch (error) {
+        if (error.response && error.response.data && error.response.data.message) {
+            // Extract and return the error message from the backend
+            throw new Error(error.response.data.message);
+        } else {
+            console.error("error", error);
+            throw new Error('An error occurred while fetching user wishlist.'); // Fallback error message
+        }
+    }
+}
+
 const userService = {
     getUserWishlist,
+    addToCart,
 };
 
 export default userService;

@@ -581,6 +581,30 @@ const wishList = asyncHandler(async (req, res) => {
 // })
 
 const addToCart = asyncHandler(async (req, res) => {
+    const { productId, color, quantity, price } = req.body;
+    const { _id } = req.user;
+    try {
+        const user = await User.findById(_id);
+        if (!user) {
+            return res.status(404).json({ message: 'Error' });
+        };
+        let newCart = new Cart({
+            userId: _id,
+            productId,
+            color,
+            quantity,
+            price,
+        });
+        await newCart.save();
+        res.status(200).json({ message: 'Items have been added to your cart.', newCart });
+    } catch (error) {
+        console.log('error', error);
+        res.status(500).json({ message: "Error Occurred while adding the product to the user's cart" });
+    }
+})
+
+/*  */
+const addToCartOne = asyncHandler(async (req, res) => {
     const { cart } = req.body;
     const { _id } = req.user;
     try {
@@ -625,6 +649,7 @@ const addToCart = asyncHandler(async (req, res) => {
         res.status(500).json({ message: "Error Occurred while adding the product to the user's cart" });
     }
 });
+/*  */
 
 const getUserCart = asyncHandler(async (req, res) => {
     const { _id } = req.params;

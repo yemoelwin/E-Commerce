@@ -244,6 +244,10 @@
     border-bottom: 1px solid rgba(0, 0, 0, 0.25);
 }
 
+.border-bottom .title{
+    font-family: 'Roboto', sans-serif !important;
+}
+
 .main-product-details h3.title {
     font-size: 18px;
     font-weight: 600;

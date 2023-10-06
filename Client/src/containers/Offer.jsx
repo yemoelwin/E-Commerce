@@ -1,6 +1,6 @@
 import React from 'react'
-import Container from '../../components/common/Container';
-import { services } from '../../utils/Data';
+import Container from '../components/common/Container';
+import { services } from '../utils/Data';
 
 const Offer = () => {
     return (

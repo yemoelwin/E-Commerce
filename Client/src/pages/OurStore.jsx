@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import ReactStars from 'react-rating-stars-component'
-import CardProduct from './containers/CardProduct';
-import Colors from '../components/common/Colors';
+import CardProduct from '../containers/CardProduct';
+import Colors from '../containers/Colors';
 import Container from '../components/common/Container';
 import BreadCrumb from '../components/common/BreadCrumb';
 import Meta from '../components/common/Meta';
