@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 
 const SpecialProduct = (props) => {
   const { specialData } = props;
-  console.log('specialprodData', specialData);
 
   return (
     <div className='grid-container'>

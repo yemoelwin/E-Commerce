@@ -43,18 +43,24 @@
     border-color: var(--color-febd69);
 }
 
+
+.product-heading{
+    padding-top: 1px;
+}
+
 .colors{
     list-style-type: none;
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 5px;
+    cursor: pointer;
 }
 
 .colors li{
     width: 20px;
     height: 20px;
-    background-color: rgb(11, 69, 241);
     border-radius: 50%;
+    border: 1px solid rgb(203, 203, 203);
 }
 
 .random-products h5{
@@ -137,6 +143,21 @@
     font-size: 18px;
     margin-bottom: 1em;
     font-weight: 600;
+}
+
+.modal-font-size{
+    font-size: 13px;
+}
+
+.modal-link{
+    color: white;
+    border: 1px solid rgb(221, 220, 220);
+    padding: 8px;
+}
+
+.font-sizeX{
+    font-size: 13px;
+    color: blue;
 }
 /* Our Store end here */
 

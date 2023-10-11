@@ -686,6 +686,14 @@ footer .input-group-text{
   font-size: 17px;
 }
 
+.loadingM {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 17px;
+  margin-top: 5rem;
+}
+
 .loading-container {
   display: flex;
   flex-direction: column;

@@ -20,20 +20,24 @@ export const getWishlist = createAsyncThunk('user/get-wishlist', async (thunkApi
     }
 })
 
-export const addItemToCart = createAsyncThunk('user/to-Cart', async (data,thunkApi) => {
-    try {
-        const response = await userService.addToCart(data);
-        return response;
-    } catch (error) {
-        console.log(error);
-        return thunkApi.rejectWithValue(error);
-    }
-})
+// export const updateCartItemQuantity = createAsyncThunk('user/update-Cart-Quantity', async (cartData, thunkApi) => {
+//     console.log('cartData', cartData);
+//     try {
+//         const response = await userService.updateQuantity(cartData);
+//         return response;
+//     } catch (error) {
+//         console.log(error);
+//         return thunkApi.rejectWithValue(error);
+//     }
+// })
+
 
 export const userSlice = createSlice({
     name: 'user',
     initialState,
-    reducers: {},
+    reducers: {
+        
+    },
     extraReducers: (builder) => {
         builder
             .addCase(getWishlist.pending, (state) => {
@@ -55,27 +59,8 @@ export const userSlice = createSlice({
                 state.errorMessage = action.payload;
                 state.users = null;
             })
-        /* Add to Cart */
-            .addCase(addItemToCart.pending, (state) => {
-                state.isLoading = true;
-            })
-            .addCase(addItemToCart.fulfilled, (state, action) => {
-                state.isError = false;
-                state.isLoading = false;
-                state.isSuccess = true;
-                state.message = 'Success';
-                state.errorMessage = null;
-                state.cartItem = action.payload;
-            })
-            .addCase(addItemToCart.rejected, (state, action) => {
-                state.isError = true;
-                state.isLoading = false;
-                state.isSuccess = false;
-                state.message = 'Failed';
-                state.errorMessage = action.payload;
-                state.users = null;
-            })
     }
 });
+
 
 export default userSlice.reducer;

@@ -3,8 +3,7 @@ import Meta from '../components/common/Meta'
 import BreadCrumb from '../components/common/BreadCrumb'
 import CardProduct from '../containers/CardProduct';
 import ReactStars from "react-rating-stars-component";
-import { Link, useParams } from "react-router-dom";
-import watch from '../images/watch.jpg';
+import { Link, useNavigate, useParams } from "react-router-dom";
 // import ReactImageZoom from 'react-image-zoom';
 import Colors from "../containers/Colors";
 import { TbGitCompare } from "react-icons/tb";
@@ -14,26 +13,46 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchProductData } from "../features/products/productSlice";
 import { showToast } from "../components/common/ShowToast";
 import copy from 'copy-to-clipboard';
+import { addToCart } from "../features/cart/cartSlice";
 
 const SingleProduct = () => {
-    const [color, setColor] = useState(null);
-    const [quantity, setQuantity] = useState(1);
-    console.log('quantity', quantity)
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const [color, setColor] = useState(null);
+    // const [quantity, setQuantity] = useState(1);
+    const [alreadyAdded, setAlreadyAdded] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const { id } = useParams();
     const product = useSelector((state) => state?.product?.singleData);
+    const cartState = useSelector((state) => state?.cart?.items);
 
+    console.log(product)
     useEffect(() => {
         const fetchProduct = async () => {
             try {
+                setIsLoading(true);
                 await dispatch(fetchProductData(id));
             } catch (error) {
+                setIsLoading(false);
                 console.error('error', error);
-                showToast('Something went wrong!')
+                showToast('Something went wrong!');
+            } finally {
+                setIsLoading(false);
             }
-        }
+        };
         fetchProduct();
-    },[id])
+    }, [id, dispatch]);
+
+    useEffect(() => {
+        const fetchProduct = async () => {
+            for (let index = 0; index < cartState.length; index++) {
+                if (id === cartState[index]?.productId) {
+                    setAlreadyAdded(true);
+                }
+            }
+        };
+        fetchProduct();
+    }, []);
 
     const props = {
         width: 600,
@@ -54,11 +73,19 @@ const SingleProduct = () => {
     // textField.remove();
     // };
     
-    const closeModal = () => {};
+    // const closeModal = () => {
+    //     setIsModalOpen(false);
+    // };
     
-    const handleAddToCart = async() => {
-        
+    const handleConfirm = async() => {
+        if (!color || color === '') {
+            showToast('Please choose the color', 'error')
+        } else {
+            await dispatch(addToCart({productId: product._id, title: product.title, image: product.images[0].url, color, price: product.price}))
+        }
     }
+    const handleAddToCart = () => { };
+    const closeModal = () => { };
 
     return (
         <>
@@ -89,7 +116,7 @@ const SingleProduct = () => {
 
                         <div className="col-6">
 
-                        <div className="main-product-details">
+                            <div className="main-product-details">
                             {/* Title */}
                                 <div className="border-bottom">
                                     <h3 className="title">
@@ -166,40 +193,142 @@ const SingleProduct = () => {
                                     </div>
 
                                 {/* Color */}
-                                    <div className="d-flex gap-10 flex-column mt-2 mb-3">
-                                        <h3 className="product-heading">Color :</h3>
-                                    <Colors colorData={product} />
-                                    </div>
+                                <div className="mt-2 mb-3">
+                                    {alreadyAdded === false && 
+                                        <>
+                                            <div className="d-flex gap-10">
+                                                <h3 className="product-heading">Available Color : </h3>
+                                                <Colors setColor={setColor} colorData={product} />
+                                            </div>
+                                            <div>
+                                                <h3 className="product-heading">
+                                                Selected Color: {color ? color : ""}</h3>
+                                            </div>
+                                        </>
+                                    }
+                                </div>
 
-                                {/* Quantity */}
-                                    <div className="d-flex align-items-center gap-15 flex-row mt-2 mb-3">
-                                        <h3 className="product-heading">Quantity :</h3>
-                                        <div className="">
-                                            <input
-                                            type="number"
-                                            name="quantity"
-                                            min={1}
-                                            max={10}
-                                            className="form-control"
-                                            style={{ width: "70px" }}
-                                            id="quantity"
-                                            value={quantity}
-                                            onChange={(e) => setQuantity(e.target.value)}
-                                            />
-                                        </div>
-                                        <div className="d-flex align-items-center gap-30 ms-5">
-                                            <button
-                                                className="button border-0"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#staticBackdrop"
-                                                type="button"
-                                                onClick={() => handleAddToCart()}
-                                            >
-                                            Add to Cart
-                                            </button>
-                                            <button className="button signup">Buy It Now</button>
+                                <div >
+                                    {/* Quantity */}
+                                    {/* <div className="d-flex align-items-center gap-10 flex-row mt-3 mb-3">
+                                        {alreadyAdded === false && 
+                                            <>
+                                                <h3 className="product-heading">Quantity :</h3>
+                                                <div className="mt-1">
+                                                    <input
+                                                    type="number"
+                                                    name="quantity"
+                                                    min={1}
+                                                    max={10}
+                                                    className="form-control"
+                                                    style={{ width: "70px" }}
+                                                    id="quantity"
+                                                    // value={quantity}
+                                                    onChange={(e) => setQuantity(e.target.value)}
+                                                    />
+                                                </div>
+                                            </>
+                                        }
+                                    </div> */}
+                                    
+                                    <div className={alreadyAdded ? 'ms-0' : "mt-3"}>
+                                        {
+                                            alreadyAdded ?
+                                                <p className="font-sizeX">This item already added.</p>
+                                                :
+                                                <button
+                                                    className="buttonX"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#staticBackdrop"
+                                                    type="button"
+                                                    onClick={() => handleAddToCart()}
+                                                >
+                                                    Add to Cart
+                                                </button>
+                                        }
+                                    </div>
+                                    
+                                    <div
+                                        className="modal fade"
+                                        id="staticBackdrop"
+                                        data-bs-backdrop="static"
+                                        data-bs-keyboard="false"
+                                        tabIndex="-1"
+                                        aria-labelledby="staticBackdropLabel"
+                                        aria-hidden="true"
+                                    >
+                                        <div className="modal-dialog">
+                                            <div className="modal-content">
+                                                    
+                                                <div className="modal-header">
+                                                    <h5 className="modal-title" id="staticBackdropLabel">
+                                                        Are you sure to add this item?
+                                                    </h5>
+                                                    <button
+                                                        type="button"
+                                                        className="btn-close"
+                                                        data-bs-dismiss="modal"
+                                                        aria-label="Close"
+                                                    >
+                                                                    
+                                                    </button>
+                                                </div>
+                                                        
+                                                <div className="modal-body">
+                                                    <div className="d-flex align-items-center">
+                                                        <div className="flex-grow-1 w-50 modal-img">
+                                                            <img
+                                                                src={product?.images[0]?.url}
+                                                                className="img-fluid"
+                                                                alt="product images"
+                                                            />
+                                                        </div>
+                                                            
+                                                        <div className="d-flex flex-column flex-grow-1 w-50 align-items-center p-3">
+                                                            <div>
+                                                                <h6 className="mb-3">{product?.title}</h6>
+                                                                {/* <p className="mb-1 modal-font-size">quantity: {quantity}</p> */}
+                                                                <p className="mb-1 modal-font-size">price: ${product?.price}</p>
+                                                                <p className="mb-1 modal-font-size">color: {color}</p>
+                                                                <p className="mb-1 modal-font-size">Size: abcd</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                        
+                                                <div className="modal-footer border-0 gap-10">
+                                                    <button
+                                                        type="submit"
+                                                        className="btn btn-primary"
+                                                        data-bs-dismiss="modal"
+                                                        onClick={() => {
+                                                            navigate(`/cart`)
+                                                        }}
+                                                    >View Cart</button>
+                                                    <button
+                                                        type="submit"
+                                                        className="btn btn-primary"
+                                                        data-bs-dismiss="modal"
+                                                        onClick={() => { handleConfirm()}}
+                                                    >Confirm</button>  
+                                                </div>    
+                                                            
+                                                {/* <div className="cart_Modal">
+                                                    <Link
+                                                        to={`/product`}
+                                                        data-bs-dismiss="modal"
+                                                        onClick={() => {
+                                                            closeModal();
+                                                        }}
+                                                    > Continue to Shopping </Link>
+                                                </div>     */}
+                                                    
+                                            </div>
+
                                         </div>
                                     </div>
+                                    
+                                </div>
 
                                 {/* Add to Compare & Add to Wishlist*/}
                                     <div className="d-flex align-items-center gap-15 mt-4">
@@ -358,73 +487,25 @@ const SingleProduct = () => {
                     </div>
 
                     <div className="row">
-                        <CardProduct />
-                        <CardProduct />
-                        <CardProduct />
-                        <CardProduct />
+                        {isLoading ? ( // Show loading indicator when isLoading is true
+                            <div className='loadingX gap-3'>
+                                <div className='loading-spinner'></div>
+                                <div className='load'>Loading ... </div>
+                            </div> 
+                        ) : (
+                            <>
+                            <CardProduct />
+                            <CardProduct />
+                            <CardProduct />
+                            <CardProduct />  
+                            </>
+                        )}                  
+                        
                     </div>
             </Container>
 
-            <div
-                className="modal fade"
-                id="staticBackdrop"
-                data-bs-backdrop="static"
-                data-bs-keyboard="false"
-                tabIndex="-1"
-                aria-labelledby="staticBackdropLabel"
-                aria-hidden="true"
-            >
-                <div className="modal-dialog">
-                    <div className="modal-content">
-                        
-                        <div className="modal-header">
-                            <h5 className="modal-title" id="staticBackdropLabel">
-                                Are you sure to add this item?
-                            </h5>
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                                        
-                            </button>
-                        </div>
-                            
-                        <div className="modal-body">
-                            <div className="d-flex align-items-center">
-                                <div className="flex-grow-1 w-50 modal-img">
-                                    <img src={watch} className="img-fluid" alt="product images" />
-                                </div>
-                                
-                                <div className="d-flex flex-column flex-grow-1 w-50 align-items-center">
-                                    <div>
-                                        <h6 className="mb-3">Apple Watch</h6>
-                                        <p className="mb-1">Quantity: 20</p>
-                                        <p className="mb-1">Price: $80</p>
-                                        <p className="mb-1">Size: abcd</p>
-                                    </div>
-                                    
-                                </div>
-                            </div>
-                        </div>
-                            
-                        <div className="modal-footer border-0 gap-10">
-                            <button type="button" className="btn btn-primary" data-bs-dismiss="modal">View Cart</button>
-                            <button type="button" className="btn btn-primary">Checkout</button>
-                        </div>
-                        
-                        <div className="cart_Modal">
-                            <Link
-                                to="/product"
-                                data-bs-dismiss="modal"
-                                onClick={() => {
-                                    closeModal()
-                                }}
-                            >
-                            Continue to Shopping
-                            </Link>
-                        </div>
-                        
-                    </div>
-
-                </div>
-            </div>
+            
+                
             
         </>
     )

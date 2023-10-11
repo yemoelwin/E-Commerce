@@ -12,14 +12,19 @@ const ProductPage = () => {
     const dispatch = useDispatch();
     const [grid, setGrid] = useState(4);
     const [isChecked, setIsChecked] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const productState = useSelector((state) => state.product.products);
     useEffect(() => {
         const getAllProducts = async () => {
             try {
+                setIsLoading(true);
                 await dispatch(getProducts());
             } catch (error) {
                 console.error("error", error);
+                setIsLoading(false);
                 throw new Error('An error occurred while fetching all products.'); // Fallback error message
+            } finally {
+                setIsLoading(false);
             }
         }
         getAllProducts();
@@ -272,7 +277,14 @@ const ProductPage = () => {
                 
                         <div className="products-list pb-5">
                             <div className='d-flex flex-wrap gap-10'>
-                                <CardProduct prodData={productState ? productState : []} grid={grid} />        
+                                {isLoading ? ( // Show loading indicator when isLoading is true
+                                    <div className='loadingX gap-3'>
+                                        <div className='loading-spinner'></div>
+                                        <div className='load'>Loading ... </div>
+                                    </div> 
+                                ) : (
+                                    <CardProduct prodData={productState ? productState : []} grid={grid} />  
+                                )}
                             </div>
                         </div>
                     </div>

@@ -9,7 +9,7 @@ import './css/signup.css';
 import './css/Cart.css';
 import './css/Dashboard.css';
 import './admin/layouts/MainLayout.css';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Layout from './components/layout/Layout';
 import Home from './pages/Home';
 import About from './pages/About';
@@ -58,6 +58,7 @@ import ViewInquiry from './admin/Pages/common/ViewInquiry';
 import DataTable from './components/common/DataTable';
 import SpecificDataPage from './admin/Pages/common/SpecificDataPage';
 import ViewOrders from './admin/Pages/common/ViewOrders';
+import NotFound from './pages/NotFound';
 
 // import ProtectedRoute from './routes/protectedRoute';
 
@@ -73,8 +74,9 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path='/' element = {< Layout />}>
-            <Route index element={< Home />} />
+          <Route path='/' element={< Layout />}>
+            <Route path='not-found' element={<NotFound />} />
+            <Route index exact element={< Home />} />
             <Route path='about' element={< About />} />
             <Route path='contact' element={< ContactUs />} />
             <Route path='product' element={< OurStore />} />
@@ -93,6 +95,7 @@ function App() {
             <Route path='privacy-policy' element={<PrivacyPolicy />} />
             <Route path='refund-policy' element={<RefundPolicy />} />
             <Route path='term-conditions' element={<TermAndConditions />} />
+            <Route path="*" element={<NotFound /> } />
           </Route>
 
           <Route path="admin" element={<MainLayout />} >
@@ -125,10 +128,6 @@ function App() {
                 <Route path="specific-data" element= {<SpecificDataPage />} />
                 <Route path="table" element= {<DataTable />} />
           </Route>
-          {/* <Route
-            path="/login"
-            element={isAuthenticated ? <Navigate to="/admin" /> : <Login />}
-          /> */}
         </Routes>
       </BrowserRouter >
     </>

@@ -23,8 +23,6 @@ const Home = () => {
             try {
               await dispatch(getAllBlog());
               await dispatch(getProducts());
-              // dispatch(addToWishListReset());
-                // setIsLoading(false);
             } catch (error) {
                 console.error('error', error);
                 throw new Error('Something went wrong while fetching blog data');

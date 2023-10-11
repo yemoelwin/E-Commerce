@@ -1,5 +1,5 @@
 import React from 'react'
-import { NavLink, Link, useNavigate } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import { BsSearch } from 'react-icons/bs'
 import compare from '../../images/compare.svg'
 import wishlist from '../../images/wishlist.svg'
@@ -8,9 +8,9 @@ import cart from '../../images/cart.svg'
 import { useSelector } from 'react-redux';
 
 const Header = () => {
-  const navigate = useNavigate();
   const { userRole, isLoggedIn } = useSelector(state => state.auth);
-  console.log(userRole)
+  const { totalQuantity, cartTotalAmount } = useSelector((state) => state.cart);
+
   return (
   <>
       <header className='header-top-strip py-3'>
@@ -79,8 +79,8 @@ const Header = () => {
                   <Link to='/cart' className='d-flex align-items-center gap-10 text-white'>
                     <img src={cart} alt='cart'></img>
                     <div className='d-flex flex-column gap-10'>
-                      <span className='badge bg-white text-dark'>0</span>
-                      <p className='mb-0'>$ 500</p>
+                      <span className='badge bg-white text-dark'>{totalQuantity}</span>
+                      <p className='mb-0'>$ {cartTotalAmount}</p>
                     </div>
                   </Link>                                    
                 </div>
