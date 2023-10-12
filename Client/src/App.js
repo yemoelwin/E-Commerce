@@ -59,6 +59,7 @@ import DataTable from './components/common/DataTable';
 import SpecificDataPage from './admin/Pages/common/SpecificDataPage';
 import ViewOrders from './admin/Pages/common/ViewOrders';
 import NotFound from './pages/NotFound';
+import CheckoutSuccess from './components/common/CheckoutSuccess';
 
 // import ProtectedRoute from './routes/protectedRoute';
 
@@ -84,6 +85,7 @@ function App() {
             <Route path='blog' element={< BlogPage />} />
             <Route path='blog/:id' element={< SingleBlog />} />
             <Route path='cart' element={< Cart />} />
+            <Route path='checkout-success' element={< CheckoutSuccess />} />
             <Route path='checkout' element={< Checkout />} />
             <Route path='compare-product' element={<CompareProduct />} />
             <Route path='wishlist' element={<WishList />} />

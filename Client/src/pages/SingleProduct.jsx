@@ -26,7 +26,6 @@ const SingleProduct = () => {
     const product = useSelector((state) => state?.product?.singleData);
     const cartState = useSelector((state) => state?.cart?.items);
 
-    console.log(product)
     useEffect(() => {
         const fetchProduct = async () => {
             try {

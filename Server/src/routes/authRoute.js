@@ -21,15 +21,7 @@ router.put('/edit-user', protect, userInfo.updatedUser); /* finished */
 
 router.put('/save-address/:_id', protect, userInfo.saveAddress); /* finished */
 
-router.post('/cart/apply_coupon', protect, userInfo.applyCoupon);
-
-router.post('/addtocart', protect, userInfo.addToCart); /* finished */
-
-router.get('/get-usercart/:_id', protect, userInfo.getUserCart); /* finished */
-
-router.delete('/cart/remove-cart-products', protect, userInfo.emptyCart); /* finished */
-
-router.post('/order/cash_order_items', protect, userInfo.creatOrder); /* finished */
+router.post('/order/create_order', protect, userInfo.createOrder); /* finished */
 
 router.get('/order/get_order_byuser/:id', protect, userInfo.userOrder); /* finished */
 
@@ -55,6 +47,20 @@ router.post('/forgot-password', userInfo.forgotPasswordToken); /* finished */
 
 router.post('/reset-password/:userId/:uniqueToken', userInfo.resetPassword); /* finished */
 
-router.delete('/:id', protect, isAdmin,userInfo.deleteUser); /* finished */
+router.delete('/:id', protect, isAdmin, userInfo.deleteUser); /* finished */
+
+/* --------------------Unnecessary Code--------------------- */
+
+router.post('/cart/apply_coupon', protect, userInfo.applyCoupon);
+
+router.post('/addtocart', protect, userInfo.addToCart); /* finished */
+
+router.get('/cart/get-usercart', protect, userInfo.getUserCart); /* finished */
+
+router.delete('/cart/delete-cart-products', protect, userInfo.emptyCart); /* finished */
+
+router.delete('/cart/remove-cart-products', protect, userInfo.removeItemFromCart); /* finished */
+
+router.put('/cart/update-cart-items-quantity', protect, userInfo.updateItemQuantity); /* finished */
 
 export default router

@@ -2,15 +2,17 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { BsArrowLeft } from 'react-icons/bs';
-import { addToCart, clearCart, decreaseQuantity, getTotals, increaseQuantity, removeCart } from '../features/cart/cartSlice';
+import { addToCart, clearCart, decreaseQuantity, getTotals, removeCart } from '../features/cart/cartSlice';
+import PayButton from '../components/common/PayButton';
 
 const Cart = () => {
+    // const navigate = useNavigate();
     const dispatch = useDispatch();
     const cart = useSelector((state) => state?.cart);
 
     useEffect(() => {
         dispatch(getTotals());
-    }, [cart]);
+    }, [cart, dispatch]);
 
     const handleRemoveCart = (item) => {
         try {
@@ -131,7 +133,7 @@ const Cart = () => {
                                             <span className='amount'>{cart.cartTotalAmount}</span>
                                         </div>
                                         <p>Taxes and shipping calculated at checkout</p>
-                                        <button>Check Out</button>
+                                        <PayButton cartData={cart.items} />
 
                                         <div className="continue-shopping">
                                             <Link to={`/product`}>

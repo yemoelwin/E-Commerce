@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { NavLink, Link } from 'react-router-dom';
 import { BsSearch } from 'react-icons/bs'
 import compare from '../../images/compare.svg'
@@ -79,8 +79,8 @@ const Header = () => {
                   <Link to='/cart' className='d-flex align-items-center gap-10 text-white'>
                     <img src={cart} alt='cart'></img>
                     <div className='d-flex flex-column gap-10'>
-                      <span className='badge bg-white text-dark'>{totalQuantity}</span>
-                      <p className='mb-0'>$ {cartTotalAmount}</p>
+                      <span className='badge bg-white text-dark'>{totalQuantity ? totalQuantity : 0}</span>
+                      <p className='mb-0'>$ {cartTotalAmount ? cartTotalAmount : 0}</p>
                     </div>
                   </Link>                                    
                 </div>

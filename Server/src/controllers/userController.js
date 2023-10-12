@@ -15,8 +15,6 @@ import jwt from 'jsonwebtoken';
 import uniqid from 'uniqid';
 import { config } from 'dotenv';
 config();
-// import crypto from 'crypto'
-// import { generatePasswordResetToken } from '../models/userModel.js';
 
 const userRegister = asyncHandler(async (req, res) => {
     try {
@@ -155,63 +153,6 @@ const userLogin = asyncHandler(async (req, res) => {
     }
 })
 
-// const adminLogin = asyncHandler(async (req, res) => {
-//     try {
-//         const { email, password } = req.body;
-//         const admin = await User.findOne({ email });
-//         if (!admin) {
-//             return res.status(404).json({
-//                 status: 'FAILED',
-//                 message: 'This admin account does not exists.'
-//             })
-//         }
-//         if (!admin?.verified) {
-//             return res.status(403).json({
-//                 status: 'FAILED',
-//                 message: 'You need to verify your email.'
-//             })
-//         }
-//         if (admin.role !== 'admin') return res.status(404).json({ status: 'FAILED', message: 'Not Authorised' });
-//         // if (admin && (await admin.password(admin.password,password))) {
-//         const isMatched = await bcrypt.compare(password, admin.password)
-//         if (!isMatched) {
-//             return res.status(404).json({ status: 'FAILED', message: 'Password does not match!' });
-//         }
-//             const refreshToken = generateRefreshToken(admin?._id);
-//             await User.findByIdAndUpdate(
-//                 admin?.id,
-//                 {
-//                     refreshToken: refreshToken
-//                 },
-//                 { new: true }
-//             )
-//             res.cookie("refreshToken", refreshToken, {
-//                 httpOnly: true,
-//                 secure: true, 
-//                 sameSite: 'strict',
-//                 maxAge: 72 * 60 * 60 * 1000
-//             })
-//             res.status(200).json({
-//                 _id: admin?._id,
-//                 firstname: admin?.firstname,
-//                 lastname: admin?.lastname,
-//                 email: admin?.email,
-//                 role: admin.role,
-//                 token: generateAccessToken(admin?._id),
-//                 status: 'SUCCESS',
-//                 message: 'Admin logged in successfully',
-//             });
-//         // } else {
-//         //     return res.status(404).json({ message: 'Invalid Credetials.' })
-//         // }
-//     } catch (error) {
-//         res.status(500).json({
-//             status: 'FAILED',
-//             message: 'An error occurred while login as admin and pls try again.'
-//         })
-//     }
-// })
-
 const Logout = asyncHandler(async (req, res) => {
     try {
         const cookie = req.cookies;
@@ -323,6 +264,7 @@ const resetPassword = asyncHandler(async (req, res) => {
         });
     }
 });
+
 // const validatePasswordToken = asyncHandler(async (req, res) => {
 //     try {
 //         const { email, resetToken, newPassword } = req.body;
@@ -543,147 +485,21 @@ const wishList = asyncHandler(async (req, res) => {
     }
 })
 
-// const addToCart = asyncHandler(async (req, res) => {
-//     const { cart } = req.body;
-//     const { _id } = req.user;
-//     try {
-//         const user = await User.findById(_id)
-//         if (!user) {
-//             return res.status(404).json({ message: 'Error'})
-//         }
-//         let products = [];
-//         await Cart.findOneAndDelete({ orderby: user._id })
-//         for (let i = 0; i < cart.length; i++){
-//             let object = [];
-//             object.product = cart[i]._id;
-//             object.count = cart[i].count;
-//             object.color = cart[i].color;
-//             let getPrice = await Product.findById(cart[i]._id).select('price').exec();
-//             object.price = getPrice.price;
-//             products.push(object)
-//         }
-//         let cartTotalPrice = 0;
-//         for (let i = 0; i < products.length; i++){
-//             cartTotalPrice += products[i].price * products[i].count;
-//         }
-//         let newCart = new Cart({
-//             products,
-//             cartTotalPrice,
-//             orderby: user?._id
-//         })
-//         await newCart.save();
-//         res.status(200).json({ message: 'Items have been added to your cart.', newCart})
-//         console.log("products and cartTotal", products);
-//     } catch (error) {
-//         console.log('error', error);
-//         res.status(500).json({ message: "Error Occurred while adding the product to the user's cart" });
-//     }
-// })
-
-const addToCart = asyncHandler(async (req, res) => {
-    const { productId, color, quantity, price } = req.body;
+const createOrder = asyncHandler(async (req, res) => {
+    const { shippingInfo, paymentInfo, orderItems, totalPrice, discountedPrice } = req.body;
     const { _id } = req.user;
     try {
-        const user = await User.findById(_id);
-        if (!user) {
-            return res.status(404).json({ message: 'Error' });
-        };
-        let newCart = new Cart({
-            userId: _id,
-            productId,
-            color,
-            quantity,
-            price,
-        });
-        await newCart.save();
-        res.status(200).json({ message: 'Items have been added to your cart.', newCart });
+        const order = await Order.create(
+            { user:_id, shippingInfo, paymentInfo, orderItems, totalPrice, discountedPrice }
+        )
+        res.status(200).json({message: 'Successfully created order', order})
     } catch (error) {
-        console.log('error', error);
-        res.status(500).json({ message: "Error Occurred while adding the product to the user's cart" });
+        console.error(error)
+        throw error;
     }
 })
 
-/*  */
-const addToCartOne = asyncHandler(async (req, res) => {
-    const { cart } = req.body;
-    const { _id } = req.user;
-    try {
-        const user = await User.findById(_id);
-        if (!user) {
-            return res.status(404).json({ message: 'Error' });
-        };
-        let products = [];
-        // Use Promise.all to fetch prices for all products concurrently
-        const getPricePromises = cart.map(async (cartItem) => {
-            try {
-                const product = await Product.findById(cartItem._id).select('price').exec();
-                if (!product) {
-                    throw new Error('Product not found');
-                }
-                const object = {
-                    product: cartItem._id,
-                    count: cartItem.count,
-                    color: cartItem.color,
-                    price: product.price,
-                };
-                products.push(object);
-            } catch (error) {
-                console.error('Error fetching product price:', error);
-            }
-        });
-        await Promise.all(getPricePromises);
-        let cartTotalPrice = 0;
-        for (let i = 0; i < products.length; i++) {
-            cartTotalPrice += products[i].price * products[i].count;
-        }
-        let newCart = new Cart({
-            products,
-            cartTotalPrice,
-            orderby: user?._id
-        });
-        await newCart.save();
-        res.status(200).json({ message: 'Items have been added to your cart.', newCart });
-        console.log("products and cartTotal", products);
-    } catch (error) {
-        console.log('error', error);
-        res.status(500).json({ message: "Error Occurred while adding the product to the user's cart" });
-    }
-});
-/*  */
-
-const getUserCart = asyncHandler(async (req, res) => {
-    const { _id } = req.params;
-    try {
-        const cart = await Cart.findOne({ orderby: _id })
-            .populate('products.product', "_id color title brand totalAfterDiscount")
-        if (!cart || cart === 'null') {
-            return res.status(404).json({ message: 'Cart is empty.' })
-        }
-            // .populate({
-            //     path: 'products.product',"_id color totalAfterDiscount"
-            //     // select: '-ratings -slug -category -price -sold -totalratings -createdAt -updatedAt -quantity -images'
-            // });
-        res.status(200).json(cart)
-    } catch (error) {
-        console.log('error', error);
-        res.status(500).json({ message: "Error Occurred while getting the product of the user's cart" });
-    }
-})
-
-const emptyCart = asyncHandler(async (req, res) => {
-    const { _id } = req.user;
-    console.log(_id);
-    try {
-        const user = await User.findOne(_id);
-        if (!user) return res.status(404).json({ message: 'Not Found!' })
-        const productCart = await Cart.findOneAndRemove({ orderby: _id })
-        if (!productCart) return res.status(404).json({ message: 'empty cart' })
-        res.status(200).json(productCart)
-    } catch (error) {
-        console.log('error', error);
-        res.status(500).json({ message: "Error Occurred while removing the product to the user's cart" });
-    }
-})
+/* ------------------- Unnecessary function --------------------- */
 
 const applyCoupon = asyncHandler(async (req, res) => {
     const { couponId } = req.body;
@@ -715,7 +531,7 @@ const applyCoupon = asyncHandler(async (req, res) => {
     }
 })
 
-const creatOrder = asyncHandler(async (req, res) => {
+const creatOrderX = asyncHandler(async (req, res) => {
     const { COD, couponApplied, Prepaid } = req.body;
     const { _id } = req.user;
     try {
@@ -833,4 +649,176 @@ const deleteOrder = asyncHandler(async (req, res) => {
         })
     }
 })
-export const userInfo = { userRegister, userLogin, getAllUser, getUserById, deleteUser, updatedUser, wishList, blockUser, unBlockUser, handleRefreshToken, Logout, verifyResetToken, forgotPasswordToken, updatePassword, verifyRegisterEmail, resetPassword, saveAddress, addToCart, getUserCart, emptyCart, applyCoupon, creatOrder, userOrder, getAllOrders, updateOrderStatus, deleteOrder };
+
+// const addToCart = asyncHandler(async (req, res) => {
+//     const { cart } = req.body;
+//     const { _id } = req.user;
+//     try {
+//         const user = await User.findById(_id)
+//         if (!user) {
+//             return res.status(404).json({ message: 'Error'})
+//         }
+//         let products = [];
+//         await Cart.findOneAndDelete({ orderby: user._id })
+//         for (let i = 0; i < cart.length; i++){
+//             let object = [];
+//             object.product = cart[i]._id;
+//             object.count = cart[i].count;
+//             object.color = cart[i].color;
+//             let getPrice = await Product.findById(cart[i]._id).select('price').exec();
+//             object.price = getPrice.price;
+//             products.push(object)
+//         }
+//         let cartTotalPrice = 0;
+//         for (let i = 0; i < products.length; i++){
+//             cartTotalPrice += products[i].price * products[i].count;
+//         }
+//         let newCart = new Cart({
+//             products,
+//             cartTotalPrice,
+//             orderby: user?._id
+//         })
+//         await newCart.save();
+//         res.status(200).json({ message: 'Items have been added to your cart.', newCart})
+//         console.log("products and cartTotal", products);
+//     } catch (error) {
+//         console.log('error', error);
+//         res.status(500).json({ message: "Error Occurred while adding the product to the user's cart" });
+//     }
+// })
+
+const addToCart = asyncHandler(async (req, res) => {
+    const { productId, color, quantity, price } = req.body;
+    const { _id } = req.user;
+    try {
+        const user = await User.findById(_id);
+        if (!user) {
+            return res.status(404).json({ message: 'Error' });
+        };
+        let newCart = new Cart({
+            userId: _id,
+            productId,
+            color,
+            quantity,
+            price,
+        });
+        await newCart.save();
+        res.status(200).json({ message: 'Items have been added to your cart.', newCart });
+    } catch (error) {
+        console.log('error', error);
+        res.status(500).json({ message: "Error Occurred while adding the product to the user's cart" });
+    }
+})
+
+const addToCartOne = asyncHandler(async (req, res) => {
+    const { cart } = req.body;
+    const { _id } = req.user;
+    try {
+        const user = await User.findById(_id);
+        if (!user) {
+            return res.status(404).json({ message: 'Error' });
+        };
+        let products = [];
+        // Use Promise.all to fetch prices for all products concurrently
+        const getPricePromises = cart.map(async (cartItem) => {
+            try {
+                const product = await Product.findById(cartItem._id).select('price').exec();
+                if (!product) {
+                    throw new Error('Product not found');
+                }
+                const object = {
+                    product: cartItem._id,
+                    count: cartItem.count,
+                    color: cartItem.color,
+                    price: product.price,
+                };
+                products.push(object);
+            } catch (error) {
+                console.error('Error fetching product price:', error);
+            }
+        });
+        await Promise.all(getPricePromises);
+        let cartTotalPrice = 0;
+        for (let i = 0; i < products.length; i++) {
+            cartTotalPrice += products[i].price * products[i].count;
+        }
+        let newCart = new Cart({
+            products,
+            cartTotalPrice,
+            orderby: user?._id
+        });
+        await newCart.save();
+        res.status(200).json({ message: 'Items have been added to your cart.', newCart });
+        console.log("products and cartTotal", products);
+    } catch (error) {
+        console.log('error', error);
+        res.status(500).json({ message: "Error Occurred while adding the product to the user's cart" });
+    }
+});
+
+const getUserCart = asyncHandler(async (req, res) => { 
+    const { _id } = req.user;
+    try {
+        const cart = await Cart.find({ userId: _id })
+            .populate("productId")
+        if (!cart || cart === 'null') {
+            return res.status(404).json({ message: 'Cart is empty.' })
+        }
+        res.status(200).json(cart)
+    } catch (error) {
+        console.log('error', error);
+        res.status(500).json({ message: "Error Occurred while getting the product of the user's cart" });
+    }
+})
+
+const removeItemFromCart = asyncHandler(async (req, res) => { 
+    const { _id } = req.user;
+    const { cartItemId } = req.body;
+    try {
+        const deletedItem = await Cart.deleteOne({ userId: _id, _id: cartItemId })
+            .populate("productId")
+        if (!deletedItem || deletedItem === 'null') {
+            return res.status(404).json({ message: 'Cart is empty.' })
+        }
+        res.status(200).json(deletedItem)
+    } catch (error) {
+        console.log('error', error);
+        res.status(500).json({ message: "Error Occurred while getting the product of the user's cart" });
+    }
+})
+
+const updateItemQuantity = asyncHandler(async (req, res) => { 
+    const { _id } = req.user;
+    const { cartItemId, quantity } = req.body;
+    console.log('backend', cartItemId, quantity)
+    try {
+        const cartItem = await Cart.findOne({ userId: _id, _id: cartItemId })
+            .populate("productId")
+        if (!cartItem || cartItem === 'null') {
+            return res.status(404).json({ message: 'Cart is empty.' })
+        }
+        cartItem.quantity = quantity;
+        cartItem.save();
+        res.status(200).json(cartItem);
+    } catch (error) {
+        console.log('error', error);
+        res.status(500).json({ message: "Error Occurred while getting the product of the user's cart" });
+    }
+})
+
+const emptyCart = asyncHandler(async (req, res) => {
+    const { _id } = req.user;
+    console.log(_id);
+    try {
+        const user = await User.findOne(_id);
+        if (!user) return res.status(404).json({ message: 'Not Found!' })
+        const productCart = await Cart.findOneAndRemove({ orderby: _id })
+        if (!productCart) return res.status(404).json({ message: 'empty cart' })
+        res.status(200).json(productCart)
+    } catch (error) {
+        console.log('error', error);
+        res.status(500).json({ message: "Error Occurred while removing the product to the user's cart" });
+    }
+})
+
+export const userInfo = { userRegister, userLogin, getAllUser, getUserById, deleteUser, updatedUser, wishList, blockUser, unBlockUser, handleRefreshToken, Logout, verifyResetToken, forgotPasswordToken, updatePassword, verifyRegisterEmail, resetPassword, saveAddress, addToCart, getUserCart, emptyCart, applyCoupon, createOrder, userOrder, getAllOrders, updateOrderStatus, deleteOrder, removeItemFromCart, updateItemQuantity };

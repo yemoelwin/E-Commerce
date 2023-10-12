@@ -6,7 +6,6 @@ import errorHandler from './middlewares/errorHandler.js';
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import cors from 'cors';
-
 import authRoute from './routes/authRoute.js';
 import productRoute from './routes/productRoute.js';
 import blogRoute from './routes/blogRoute.js';
@@ -17,9 +16,12 @@ import couponRoute from './routes/couponRoute.js';
 import colorRoute from './routes/colorRoute.js';
 import inquiryRoute from './routes/inquiryRoute.js';
 import uploadRoute from './routes/uploadRoute.js';
+import stripeRoute from './routes/stripeRoute.js';
+import { Stripe } from 'stripe';
 config();
 
 const app = express();
+export const stripe = Stripe(process.env.STRIPE_APIKEYS);
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
@@ -28,15 +30,17 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.static("public"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan("dev"));
 app.use(cors());
-// app.use(cors({
-//     origin: 'http://localhost:3000', // Replace with your frontend's URL
-//     credentials: true, // Enable cookies
-// }));
+app.use(cors({
+    origin: 'http://localhost:3000', // Update this to your frontend URL
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true, // Enable cookies if needed
+}));
 app.use('/api/user', authRoute);
 app.use('/api/product', productRoute);
 app.use('/api/blog', blogRoute);
@@ -47,6 +51,7 @@ app.use('/api/coupon', couponRoute);
 app.use('/api/color', colorRoute);
 app.use('/api/inquiry', inquiryRoute);
 app.use('/api/upload', uploadRoute);
+app.use('/api/stripe', stripeRoute);
 app.use(errorHandler.pageNotFound);
 app.use(errorHandler.handleError);
 

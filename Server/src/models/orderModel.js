@@ -1,43 +1,96 @@
 import { model, Schema } from 'mongoose'; // Erase if already required
 import mongoose from 'mongoose';
 
-// Declare the Schema of the Mongo model
-var orderSchema = new Schema({
-    products: [
-        {
-            product: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'Product'
-            },
-            count: Number,
-            color: String,
-            price: Number,
-        }
-    ],
-    payment: {},
-    orderStatus: {
-        type: String,
-        default: 'Not Processed',
-        enum: [
-            "Not Processed",
-            "Cash on Delivery",
-            "Prepaid",
-            "Processing",
-            "Dispatched",
-            "Cancelled",
-            "Delivered",
-        ],
-    },
-    orderby: [
-        {
+var orderSchema = new Schema(
+    {
+        user: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "User",
+            ref: 'User',
+            required: true,
+        }, 
+        shippingInfo: {
+            firstName: {
+                type: String,
+                required: true,
+            },
+            lastName: {
+                type: String,
+                required: true,
+            },
+            address: {
+                type: String,
+                required: true,
+            },
+            city: {
+                type: String,
+                required: true,
+            },
+            state: {
+                type: String,
+                required: true,
+            },
+            other: {
+                type: String,
+                required: true,
+            },
+            pincode: {
+                type: String,
+                required: true,
+            }
+        },
+        paymentInfo: {
+            orderId: {
+                type: String,
+                required: true,
+            },
+            paymentId: {
+                type: String,
+                required: true,
+            }
+        },
+        orderItems: [
+            {
+                product: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: 'Product',
+                    required: true,
+                },
+                color: {
+                    type: String,
+                    required: true,
+                },
+                quantity: {
+                    type: String,
+                    required: true,
+                },
+                price: {
+                    type: String,
+                    required: true,
+                }
+            }
+        ],
+        paidAt: {
+            type: Date,
+            default: Date.now()
+        },
+        totalPrice: {
+            type: Number,
+            required: true,
+        },
+        discountedPrice: {
+            type: Number,
+            required: true,
+        },
+        orderStatus: {
+            type: Number,
+            default: "Ordered"
         }
-    ],
-}, {
-    timestamps: true,
-}
+    },
+    {
+        timestamps: true,
+    }
+    
 );
 
-//Export the model
+
 export default model('Order', orderSchema);

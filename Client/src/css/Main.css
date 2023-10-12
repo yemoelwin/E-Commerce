@@ -123,3 +123,19 @@ a {
     min-height: 80vh;
     font-size: 30px;
 }
+
+.arrow{
+    font-size: 20px;
+}
+
+.to_shopping{
+    font-size: 14px;
+    margin-top: 13px;
+}
+
+.checkout_success{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
+}
