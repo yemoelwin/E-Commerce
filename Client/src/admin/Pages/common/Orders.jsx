@@ -4,9 +4,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { fetchOrders, updateOrderStatus } from '../../../features/auth/AuthSlice';
 import { MdDelete } from 'react-icons/md';
-import { CustomModal } from '../../../components/common/CustomModal';
+import { CustomModal } from '../../../containers/common/CustomModal';
 import { deleteOrder } from '../../../features/auth/AuthSlice';
-import { showToast } from '../../../components/common/ShowToast';
+import { showToast } from '../../../containers/common/ShowToast';
 
 const columns = [
     {

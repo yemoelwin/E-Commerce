@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createAction, createSlice } from "@reduxjs/toolkit";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -6,6 +6,16 @@ const initialState = {
     items: [],
     totalQuantity: 0,
     cartTotalAmount: 0,
+}
+
+export const clearCartItem = createAction('remove_items');
+
+export const truncateTitle = (title, maxLength) => {
+    if (title.length > maxLength) {
+        return `${title.slice(0, maxLength)}...`;
+    } else {
+        return title;
+    }
 }
 
 export const cartSlice = createSlice({
@@ -20,14 +30,14 @@ export const cartSlice = createSlice({
             } else {
                 const tempProduct = { ...action.payload, quantity: 1 }
                 state.items.push(tempProduct);
-                toast.success(`${tempProduct.title} is added to cart`);
+                toast.success(`${truncateTitle(tempProduct.title, 50)} is added to cart`);
             }
         },
         removeCart: (state, action) => {
             const { productId } = action.payload;
             const nextCartItems = state.items.filter((item) => item.productId !== productId);
             state.items = nextCartItems;
-            toast.info(`${action.payload.title} is removed from cart`)
+            toast.info(`${truncateTitle(action.payload.title, 50)} is removed from cart`)
         },
         decreaseQuantity: (state, action) => {
             const { productId } = action.payload;
@@ -59,7 +69,10 @@ export const cartSlice = createSlice({
         }
         
     },
-    extraReducers: (builder) => {}
+    extraReducers: (builder) => {
+        builder
+        .addCase(clearCartItem, () => initialState);
+    }
 });
 
 export const { addToCart, removeCart, decreaseQuantity, clearCart, getTotals } = cartSlice.actions;

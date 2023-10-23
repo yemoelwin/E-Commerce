@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Table } from "antd";
 import { useDispatch, useSelector } from 'react-redux';
-import { CustomModal } from '../../../components/common/CustomModal';
+import { CustomModal } from '../../../containers/common/CustomModal';
 import { MdDelete } from 'react-icons/md';
 import { deleteCoupon, getCoupons } from '../../../features/coupon/couponSlice';
-import { showToast } from '../../../components/common/ShowToast';
+import { showToast } from '../../../containers/common/ShowToast';
 
 const columns = [
     {

@@ -1,7 +1,7 @@
 import React,{ useRef,useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import Meta from '../../components/common/Meta';
-import BreadCrumb from '../../components/common/BreadCrumb';
+import Meta from '../../containers/common/Meta';
+import BreadCrumb from '../../containers/common/BreadCrumb';
 import { useDispatch, useSelector } from 'react-redux';
 import { login, clearErrorMessage } from '../../features/auth/AuthSlice';
 // import { useFormik } from 'formik';

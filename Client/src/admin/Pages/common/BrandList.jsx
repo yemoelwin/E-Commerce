@@ -4,8 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getBrands, deleteBrand, brandResetState } from '../../../features/brand/brandSlice';
 import { Link } from 'react-router-dom';
 import { MdDelete } from 'react-icons/md';
-import { CustomModal } from '../../../components/common/CustomModal';
-import { showToast } from '../../../components/common/ShowToast';
+import { CustomModal } from '../../../containers/common/CustomModal';
+import { showToast } from '../../../containers/common/ShowToast';
 // import { toast } from 'react-toastify';
 
 const columns = [

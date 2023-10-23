@@ -160,7 +160,7 @@ const updateProduct = asyncHandler(async (req, res) => {
         req.body.slug = slug;
         const product = await Product.findByIdAndUpdate(
             id,
-            { title, description, price, brand, category, quantity, color, images, tags },
+            { title, description, price, brand, category, quantity, color, images, tags, slug },
             { new: true }
         )
         if (!product) {

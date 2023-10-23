@@ -1,10 +1,10 @@
 import React from 'react'
-import Meta from '../components/common/Meta';
-import BreadCrumb from '../components/common/BreadCrumb';
+import Meta from '../containers/common/Meta';
+import BreadCrumb from '../containers/common/BreadCrumb';
 import { Link } from 'react-router-dom';
 import { BiArrowBack } from 'react-icons/bi';
 import watch from '../images/watch.jpg'
-import Container from '../components/common/Container';
+import Container from '../containers/common/Container';
 
 const Checkout = () => {
     return (

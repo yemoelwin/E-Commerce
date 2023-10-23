@@ -1,7 +1,7 @@
 import React from 'react'
-import Meta from '../components/common/Meta'
-import BreadCrumb from '../components/common/BreadCrumb'
-import Container from '../components/common/Container';
+import Meta from '../containers/common/Meta'
+import BreadCrumb from '../containers/common/BreadCrumb'
+import Container from '../containers/common/Container';
 
 const TermAndConditions = () => {
     return (

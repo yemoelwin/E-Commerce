@@ -4,7 +4,7 @@ import { useFormik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { categoryResetState, createCategory, getCategory, updateCategory } from '../../../features/category/categorySlice';
-import { showToast } from '../../../components/common/ShowToast';
+import { showToast } from '../../../containers/common/ShowToast';
 
 let schema = yup.object().shape({
     title: yup.string().required("Title is Required"),

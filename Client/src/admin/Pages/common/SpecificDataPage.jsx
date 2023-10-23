@@ -1,5 +1,5 @@
 import React from 'react';
-import DataTable from '../../../components/common/DataTable';// Import your table component
+import DataTable from '../../../containers/common/DataTable';// Import your table component
 
 const SpecificDataPage = () => {
   // Define your table columns and data

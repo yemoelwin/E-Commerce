@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import BlogCart from '../containers/BlogCart';
-import Container from '../components/common/Container';
-import Meta from '../components/common/Meta';
-import BreadCrumb from '../components/common/BreadCrumb';
+import Container from '../containers/common/Container';
+import Meta from '../containers/common/Meta';
+import BreadCrumb from '../containers/common/BreadCrumb';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllBlog } from '../features/blog/blogSlice';
 

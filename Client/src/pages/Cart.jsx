@@ -3,12 +3,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { BsArrowLeft } from 'react-icons/bs';
 import { addToCart, clearCart, decreaseQuantity, getTotals, removeCart } from '../features/cart/cartSlice';
-import PayButton from '../components/common/PayButton';
+import PayButton from './PayButton';
 
 const Cart = () => {
     // const navigate = useNavigate();
     const dispatch = useDispatch();
     const cart = useSelector((state) => state?.cart);
+    console.log()
 
     useEffect(() => {
         dispatch(getTotals());
@@ -87,7 +88,17 @@ const Cart = () => {
                                                 <div className="cart_product">
                                                     <img src={cartItem?.image} alt=''/>
                                                     <div className=''>
-                                                        <h3>{cartItem.title}</h3>
+                                                        <h3 title={cartItem.title}>
+                                                        { cartItem?.title?.length > 15 ? (() => {
+                                                            const truncatedTitle = cartItem?.title.substr(0, 70);
+                                                            const lastSpaceIndex = truncatedTitle.lastIndexOf(" ");
+                                                            if (!lastSpaceIndex) {
+                                                                return `${truncatedTitle}...`;
+                                                            }
+                                                            return `${truncatedTitle.substr(0, lastSpaceIndex)}...`;
+                                                            })() : cartItem?.title
+                                                        }
+                                                        </h3>
                                                     </div>
                                                 </div>
 
@@ -110,7 +121,7 @@ const Cart = () => {
                                                 </div>
 
                                                 <div className="cart_product_total_price">
-                                                    ${cartItem.quantity * cartItem.price}
+                                                    ${(cartItem.quantity * cartItem.price).toFixed(2)}
                                                 </div>
                                             </div> 
                                         )
@@ -130,10 +141,10 @@ const Cart = () => {
                                     <div className="checkout_cart">
                                         <div className="sub_total">
                                             <span>SubTotal</span>
-                                            <span className='amount'>{cart.cartTotalAmount}</span>
+                                            <span className='amount'>{(cart.cartTotalAmount).toFixed(2)}</span>
                                         </div>
                                         <p>Taxes and shipping calculated at checkout</p>
-                                        <PayButton cartData={cart.items} />
+                                        <PayButton cartData={cart.items} cartTotalAmount={cart.cartTotalAmount} totalQuantity={cart.totalQuantity} />
 
                                         <div className="continue-shopping">
                                             <Link to={`/product`}>

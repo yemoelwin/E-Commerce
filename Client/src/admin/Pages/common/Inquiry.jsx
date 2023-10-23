@@ -5,8 +5,8 @@ import { Link } from 'react-router-dom';
 import { deleteInquiry, getAllInquiries, updateInquiry } from '../../../features/inquiry/inquirySlice';
 import { MdDelete } from 'react-icons/md';
 import { BsEyeSlash } from 'react-icons/bs';
-import { CustomModal } from '../../../components/common/CustomModal';
-import { showToast } from '../../../components/common/ShowToast';
+import { CustomModal } from '../../../containers/common/CustomModal';
+import { showToast } from '../../../containers/common/ShowToast';
 
 const columns = [
     {

@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 import { MdDelete } from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
 import { getColors, deleteColor, colorResetState } from '../../../features/color/colorSlice';
-import { CustomModal } from '../../../components/common/CustomModal';
-import { showToast } from '../../../components/common/ShowToast';
+import { CustomModal } from '../../../containers/common/CustomModal';
+import { showToast } from '../../../containers/common/ShowToast';
 
 const columns = [
     {

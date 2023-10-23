@@ -259,8 +259,27 @@
 
 .modal-header h5{
     font-size: 16px;
+    display: flex;
+    justify-content: center;
 }
 
+
+.modal-header{
+    display: grid;
+    grid-template-columns: 95fr 5fr;
+}
+
+.modal-header button{
+    width: 10px;
+    height: 10px;
+    background-color: black;
+    color: black !important;
+}
+
+.modal-header button:hover{
+    /* color: black; */
+    color: black !important;
+}
 
 
 

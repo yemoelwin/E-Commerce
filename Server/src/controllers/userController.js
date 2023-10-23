@@ -14,6 +14,7 @@ import { validateMongodbID } from '../utils/validateMongodbID.js';
 import jwt from 'jsonwebtoken';
 import uniqid from 'uniqid';
 import { config } from 'dotenv';
+import ProductModel from '../models/productModel.js';
 config();
 
 const userRegister = asyncHandler(async (req, res) => {
@@ -485,21 +486,104 @@ const wishList = asyncHandler(async (req, res) => {
     }
 })
 
-const createOrder = asyncHandler(async (req, res) => {
-    const { shippingInfo, paymentInfo, orderItems, totalPrice, discountedPrice } = req.body;
+const saveUserOrder = asyncHandler(async (req, res) => {
     const { _id } = req.user;
+    const { cartData, cartTotalAmount, totalQuantity, transitionId } = req.body;
+    console.log('cartData from backend', cartData, cartTotalAmount, totalQuantity, transitionId);
     try {
-        const order = await Order.create(
-            { user:_id, shippingInfo, paymentInfo, orderItems, totalPrice, discountedPrice }
-        )
-        res.status(200).json({message: 'Successfully created order', order})
+        const existingOne = await Order.find({ customerId: _id, stripe_response: false })
+        console.log("exitone",existingOne)
+
+        if (existingOne.length !== 0) {
+            
+                await Order.updateOne(
+                    { _id: existingOne[0]._id },
+                    {
+                        $set: {
+                            products: cartData,
+                            transitionId,
+                            totalQuantity,
+                            subTotalAmount : cartTotalAmount,
+                        }
+                    }
+                )
+                res.status(200).json({ message: 'success' })
+        } else {
+            const newOrder = new Order({
+                transitionId: transitionId,
+                customerId: _id,
+                products: cartData,
+                totalQuantity: totalQuantity,
+                subTotalAmount: cartTotalAmount,
+                createdAt: new Date(),
+            })
+            await newOrder.save();
+            res.status(200).json({message: 'success', newOrder});
+        }
     } catch (error) {
-        console.error(error)
-        throw error;
+        console.log('Error saving cart:', error);
+        throw error; // Handle the error appropriately in your application
     }
 })
 
+const getOrder = asyncHandler(async (req, res) => {
+    const { userId, transitionId } = req.params;
+    console.log(userId, transitionId);
+    try {
+        const userOrder = await Order.findOne({ customerId: userId, transitionId, stripe_response: true });
+        if (!userOrder) {
+            return res.status(404).json({ message: "Order not found" });
+        }
+        res.status(200).json(userOrder);
+    } catch (error) {
+        console.log('error', error);
+        res.status(500).json({ message: "Error occurred while retrieving user order." });
+    }
+});
+
+
+
+// const createOrder = asyncHandler(async (customer, data) => {
+//     // const { shippingInfo, paymentInfo, orderItems, totalPrice, discountedPrice } = req.body;
+
+//     const { _id } = req.user;
+//     try {
+//         const order = await Order.create(
+//             { user:_id, shippingInfo, paymentInfo, orderItems, totalPrice, discountedPrice }
+//         )
+//         res.status(200).json({message: 'Successfully created order', order})
+//     } catch (error) {
+//         console.error(error)
+//         throw error;
+//     }
+// })
+
 /* ------------------- Unnecessary function --------------------- */
+
+const addToCart = asyncHandler(async (req, res) => {
+    const { productId, title, brand, color, quantity, price } = req.body;
+    const { _id } = req.user;
+    try {
+        let cart = await Cart.findOne({ userId: _id });
+        if (!cart) {
+            return res.status(404).json({ message: 'User does not exist.' });
+        };
+        let newCart = new Cart({
+            userId: _id,
+            productId,
+            title,
+            brand,
+            color,
+            quantity,
+            price,
+        });
+        await newCart.save();
+        res.status(200).json({ message: 'Successfully save the items to cart.', newCart });
+    } catch (error) {
+        console.log('error', error);
+        res.status(500).json({ message: "Error Occurred while adding the product to the user's cart" });
+    }
+})
 
 const applyCoupon = asyncHandler(async (req, res) => {
     const { couponId } = req.body;
@@ -577,19 +661,6 @@ const creatOrderX = asyncHandler(async (req, res) => {
         res.status(500).json({ message: "Error Occurred while creating ordering." });
     }
 })
-
-const userOrder = asyncHandler(async (req, res) => {
-    const { id } = req.params;
-    console.log(id);
-    try {
-        const userOrder = await Order.findById(id)
-            .populate('products.product', "_id color title brand ").exec();
-        res.status(200).json(userOrder);
-    } catch (error) {
-        console.log('error', error);
-        res.status(500).json({ message: "Error Occurred while retrieving user order." });
-    }
-});
 
 const getAllOrders = asyncHandler(async (req, res) => {
     try {
@@ -687,28 +758,7 @@ const deleteOrder = asyncHandler(async (req, res) => {
 //     }
 // })
 
-const addToCart = asyncHandler(async (req, res) => {
-    const { productId, color, quantity, price } = req.body;
-    const { _id } = req.user;
-    try {
-        const user = await User.findById(_id);
-        if (!user) {
-            return res.status(404).json({ message: 'Error' });
-        };
-        let newCart = new Cart({
-            userId: _id,
-            productId,
-            color,
-            quantity,
-            price,
-        });
-        await newCart.save();
-        res.status(200).json({ message: 'Items have been added to your cart.', newCart });
-    } catch (error) {
-        console.log('error', error);
-        res.status(500).json({ message: "Error Occurred while adding the product to the user's cart" });
-    }
-})
+
 
 const addToCartOne = asyncHandler(async (req, res) => {
     const { cart } = req.body;
@@ -821,4 +871,4 @@ const emptyCart = asyncHandler(async (req, res) => {
     }
 })
 
-export const userInfo = { userRegister, userLogin, getAllUser, getUserById, deleteUser, updatedUser, wishList, blockUser, unBlockUser, handleRefreshToken, Logout, verifyResetToken, forgotPasswordToken, updatePassword, verifyRegisterEmail, resetPassword, saveAddress, addToCart, getUserCart, emptyCart, applyCoupon, createOrder, userOrder, getAllOrders, updateOrderStatus, deleteOrder, removeItemFromCart, updateItemQuantity };
+export const userInfo = { userRegister, userLogin, getAllUser, getUserById, deleteUser, updatedUser, wishList, blockUser, unBlockUser, handleRefreshToken, Logout, verifyResetToken, forgotPasswordToken, updatePassword, verifyRegisterEmail, resetPassword, saveAddress, saveUserOrder, addToCart, getUserCart, emptyCart, applyCoupon, getOrder, getAllOrders, updateOrderStatus, deleteOrder, removeItemFromCart, updateItemQuantity };

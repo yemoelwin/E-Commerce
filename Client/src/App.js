@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import './css/App.css';
 import './css/Product.css';
 import './css/Contact.css';
+import './css/invoice.css';
 import './css/CompareProduct.css';
 import './css/Login.css';
 import './css/signup.css';
@@ -10,7 +11,7 @@ import './css/Cart.css';
 import './css/Dashboard.css';
 import './admin/layouts/MainLayout.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Layout from './components/layout/Layout';
+import Layout from './containers/layout/Layout';
 import Home from './pages/Home';
 import About from './pages/About';
 import OurStore from './pages/OurStore';
@@ -55,11 +56,13 @@ import { setUser } from './features/auth/AuthSlice';
 import AddCoupon from './admin/Pages/common/AddCoupon';
 import CouponList from './admin/Pages/common/CouponList';
 import ViewInquiry from './admin/Pages/common/ViewInquiry';
-import DataTable from './components/common/DataTable';
+import DataTable from './containers/common/DataTable';
 import SpecificDataPage from './admin/Pages/common/SpecificDataPage';
 import ViewOrders from './admin/Pages/common/ViewOrders';
 import NotFound from './pages/NotFound';
-import CheckoutSuccess from './components/common/CheckoutSuccess';
+
+import CheckoutCancel from './containers/common/CheckoutCancel';
+import CheckoutSuccess from './containers/CheckoutSuccess';
 
 // import ProtectedRoute from './routes/protectedRoute';
 
@@ -85,7 +88,8 @@ function App() {
             <Route path='blog' element={< BlogPage />} />
             <Route path='blog/:id' element={< SingleBlog />} />
             <Route path='cart' element={< Cart />} />
-            <Route path='checkout-success' element={< CheckoutSuccess />} />
+            <Route path='checkout-success/:userId/:transitionId' element={< CheckoutSuccess />} />
+            <Route path='cancel' element={< CheckoutCancel />} />
             <Route path='checkout' element={< Checkout />} />
             <Route path='compare-product' element={<CompareProduct />} />
             <Route path='wishlist' element={<WishList />} />

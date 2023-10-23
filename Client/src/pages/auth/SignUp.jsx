@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import Meta from '../../components/common/Meta'
-import BreadCrumb from '../../components/common/BreadCrumb'
+import Meta from '../../containers/common/Meta'
+import BreadCrumb from '../../containers/common/BreadCrumb'
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';

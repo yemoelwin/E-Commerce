@@ -4,8 +4,8 @@ import { Link } from 'react-router-dom';
 import { Table } from "antd";
 import { deleteProduct, getProducts } from '../../../features/products/productSlice';
 import { MdDelete } from 'react-icons/md';
-import { CustomModal } from '../../../components/common/CustomModal';
-import { showToast } from '../../../components/common/ShowToast';
+import { CustomModal } from '../../../containers/common/CustomModal';
+import { showToast } from '../../../containers/common/ShowToast';
 
 const columns = [
     {

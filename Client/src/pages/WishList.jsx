@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import Container from '../components/common/Container';
-import Meta from '../components/common/Meta';
-import BreadCrumb from '../components/common/BreadCrumb';
+import Container from '../containers/common/Container';
+import Meta from '../containers/common/Meta';
+import BreadCrumb from '../containers/common/BreadCrumb';
 import { useDispatch, useSelector } from 'react-redux';
 import { getWishlist } from '../features/users/userSlice';
 import { productResetState, removeWishlist } from '../features/products/productSlice';
-import { showToast } from '../components/common/ShowToast';
+import { showToast } from '../containers/common/ShowToast';
 
 const WishList = () => {
 

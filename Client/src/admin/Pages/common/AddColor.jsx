@@ -4,7 +4,7 @@ import { useFormik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { colorResetState, createColor, fetchColor, updateColor } from '../../../features/color/colorSlice';
-import { showToast } from '../../../components/common/ShowToast';
+import { showToast } from '../../../containers/common/ShowToast';
 
 let schema = yup.object().shape({
     color: yup.string().required("Color is Required"),

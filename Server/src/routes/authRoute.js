@@ -21,9 +21,11 @@ router.put('/edit-user', protect, userInfo.updatedUser); /* finished */
 
 router.put('/save-address/:_id', protect, userInfo.saveAddress); /* finished */
 
-router.post('/order/create_order', protect, userInfo.createOrder); /* finished */
+router.post('/cart?addtocart', protect, userInfo.addToCart); /* finished */
 
-router.get('/order/get_order_byuser/:id', protect, userInfo.userOrder); /* finished */
+router.post('/order/create_userOrder', protect, userInfo.saveUserOrder); /* finished */
+
+router.get('/order/get_order/:userId/:transitionId', protect, userInfo.getOrder); /* finished */
 
 router.get('/order/allorders', protect, isAdmin, userInfo.getAllOrders); /* finished */
 
@@ -52,8 +54,6 @@ router.delete('/:id', protect, isAdmin, userInfo.deleteUser); /* finished */
 /* --------------------Unnecessary Code--------------------- */
 
 router.post('/cart/apply_coupon', protect, userInfo.applyCoupon);
-
-router.post('/addtocart', protect, userInfo.addToCart); /* finished */
 
 router.get('/cart/get-usercart', protect, userInfo.getUserCart); /* finished */
 

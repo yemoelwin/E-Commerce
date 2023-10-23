@@ -1,19 +1,20 @@
 import React, { useEffect } from 'react'
 import ReactStars from "react-rating-stars-component";
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import prodcompare from "../images/prodcompare.svg";
 import wish from '../images/wish.svg'
 import addcart from "../images/add-cart.svg";
 import view from "../images/view.svg";
 import { useDispatch, useSelector } from 'react-redux';
 import { addToWishlistProduct, addToWishListReset } from '../features/products/productSlice';
-import { showToast } from '../components/common/ShowToast';
+import { showToast } from './common/ShowToast';
 
 const CardProduct = (props) => {
     const { grid, prodData } = props;
+    console.log('prodData', prodData)
     let location = useLocation();
     const dispatch = useDispatch();
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
     const addToWishlistMessage = useSelector((state) => state?.product?.addToWishList);
     const message = addToWishlistMessage?.message;
 
@@ -55,7 +56,23 @@ const CardProduct = (props) => {
 
                                 <div className="product-details">
                                     <h6 className="brand">{item.brand}</h6>
-                                    <h5 className="product-title">{item.title}</h5>
+                                    <h5 className="product-title" title={item?.title}>
+
+                                        {
+                                            item?.title.length > 15
+                                            ? (() => {
+                                                const truncatedTitle = item?.title.substr(0, 50);
+                                                const lastSpaceIndex = truncatedTitle.lastIndexOf(' ');
+                                                if (lastSpaceIndex !== -1) {
+                                                return `${truncatedTitle.substr(0, lastSpaceIndex)}...`;
+                                                } else {
+                                                return `${truncatedTitle}...`;
+                                                }
+                                            })()
+                                            : item?.title
+                                        }
+                                        
+                                    </h5>
                                     <ReactStars
                                         count={5}
                                         size={24}
@@ -63,15 +80,28 @@ const CardProduct = (props) => {
                                         edit={false}
                                         activeColor="#ffd700"
                                     />
-                                    <p className={`description ${grid === 12 ? "d-block" : "d-none"}`}>
-                                        {item.description}
+                                    <p className={`description ${grid === 12 ? "d-block" : "d-none"}`} description = {item.description}>
+
+                                        {
+                                            item?.description.length > 15
+                                            ? (() => {
+                                                const truncatedDescription = item?.description.substr(0, 300);
+                                                const lastSpaceIndex = truncatedDescription.lastIndexOf(' ');
+                                                if (lastSpaceIndex !== -1) {
+                                                return `${truncatedDescription.substr(0, lastSpaceIndex)}...`;
+                                                } else {
+                                                return `${truncatedDescription}...`;
+                                                }
+                                            })()
+                                            : item?.description
+                                        }
                                     </p>
                                     <p className="price">{`$ ${item.price }`}</p>
                                 </div>
 
                                 <div className="action-bar position-absolute">
                                     
-                                    <div className="d-flex flex-column">
+                                    <div className="d-flex flex-column action-barX">
                                         <button
                                             className='mb-1 border-0 bg-transparent '
                                             onClick={(e) => {

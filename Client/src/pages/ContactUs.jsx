@@ -2,15 +2,15 @@ import React, { useEffect, useState } from 'react'
 // import Maps from './Maps';
 import { AiOutlineHome, AiOutlineMail } from 'react-icons/ai'
 import { BiPhoneCall, BiInfoCircle } from 'react-icons/bi'
-import Container from '../components/common/Container';
-import Meta from '../components/common/Meta';
-import BreadCrumb from '../components/common/BreadCrumb';
+import Container from '../containers/common/Container';
+import Meta from '../containers/common/Meta';
+import BreadCrumb from '../containers/common/BreadCrumb';
 import { Link } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useDispatch, useSelector } from 'react-redux';
 import { createContact } from '../features/inquiry/inquirySlice';
-import { showToast } from '../components/common/ShowToast';
+import { showToast } from '../containers/common/ShowToast';
 
 let schema = yup.object().shape({
     name: yup.string().required("Name is Required"),

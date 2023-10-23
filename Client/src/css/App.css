@@ -369,30 +369,49 @@ footer .input-group-text{
 
 /* Card Product starts here */
 
-.product-card{
+/* .product-card{
   padding: 18px;
   background-color: rgb(255, 255, 255);
   border-radius: 10px;
   overflow: hidden;
-  /* max-width: 100%; */
+  height: 95%;
+  width: 100%;
+} */
+
+.product-card {
+  /* display: flex;
+  flex-direction: column; */
+  padding: 18px;
+  background-color: rgb(255, 255, 255);
+  border-radius: 10px;
+  overflow: hidden;
   height: 95%;
   width: 100%;
 }
 
 .product-card .product-image{
   height: 280px;
-  /* width: ; */
-  /* width: 100%; */
+  
 }
 
 .product-card .product-image img{
   object-fit: contain;
-  height: 250px;
-  max-width: 90%;
+  max-width: 90%; /* Ensure the image fills its container */
+  height: 260px; /* Allow images of different heights */
   display: block;
-  margin-right: 0;
-  margin-left: 0;
+  margin-right: auto;
+  margin-left: auto;
   margin-top: 5px;
+}
+
+.product-card .product-details {
+  flex: 1;
+  /* Allow the details section to expand and fill available space */
+  display: flex;
+  flex-direction: column;
+  /* Align the text content vertically */
+  justify-content: space-between;
+  /* Space evenly between title and other details */
 }
 
 /* .product-card .product-image>img:last-child {
@@ -407,7 +426,7 @@ footer .input-group-text{
 } */
 
 .product-card:hover .action-bar{
-  right: 14px;
+  right: 8px;
 }
 
 .product-card .product-details h6{
@@ -419,6 +438,7 @@ footer .input-group-text{
   font-size: 15px;
   color: var(--color-1c1c1b);
 }
+
 .product-card .product-details p{
   font-size: 17px;
   color: var(--color-1c1c1b);
@@ -437,10 +457,8 @@ footer .input-group-text{
 }
 
 .wishlist-icon {
-  /* opacity: 0; */
   top: 4%;
   right: 15px;
-  /* transition: opacity 0.1s; */
 }
 
 @media (min-width: 768px) {
@@ -663,8 +681,10 @@ footer .input-group-text{
 }
 
 .loading-spinner {
-  border: 2px solid rgba(9, 9, 9, 0.1);
+  border: 2px solid rgba(146, 144, 144, 0.1);
   border-left: 2px solid #4b4b4b;
+  border-right: 2px solid #4b4b4b;
+  /* border-top: 2px solid #4b4b4b; */
   border-radius: 50%;
   width: 25px;
   height: 25px;
@@ -703,9 +723,120 @@ footer .input-group-text{
   font-size: 17px;
   /* Adjust height as needed */
 }
+/* NavLink active */
+.active-display{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
+.inactive-display{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: white
+}
 
+.link-active{
+  color: #0A58CA
+}
 
+.link-inactive {
+  color: rgb(211, 211, 211);
+}
 
+/* Profile */
 
+.hero{
+  width: 40px;
+  height: 40px;
+  position: relative;
+  margin-right: 1rem;
+}
+
+.profile-logo{
+  width: 100%;
+  height: 100%;
+    background: #eceaff;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.header-upper .header-upper-links .profile-logo img{
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: fill;
+}
+
+.header-upper .header-upper-links .user-info img{
+  width: 45px;
+  height: 45px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 1px solid rgb(198, 198, 198);
+  padding: 1px;
+}
+
+.sub-menu-wrap{
+  position: absolute;
+  top: 132%;
+  right: 0;
+  width: 200px;
+  max-height: 0px;
+  overflow: hidden;
+  transition: max-height 0.5s;
+  z-index: 1;
+}
+
+.sub-menu-wrap.open-menu{
+  max-height: 300px;
+}
+
+.sub-menu{
+  background: white;
+  border-radius: 3px;
+  padding: 20px;
+  margin: 10px;
+}
+
+.user-info{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user-info h5{
+font-weight: 400;
+font-size: 14px;
+}
+
+.sub-menu-link{
+  display: flex;
+  text-decoration: none;
+  margin: 5px 0;
+  text-align: center;
+  gap: 6px;
+}
+
+.sub-menu-link .logo-sl{
+  font-size: 22px;
+  color: #525252;
+}
+
+.sub-menu-link p{
+  color: #525252;
+  margin-top: 1px;
+  letter-spacing: 0.3px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.sub-menu-link p:hover{
+  color: #a8a8a8;
+}
+
+.profile-login img{
+  border-radius: 50%;
+}
 

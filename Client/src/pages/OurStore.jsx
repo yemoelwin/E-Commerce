@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react'
 import ReactStars from 'react-rating-stars-component'
 import CardProduct from '../containers/CardProduct';
 import Colors from '../containers/Colors';
-import Container from '../components/common/Container';
-import BreadCrumb from '../components/common/BreadCrumb';
-import Meta from '../components/common/Meta';
+import Container from '../containers/common/Container';
+import BreadCrumb from '../containers/common/BreadCrumb';
+import Meta from '../containers/common/Meta';
 import { useDispatch, useSelector } from 'react-redux';
 import { getProducts } from '../features/products/productSlice';
 
@@ -14,6 +14,7 @@ const ProductPage = () => {
     const [isChecked, setIsChecked] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const productState = useSelector((state) => state.product.products);
+    // console.log('abc',productState[0].quantity)
     useEffect(() => {
         const getAllProducts = async () => {
             try {

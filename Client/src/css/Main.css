@@ -130,7 +130,12 @@ a {
 
 .to_shopping{
     font-size: 14px;
-    margin-top: 13px;
+    align-items: center;
+    text-align: center;
+}
+
+.checkoutX_success{
+    height: 80vh;
 }
 
 .checkout_success{
@@ -138,4 +143,33 @@ a {
     justify-content: center;
     align-items: center;
     height: 80vh;
+}
+
+.link_x{
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    /* height: 30vh; */
+}
+
+.alertX {
+    /* padding-top: 0.5rem; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+}
+
+.alertX h5{
+    margin-top: 8px;
+}
+
+.btn-outline-primary{
+    font-size: 14px !important;
+}
+
+.btn-outline-primary:hover{
+    background-color: white !important;
+    color: #1120c2;
+    
 }

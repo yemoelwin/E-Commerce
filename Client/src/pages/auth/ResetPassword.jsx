@@ -1,8 +1,8 @@
 import React from 'react'
-import Meta from '../../components/common/Meta'
-import BreadCrumb from '../../components/common/BreadCrumb';
-import CustomInput from '../../components/common/CustomInput';
-import Container from '../../components/common/Container'
+import Meta from '../../containers/common/Meta'
+import BreadCrumb from '../../containers/common/BreadCrumb';
+import CustomInput from '../../containers/common/CustomInput';
+import Container from '../../containers/common/Container'
 // import { Link } from 'react-router-dom';
 
 const ResetPassword = () => {

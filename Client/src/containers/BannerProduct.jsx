@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Container from '../components/common/Container';
+import Container from './common/Container';
 
 const BannerProduct = () => {
     return (

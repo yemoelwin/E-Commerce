@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import Meta from '../components/common/Meta'
-import BreadCrumb from '../components/common/BreadCrumb'
-import Container from '../components/common/Container'
+import Meta from '../containers/common/Meta'
+import BreadCrumb from '../containers/common/BreadCrumb'
+import Container from '../containers/common/Container'
 import { Link, useLocation } from 'react-router-dom'
 import { HiOutlineArrowLeft } from "react-icons/hi";
 import { useDispatch, useSelector } from 'react-redux';

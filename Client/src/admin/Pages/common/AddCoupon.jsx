@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { couponResetState, createNewCoupon } from '../../../features/coupon/couponSlice';
-import { showToast } from '../../../components/common/ShowToast';
+import { showToast } from '../../../containers/common/ShowToast';
 
 
 let schema = yup.object().shape({

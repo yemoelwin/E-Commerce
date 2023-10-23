@@ -7,7 +7,7 @@ import MarqueeSlider from '../containers/Marquee';
 import Offer from '../containers/Offer';
 import Items from '../containers/Items';
 import BannerProduct from '../containers/BannerProduct';
-import Container from '../components/common/Container';
+import Container from '../containers/common/Container';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAllBlog } from '../features/blog/blogSlice';
 import { getProducts,} from '../features/products/productSlice';

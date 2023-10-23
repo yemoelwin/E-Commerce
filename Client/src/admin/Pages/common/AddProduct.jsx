@@ -13,7 +13,7 @@ import { createProduct, fetchProductData, productResetState, updateProductData }
 import { useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
-import { showToast } from '../../../components/common/ShowToast';
+import { showToast } from '../../../containers/common/ShowToast';
 import { RxCross2 } from 'react-icons/rx';
 
 let schema = yup.object().shape({

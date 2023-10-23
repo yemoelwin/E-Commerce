@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import Meta from '../components/common/Meta'
-import BreadCrumb from '../components/common/BreadCrumb'
+import Meta from '../containers/common/Meta'
+import BreadCrumb from '../containers/common/BreadCrumb'
 import CardProduct from '../containers/CardProduct';
 import ReactStars from "react-rating-stars-component";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -8,12 +8,13 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import Colors from "../containers/Colors";
 import { TbGitCompare } from "react-icons/tb";
 import { AiOutlineHeart } from "react-icons/ai";
-import Container from "../components/common/Container";
+import Container from "../containers/common/Container";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProductData } from "../features/products/productSlice";
-import { showToast } from "../components/common/ShowToast";
+import { showToast } from "../containers/common/ShowToast";
 import copy from 'copy-to-clipboard';
 import { addToCart } from "../features/cart/cartSlice";
+import { RxCross1 } from 'react-icons/rx';
 
 const SingleProduct = () => {
     const dispatch = useDispatch();
@@ -25,6 +26,7 @@ const SingleProduct = () => {
     const { id } = useParams();
     const product = useSelector((state) => state?.product?.singleData);
     const cartState = useSelector((state) => state?.cart?.items);
+    console.log(product)
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -51,14 +53,14 @@ const SingleProduct = () => {
             }
         };
         fetchProduct();
-    }, []);
+    }, [id, cartState]);
 
-    const props = {
-        width: 600,
-        height: 720,
-        zoomWidth: 600,
-        img: product?.images[0].url ? product?.images[0].url : '',
-    };
+    // const props = {
+    //     width: 600,
+    //     height: 720,
+    //     zoomWidth: 600,
+    //     img: product?.images[0].url ? product?.images[0].url : '',
+    // };
 
     // setorderedProduct
     const [orderedProduct] = useState(true);
@@ -80,11 +82,22 @@ const SingleProduct = () => {
         if (!color || color === '') {
             showToast('Please choose the color', 'error')
         } else {
-            await dispatch(addToCart({productId: product._id, title: product.title, image: product.images[0].url, color, price: product.price}))
+            const cartItem = {
+                productId: product._id,
+                title: product.title,
+                image: product.images[0].url,
+                color,
+                price: product.price,
+                brand: product.brand,
+            };
+            await dispatch(addToCart(cartItem));
         }
     }
+
+    // {productId: product._id, title: product.title, image: product.images[0].url, color, price: product.price, brand: product.brand}
+    
     const handleAddToCart = () => { };
-    const closeModal = () => { };
+    // const closeModal = () => { };
 
     return (
         <>
@@ -145,7 +158,7 @@ const SingleProduct = () => {
                                 {/* Type */}
                                     <div className="d-flex gap-10 align-items-center my-2">
                                         <h3 className="product-heading">Type :</h3>
-                                    <p className="product-data">{product?.category}</p>
+                                        <p className="product-data">{product?.category}</p>
                                     </div>
 
                                 {/* Brand */}
@@ -167,10 +180,27 @@ const SingleProduct = () => {
                                     </div>
 
                                 {/* Availablity */}
-                                    <div className="d-flex gap-10 align-items-center my-2">
+                                    {/* <div className="d-flex gap-10 align-items-center my-2">
                                         <h3 className="product-heading">Availablity :</h3>
-                                        <p className="product-data">In Stock</p>
+                                    <p className="product-data">
+                                        <span>
+                                            {product.quantity > 0 ? `instock (${product.quantity})` : `out of stock`}
+                                        </span>
+                                    </p>
+                                    </div> */}
+                                {product ? (
+                                    <div className="d-flex gap-10 align-items-center my-2">
+                                        <h3 className="product-heading">Availability :</h3>
+                                        <p className="product-data">
+                                        <span>
+                                            {product.quantity > 0 ? `in stock (${product.quantity})` : 'out of stock'}
+                                        </span>
+                                        </p>
                                     </div>
+                                ) : (
+                                    // Render a loading indicator or error message
+                                    <p>Loading product data...</p>
+                                )}
 
                                 {/* Size */}
                                     <div className="d-flex gap-10 flex-column mt-2 mb-3">
@@ -189,7 +219,7 @@ const SingleProduct = () => {
                                             XXL
                                             </span>
                                         </div>
-                                    </div>
+                                </div>
 
                                 {/* Color */}
                                 <div className="mt-2 mb-3">
@@ -208,27 +238,6 @@ const SingleProduct = () => {
                                 </div>
 
                                 <div >
-                                    {/* Quantity */}
-                                    {/* <div className="d-flex align-items-center gap-10 flex-row mt-3 mb-3">
-                                        {alreadyAdded === false && 
-                                            <>
-                                                <h3 className="product-heading">Quantity :</h3>
-                                                <div className="mt-1">
-                                                    <input
-                                                    type="number"
-                                                    name="quantity"
-                                                    min={1}
-                                                    max={10}
-                                                    className="form-control"
-                                                    style={{ width: "70px" }}
-                                                    id="quantity"
-                                                    // value={quantity}
-                                                    onChange={(e) => setQuantity(e.target.value)}
-                                                    />
-                                                </div>
-                                            </>
-                                        }
-                                    </div> */}
                                     
                                     <div className={alreadyAdded ? 'ms-0' : "mt-3"}>
                                         {
@@ -263,14 +272,14 @@ const SingleProduct = () => {
                                                     <h5 className="modal-title" id="staticBackdropLabel">
                                                         Are you sure to add this item?
                                                     </h5>
-                                                    <button
+                                                    <RxCross1
                                                         type="button"
-                                                        className="btn-close"
+                                                        // className="btn-close"
                                                         data-bs-dismiss="modal"
                                                         aria-label="Close"
                                                     >
                                                                     
-                                                    </button>
+                                                    </RxCross1>
                                                 </div>
                                                         
                                                 <div className="modal-body">
@@ -285,8 +294,20 @@ const SingleProduct = () => {
                                                             
                                                         <div className="d-flex flex-column flex-grow-1 w-50 align-items-center p-3">
                                                             <div>
-                                                                <h6 className="mb-3">{product?.title}</h6>
-                                                                {/* <p className="mb-1 modal-font-size">quantity: {quantity}</p> */}
+                                                                <h6 className="mb-3" title={product?.title}>
+                                                                    
+                                                                    {
+                                                                        product?.title?.length > 15 ? (() => {
+                                                                            const truncatedTitle = product?.title.substr(0, 70);
+                                                                            const lastSpaceIndex = truncatedTitle.lastIndexOf(" ");
+                                                                            if (!lastSpaceIndex) {
+                                                                            return `${truncatedTitle}...`;
+                                                                            }
+                                                                            return `${truncatedTitle.substr(0, lastSpaceIndex)}...`;
+                                                                        })() : product?.title
+                                                                    }
+                                                                </h6>
+                                                                
                                                                 <p className="mb-1 modal-font-size">price: ${product?.price}</p>
                                                                 <p className="mb-1 modal-font-size">color: {color}</p>
                                                                 <p className="mb-1 modal-font-size">Size: abcd</p>
@@ -312,15 +333,6 @@ const SingleProduct = () => {
                                                     >Confirm</button>  
                                                 </div>    
                                                             
-                                                {/* <div className="cart_Modal">
-                                                    <Link
-                                                        to={`/product`}
-                                                        data-bs-dismiss="modal"
-                                                        onClick={() => {
-                                                            closeModal();
-                                                        }}
-                                                    > Continue to Shopping </Link>
-                                                </div>     */}
                                                     
                                             </div>
 
