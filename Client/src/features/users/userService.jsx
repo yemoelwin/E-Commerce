@@ -16,7 +16,7 @@ const getUserWishlist = async () => {
 };
 
 const saveOrder = async (data) => {
-    // console.log('service data', data)
+    console.log('service data', data)
     try {
         const response = await api.post('/user/order/create_userOrder', data);
         console.log('reponsedata', response.data)
@@ -49,6 +49,58 @@ const getOrder = async ({userId, transitionId}) => {
     }
 };
 
+const getOrders = async (id) => {
+    console.log('service id', id)
+    try {
+        const response = await api.get(`/user/order/user-orders/${id}`)
+        return response.data;
+    } catch (error) {
+        console.error(error.response.data); // Re-throw the error for higher-level handlings
+        throw new Error();
+    }   
+};
+
+const getallUserOrders = async () => {
+    try {
+        const response = await api.get(`/user/order/all-orders`)
+        return response.data;
+    } catch (error) {
+        console.error(error.response.data); // Re-throw the error for higher-level handlings
+        throw new Error();
+    }   
+};
+
+// const getOrder = async (id) => {
+//     try {
+//         const response = await api.get(`/user/order/get_order_byuser/${id}`)
+//         return response.data;
+//     } catch (error) {
+//         console.error("An error occurred while updating order status", error);
+//         throw error; // Re-throw the error for higher-level handling
+//     }   
+// };
+
+const updateOrderStatus = async (data) => {
+    try {
+        const response = await api.put(`/user/order/update_user_order_status/${data.id}`, {orderStatus: data.data})
+        return response.data;
+    } catch (error) {
+        console.error("An error occurred while updating order status", error);
+        throw error; // Re-throw the error for higher-level handling
+    }   
+};
+
+
+const deleteOrder = async (id) => {
+    try {
+        const response = await api.delete(`/user/delete_order/${id}`)
+        return response.data;
+    } catch (error) {
+        console.error("An error occurred while updating order status", error);
+        throw error; // Re-throw the error for higher-level handling
+    }   
+};
+
 const invoicePDF = async (id) => {
     console.log('service id',id)
     try {
@@ -71,6 +123,8 @@ const userService = {
     getUserWishlist,
     saveOrder,
     getOrder,
+    getOrders,
+    getallUserOrders,
     invoicePDF,
 };
 

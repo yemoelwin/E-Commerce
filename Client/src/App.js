@@ -31,6 +31,10 @@ import Checkout from './pages/Checkout';
 import ContactUs from './pages/ContactUs';
 import BlogPage from './pages/BlogPage';
 import WishList from './pages/WishList';
+import NotFound from './pages/NotFound';
+import CheckoutCancel from './containers/common/CheckoutCancel';
+import OrderList from './pages/OrderList';
+import CheckoutSuccess from './pages/CheckoutSuccess';
 
 /* admin */
 import MainLayout from "./admin/layouts/MainLayout";
@@ -50,30 +54,35 @@ import AddColor from "./admin/Pages/common/AddColor";
 import AddCategory from "./admin/Pages/common/AddCategory";
 import AddBrand from "./admin/Pages/common/AddBrand";
 import AddProduct from "./admin/Pages/common/AddProduct";
-
-import { useDispatch } from 'react-redux';
-import { setUser } from './features/auth/AuthSlice';
 import AddCoupon from './admin/Pages/common/AddCoupon';
 import CouponList from './admin/Pages/common/CouponList';
 import ViewInquiry from './admin/Pages/common/ViewInquiry';
 import DataTable from './containers/common/DataTable';
 import SpecificDataPage from './admin/Pages/common/SpecificDataPage';
 import ViewOrders from './admin/Pages/common/ViewOrders';
-import NotFound from './pages/NotFound';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUser } from './features/auth/AuthSlice';
+import { PrivateRoutes } from './routes/privateRoutes';
 
-import CheckoutCancel from './containers/common/CheckoutCancel';
-import CheckoutSuccess from './containers/CheckoutSuccess';
 
-// import ProtectedRoute from './routes/protectedRoute';
 
 function App() {
   const dispatch = useDispatch();
-  const user = JSON.parse(localStorage.getItem('user'));
-  useEffect(() => {
-    dispatch(setUser(user));
-  }, [dispatch, user]);
   // const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
+  useEffect(() => {
+    // Attempt to retrieve user data from local storage
+    try {
+      const user = JSON.parse(localStorage.getItem('user'));
+      if (user) {
+        // Dispatch the user data to set the user in your Redux store
+        dispatch(setUser(user));
+      }
+    } catch (error) {
+      // Handle any errors that occur while retrieving or parsing user data
+      console.error('Error retrieving user data:', error);
+    }
+  }, [dispatch]);
   return (
     <>
       <BrowserRouter>
@@ -87,8 +96,9 @@ function App() {
             <Route path='product/:id' element={< SingleProduct />} />
             <Route path='blog' element={< BlogPage />} />
             <Route path='blog/:id' element={< SingleBlog />} />
-            <Route path='cart' element={< Cart />} />
+            <Route path='cart' element={<PrivateRoutes>< Cart /></PrivateRoutes>} />
             <Route path='checkout-success/:userId/:transitionId' element={< CheckoutSuccess />} />
+            <Route path='orderlists/:id' element={< OrderList />} />
             <Route path='cancel' element={< CheckoutCancel />} />
             <Route path='checkout' element={< Checkout />} />
             <Route path='compare-product' element={<CompareProduct />} />

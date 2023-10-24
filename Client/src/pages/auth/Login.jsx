@@ -28,19 +28,19 @@ const Login = () => {
     }, [isSuccess, isError, navigate]);
 
     const handleEmailChange = (e) => {
-        e.preventDefault()
+        e.preventDefault();
         setEmail(e.target.value);
         removeErrorMessage();
     };
 
     const handlePasswordChange = (e) => {
-        e.preventDefault()
+        e.preventDefault();
         setPassword(e.target.value);
         removeErrorMessage();
     };
 
     const handleSubmit = async(e) => {
-        e.preventDefault()
+        e.preventDefault();
         try {
             const loginData = { email, password };
             await dispatch(login(loginData));

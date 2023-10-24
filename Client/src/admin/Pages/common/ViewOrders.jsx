@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Table } from "antd";
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { getOrderbyUser } from '../../../features/auth/AuthSlice';
+// import { getOrderbyUser } from '../../../features/auth/AuthSlice';
 import { MdDelete } from 'react-icons/md';
 import { BiArrowBack } from 'react-icons/bi';
 
@@ -52,7 +52,7 @@ const ViewOrders = () => {
             try {
                 if (orderId !== undefined) {
                     setIsLoading(true);
-                    await dispatch(getOrderbyUser(orderId));
+                    // await dispatch(getOrderbyUser(orderId));
                 }
             } catch (error) {
                 console.error('Error fetching order data:', error);

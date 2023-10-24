@@ -72,9 +72,9 @@ const createProduct = asyncHandler(async (req, res) => {
 //     }
 // })
 
-const getProductById= async (req, res) => {
+const getProductById = async (req, res) => {
     const { id } = req.params;
-    // console.log('productid',id);
+    console.log('backendProdId', id)
     try {
         const fetchProduct = await Product.findById( id );
         if (!fetchProduct) {

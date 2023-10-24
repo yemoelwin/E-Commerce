@@ -1,26 +1,24 @@
 import jwt from 'jsonwebtoken';
-// import { Request, Response, NextFunction } from 'express';
 import asyncHandler from 'express-async-handler';
 import User from '../models/userModel.js';
-
-
-// const payload = { id: User };
-// const secretKey = 'billionaire142996';
-// const token = jwt.sign(payload, secretKey);
+import { config } from 'dotenv';
+config();
 
 export const protect = asyncHandler(async (req, res, next) => {
-        let token;
+    let token;
         if (
             req.headers.authorization && 
             req.headers.authorization.startsWith("Bearer")
         ) {
+            // token = req.headers.authorization;
             token = req.headers.authorization.split(' ')[1];
+            console.log('authorization Token', token)
             try {
                 if (token) {
                     const decoded = jwt.verify(token, process.env.JWT_SECRET);
                     console.log("decoded data", decoded);
-                    // console.log(token);
-                    const user = await User.findById(decoded.id)
+                    const user = await User.findById(decoded.id);
+                    console.log('req user checking by token', user);
                     req.user = user;
                     if (!req.user) {
                         throw new Error('User Not Found');
@@ -54,23 +52,3 @@ export const isAdmin = asyncHandler(async (req, res, next) => {
     }
 })
 
-// export const isUser = asyncHandler(async (req, res, next) => {
-//     const { _id } = req.user; // Assuming `_id` is used to identify users
-//     const user = await User.findById(_id);
-
-//     if (!user) {
-//         throw new Error('User not found.');
-//     } else {
-//         req.user = user; // Store user information in the request object
-//         next();
-//     }
-// });
-
-
-// export const verifyJWT = (token) => {
-//     try {
-//         const decoded = jwt.verify(token, `${process.env.JWT_SECRET}`)
-//     } catch (error) {
-        
-//     }
-// }

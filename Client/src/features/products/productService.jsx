@@ -1,4 +1,4 @@
-import api from '../../app/api/currentApi';
+import api from "../../app/api/currentApi";
 
 const getProducts = async () => {
     try {
@@ -40,9 +40,10 @@ const removeFromToWishlist = async (prodId) => {
     }
 }
 
-const getProduct = async (id) => {
+const getProduct = async (prodId) => {
+    console.log('serviceProdId', prodId)
     try {
-        const response = await api.get(`/product/${id}`);
+        const response = await api.get(`/product/retrieve/${prodId}`);
         return response.data;
     } catch (error) {
         console.error("An error occurred while fetching single product:", error);

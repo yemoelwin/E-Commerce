@@ -16,16 +16,16 @@ const CardProduct = (props) => {
     const dispatch = useDispatch();
     // const navigate = useNavigate();
     const addToWishlistMessage = useSelector((state) => state?.product?.addToWishList);
-    const message = addToWishlistMessage?.message;
+    // const message = addToWishlistMessage?.message;
 
-    useEffect(() => {
-        if (message && !message.includes('already exists')) {
-            showToast(message, 'success')
-        } else if(message){
-            showToast(message, 'info');
-        }
-        dispatch(addToWishListReset());
-    }, [message, dispatch])
+    // useEffect(() => {
+    //     if (message && !message.includes('already exists')) {
+    //         showToast(message, 'success')
+    //     } else if(message){
+    //         showToast(message, 'info');
+    //     }
+    //     dispatch(addToWishListReset());
+    // }, [message, dispatch])
 
     const handleWishlist = async(prodId) => {
         alert(prodId);

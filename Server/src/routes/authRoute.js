@@ -7,7 +7,7 @@ router.post('/register', userInfo.userRegister); /* finished */
 
 router.get('/verify_email/:token/:_id', userInfo.verifyRegisterEmail); /* finished */
 
-router.post('/login', userInfo.userLogin); /* finished */ 
+router.post('/auth/login', userInfo.userLogin); /* finished */ 
 
 // router.post('/admin-login', userInfo.adminLogin); /* finished */
 
@@ -27,7 +27,9 @@ router.post('/order/create_userOrder', protect, userInfo.saveUserOrder); /* fini
 
 router.get('/order/get_order/:userId/:transitionId', protect, userInfo.getOrder); /* finished */
 
-router.get('/order/allorders', protect, isAdmin, userInfo.getAllOrders); /* finished */
+router.get('/order/user-orders/:id', protect, userInfo.getUserOrders); /* finished */
+
+router.get('/order/all-orders', protect, isAdmin, userInfo.getAllOrders); /* finished */
 
 router.put('/order/update_user_order_status/:id', protect, isAdmin, userInfo.updateOrderStatus); /*finished*/
 
@@ -39,7 +41,7 @@ router.put('/block-user/:id', protect, isAdmin, userInfo.blockUser); /* finished
 
 router.put('/unblock-user/:id', protect, isAdmin, userInfo.unBlockUser); /* finished */
 
-router.post('/logout', userInfo.Logout); /* finished */
+router.post('/auth/logout', protect, userInfo.Logout); /* finished */
 
 router.get('/reset-password/:userId/:uniqueToken', userInfo.verifyResetToken); /* finished */
 

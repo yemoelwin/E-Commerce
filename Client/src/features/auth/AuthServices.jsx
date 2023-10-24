@@ -15,9 +15,10 @@ const register = async (data) => {
     }
 };
 
-const login = async (user) => {
+const login = async (data) => {
+    console.log('serviceLogindata', data);
     try {
-        const response = await api.post(`/user/login`, user);
+        const response = await api.post(`/user/auth/login`, {email: data.email, password: data.password});
         return response.data;
     } catch (error) {
         if (error.response && error.response.data && error.response.data.message) {
@@ -30,54 +31,27 @@ const login = async (user) => {
     
 };
 
-const getOrders = async () => {
+const logout = async (data) => {
+    console.log('serviceLogoutdata', data);
     try {
-        const response = await api.get('/user/order/allorders')
+        const response = await api.post(`/user/auth/logout`);
         return response.data;
     } catch (error) {
-        console.error(error.response.data); // Re-throw the error for higher-level handlings
-        throw new Error();
-    }   
-};
-
-const getOrder = async (id) => {
-    try {
-        const response = await api.get(`/user/order/get_order_byuser/${id}`)
-        return response.data;
-    } catch (error) {
-        console.error("An error occurred while updating order status", error);
-        throw error; // Re-throw the error for higher-level handling
-    }   
-};
-
-const updateOrderStatus = async (data) => {
-    try {
-        const response = await api.put(`/user/order/update_user_order_status/${data.id}`, {orderStatus: data.data})
-        return response.data;
-    } catch (error) {
-        console.error("An error occurred while updating order status", error);
-        throw error; // Re-throw the error for higher-level handling
-    }   
+        if (error.response && error.response.data && error.response.data.message) {
+            throw new Error(error.response.data.message);
+        } else {
+            console.error("error", error);
+            throw new Error('An error occurred while signing in.'); // Fallback error message
+        }
+    }
+    
 };
 
 
-const deleteOrder = async (id) => {
-    try {
-        const response = await api.delete(`/user/delete_order/${id}`)
-        return response.data;
-    } catch (error) {
-        console.error("An error occurred while updating order status", error);
-        throw error; // Re-throw the error for higher-level handling
-    }   
-};
 
 const authService = {
     register,
     login,
-    getOrders,
-    getOrder,
-    updateOrderStatus,
-    deleteOrder,
 };
 
 export default authService;

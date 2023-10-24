@@ -65,6 +65,10 @@ a {
     gap: 30px;
 }
 
+.margin-top{
+    margin: 3rem;
+}
+
 .button {
     background-color: var(--color-232f3e);
     color: white;

@@ -242,3 +242,8 @@
     overflow: hidden;
     clip: rect(1px, 1px, 1px, 1px);
 }
+
+.logout button{
+    border: none;
+    background: none;
+}

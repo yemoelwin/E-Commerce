@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Table } from "antd";
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { fetchOrders, updateOrderStatus } from '../../../features/auth/AuthSlice';
+// import { fetchOrders, updateOrderStatus } from '../../../features/auth/AuthSlice';
 import { MdDelete } from 'react-icons/md';
 import { CustomModal } from '../../../containers/common/CustomModal';
-import { deleteOrder } from '../../../features/auth/AuthSlice';
+// import { deleteOrder } from '../../../features/auth/AuthSlice';
 import { showToast } from '../../../containers/common/ShowToast';
 
 const columns = [
@@ -58,7 +58,7 @@ const Orders = () => {
         setIsLoading(true);
         const fetchData = async() => {
             try {
-                await dispatch(fetchOrders());
+                // await dispatch(fetchOrders());
             } catch (error) {
                 console.error('Error fetching all orders:', error);
             } finally {
@@ -83,8 +83,8 @@ const Orders = () => {
         setIsLoading(true);
         try {
             setOpen(false);
-            await dispatch(deleteOrder(e));
-            await dispatch(fetchOrders()); 
+            // await dispatch(deleteOrder(e));
+            // await dispatch(fetchOrders()); 
             showToast('Order has been deleted successfully.')
         } catch (error) {
             console.error('Error deleting inquiry:', error);
@@ -135,12 +135,13 @@ const Orders = () => {
                         className='form-control form-select'
                         // onChange={(e) => handleUpdateStatus(e.target.value, orderState[i]?._id)}
                     >
-                        <option value="Not Processed" className=''>Not Processed</option>
+                        {/* <option value="Not Processed" className=''>Not Processed</option>
                         <option value="Processing" className=''>Processing</option>
                         <option value="Cash on Delivery" className=''>Cash on Delivery</option>
                         <option value="Prepaid" className=''>Prepaid</option>
-                        <option value="Cancelled" className=''>Cancelled</option>
+                        <option value="Cancelled" className=''>Cancelled</option> */}
                         <option value="Delivered" className=''>Delivered</option>
+                        <option value="Canceled" className=''>Canceled</option>
                     </select>
                 </>
             ),

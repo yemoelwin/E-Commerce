@@ -68,13 +68,24 @@ const ProductPage = () => {
                                 <h5 className='sub-title'>Availabilty</h5>
                                 <div>
                                     <div className="form-check">
-                                        <input type="checkbox" className="form-check-input" value='' id=''/>
-                                        <label htmlFor="" className="form-check-label">Instock (2)</label>
+                                        <input
+                                            type="checkbox"
+                                            className="form-check-input"
+                                            id="availability-checkbox"
+                                            value=''
+                                        />
+                                        <label htmlFor="availability-checkbox" className="form-check-label">Instock (2)</label>
                                     </div>
 
                                     <div className="form-check">
-                                        <input type="checkbox" className="form-check-input" value='' id='' checked = {isChecked} onChange={handleCheckboxChange} />
-                                        <label htmlFor="" className="form-check-label">Out of Stock (0)</label>
+                                        <input
+                                            type="checkbox"
+                                            className="form-check-input"
+                                            id="unavailability-checkbox"
+                                            value=''
+                                            checked={isChecked}
+                                            onChange={handleCheckboxChange} />
+                                        <label htmlFor="unavailability-checkbox" className="form-check-label">Out of Stock (0)</label>
                                     </div>
                                 </div>
 
@@ -284,7 +295,7 @@ const ProductPage = () => {
                                         <div className='load'>Loading ... </div>
                                     </div> 
                                 ) : (
-                                    <CardProduct prodData={productState ? productState : []} grid={grid} />  
+                                    <CardProduct prodData={productState} grid={grid} />  
                                 )}
                             </div>
                         </div>

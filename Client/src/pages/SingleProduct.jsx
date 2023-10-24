@@ -3,7 +3,7 @@ import Meta from '../containers/common/Meta'
 import BreadCrumb from '../containers/common/BreadCrumb'
 import CardProduct from '../containers/CardProduct';
 import ReactStars from "react-rating-stars-component";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 // import ReactImageZoom from 'react-image-zoom';
 import Colors from "../containers/Colors";
 import { TbGitCompare } from "react-icons/tb";
@@ -19,20 +19,23 @@ import { RxCross1 } from 'react-icons/rx';
 const SingleProduct = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
     const [color, setColor] = useState(null);
     // const [quantity, setQuantity] = useState(1);
     const [alreadyAdded, setAlreadyAdded] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
-    const { id } = useParams();
+    // const { id } = useParams();
+    const prodId = location.pathname.split('/')[2]
     const product = useSelector((state) => state?.product?.singleData);
     const cartState = useSelector((state) => state?.cart?.items);
-    console.log(product)
+    // console.log('singleProduct', product);
+    // console.log('productId of params', prodId);
 
     useEffect(() => {
         const fetchProduct = async () => {
             try {
                 setIsLoading(true);
-                await dispatch(fetchProductData(id));
+                await dispatch(fetchProductData(prodId));
             } catch (error) {
                 setIsLoading(false);
                 console.error('error', error);
@@ -41,19 +44,21 @@ const SingleProduct = () => {
                 setIsLoading(false);
             }
         };
-        fetchProduct();
-    }, [id, dispatch]);
+        if (prodId !== product?._id) {
+            fetchProduct();
+        }
+    }, [prodId, product]);
 
     useEffect(() => {
-        const fetchProduct = async () => {
+        const isProductInCart  = async () => {
             for (let index = 0; index < cartState.length; index++) {
-                if (id === cartState[index]?.productId) {
+                if (prodId === cartState[index]?.productId) {
                     setAlreadyAdded(true);
                 }
             }
         };
-        fetchProduct();
-    }, [id, cartState]);
+        isProductInCart();
+    }, [prodId, cartState]);
 
     // const props = {
     //     width: 600,
@@ -237,13 +242,13 @@ const SingleProduct = () => {
                                     }
                                 </div>
 
+                                {/* Add to Cart */}
                                 <div >
-                                    
-                                    <div className={alreadyAdded ? 'ms-0' : "mt-3"}>
-                                        {
-                                            alreadyAdded ?
+                                    {(product && product.quantity > 0) ? (
+                                        <div className={alreadyAdded ? 'ms-0' : "mt-3"}>
+                                            {alreadyAdded ? (
                                                 <p className="font-sizeX">This item already added.</p>
-                                                :
+                                            ) : (
                                                 <button
                                                     className="buttonX"
                                                     data-bs-toggle="modal"
@@ -253,8 +258,11 @@ const SingleProduct = () => {
                                                 >
                                                     Add to Cart
                                                 </button>
-                                        }
-                                    </div>
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <p className="fs-6 text-danger">Currently not available</p>
+                                    )}
                                     
                                     <div
                                         className="modal fade"

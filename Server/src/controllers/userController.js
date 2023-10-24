@@ -97,7 +97,12 @@ const verifyRegisterEmail = asyncHandler(async (req, res) => {
 const userLogin = asyncHandler(async (req, res) => {
     try {
         const { email, password } = req.body;
-        const user = await User.findOne({ email })
+        if (!email || !password) {
+            return res.status(400).json({message: 'All fields are required.'})
+        }
+        // console.log('email', email, 'password', password);
+        const user = await User.findOne({ email });
+        // console.log('userEmail', user);
         const genericErrorMessage = 'Invalid email or password';
         const verifyEmailMessage = 'Verify Your Email';
         if (!user) {
@@ -118,18 +123,28 @@ const userLogin = asyncHandler(async (req, res) => {
         if (isMatched) {
             const userType = user.role === 'admin' ? 'admin' : 'user';
             const refreshToken = generateRefreshToken(user?._id);
+            // console.log('refreshToken', refreshToken);
             const accessToken = generateAccessToken(user?._id);
+            // console.log('accessToken', accessToken);
             await User.findByIdAndUpdate(user._id, {
                 refreshToken
             }, {
                 new: true
             })
+            // res.cookie('accessToken', accessToken, {
+            //     httpOnly: true,
+            //     secure: true, // Use only on HTTPS connections
+            //     sameSite: 'None',
+            //     maxAge: 60 * 60 * 1000, // 1 hour in milliseconds
+            //     domain: '.localhost', 
+            // });
             res.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
                 secure: true, // Use only on HTTPS connections
-                sameSite: 'strict',
-                maxAge: 72 * 60 * 60 * 1000
-            })
+                sameSite: 'None',
+                maxAge: 30 * 24 * 60 * 60 * 1000,
+                // domain: '.localhost', 
+            });
             res.status(200).json({
                 _id: user?._id,
                 firstname: user?.firstname,
@@ -137,6 +152,7 @@ const userLogin = asyncHandler(async (req, res) => {
                 email: user?.email,
                 role: userType,
                 token: accessToken,
+                refreshToken: refreshToken,
                 status: 'Login Success',
                 message: `${userType === 'admin' ? 'Admin' : 'User'} logged in successfully`,
             });
@@ -157,22 +173,24 @@ const userLogin = asyncHandler(async (req, res) => {
 const Logout = asyncHandler(async (req, res) => {
     try {
         const cookie = req.cookies;
-        if (!cookie?.refreshToken) throw new Error('No Refresh Token in Cookies.');
+        if (!cookie?.refreshToken) return res.status(401).json({message: 'No Refresh Token in Cookies.'});
         const refreshToken = cookie.refreshToken;
         const user = await User.findOne({ refreshToken });
         if (!user) {
             res.clearCookie('refreshToken', {
                 httpOnly: true,
                 secure: true,
+                sameSite: 'None',
             })
             return res.sendStatus(403) /* forbidden */
         }
         await User.findOneAndUpdate({ refreshToken: refreshToken },{ refreshToken: " "});
         res.clearCookie('refreshToken', {
             httpOnly: true,
-            secure: true
+            secure: true,
+            sameSite: 'None',
         });
-        res.status(200).json('Logged out successfully.');
+        res.status(200).json('Cookie cleared and logged out successfully.');
     } catch (error) {
         console.log(error);
         res.status(500).json('Internal Server Error.')
@@ -182,7 +200,7 @@ const Logout = asyncHandler(async (req, res) => {
 const handleRefreshToken = asyncHandler(async (req, res) => {
     const cookie = req.cookies;
     console.log(cookie);
-    if (!cookie?.refreshToken) throw new Error('Pls try logging in again to authenticate.')
+    if (!cookie?.refreshToken) return res.status(401).json({message: 'No Refresh Token in Cookies.'});
     const refreshToken = cookie.refreshToken;
     console.log(refreshToken);
     const user = await User.findOne({ refreshToken });
@@ -541,6 +559,32 @@ const getOrder = asyncHandler(async (req, res) => {
     }
 });
 
+const getUserOrders = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    console.log('backend Id', id)
+    try {
+        const userOrders = await Order.find({ customerId: id, stripe_response: true });
+        if (!userOrders) {
+            return res.status(404).json({message: 'empty order list.'})
+        }
+        res.status(200).json(userOrders);
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
+const getAllOrders = asyncHandler(async (req, res) => {
+    try {
+        const allOrders = await Order.find({stripe_response: true });
+        if (!allOrders) {
+            return res.status(404).json({message: 'empty order list.'})
+        }
+        res.status(200).json(allOrders);
+    } catch (error) {
+        throw new Error(error);
+    }
+});
+
 
 
 // const createOrder = asyncHandler(async (customer, data) => {
@@ -662,17 +706,7 @@ const creatOrderX = asyncHandler(async (req, res) => {
     }
 })
 
-const getAllOrders = asyncHandler(async (req, res) => {
-    try {
-        const alluserorders = await Order.find()
-        .populate('products.product', "_id color title brand")
-        .populate('orderby', 'firstname lastname email mobile')
-            .exec();
-        res.status(200).json(alluserorders);
-    } catch (error) {
-        throw new Error(error);
-    }
-});
+
 
 const updateOrderStatus = asyncHandler(async (req, res) => {
     const { orderStatus } = req.body;
@@ -871,4 +905,4 @@ const emptyCart = asyncHandler(async (req, res) => {
     }
 })
 
-export const userInfo = { userRegister, userLogin, getAllUser, getUserById, deleteUser, updatedUser, wishList, blockUser, unBlockUser, handleRefreshToken, Logout, verifyResetToken, forgotPasswordToken, updatePassword, verifyRegisterEmail, resetPassword, saveAddress, saveUserOrder, addToCart, getUserCart, emptyCart, applyCoupon, getOrder, getAllOrders, updateOrderStatus, deleteOrder, removeItemFromCart, updateItemQuantity };
+export const userInfo = { userRegister, userLogin, getAllUser, getUserById, deleteUser, updatedUser, wishList, blockUser, unBlockUser, handleRefreshToken, Logout, verifyResetToken, forgotPasswordToken, updatePassword, verifyRegisterEmail, resetPassword, saveAddress, saveUserOrder, addToCart, getUserCart, emptyCart, applyCoupon, getOrder, getUserOrders, getAllOrders,  updateOrderStatus, deleteOrder, removeItemFromCart, updateItemQuantity };

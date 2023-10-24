@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 const PayButton = (cartData) => {
     const dispatch = useDispatch();
     const { _id } = useSelector((state) => state.auth.users);
+    console.log('userId', _id)
     const [isLoading, setLoading] = useState(false);
     const [transitionId, setTransitionId] = useState('');
 

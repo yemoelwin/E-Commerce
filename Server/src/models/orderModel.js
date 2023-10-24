@@ -9,6 +9,17 @@ const orderSchema = new Schema({
         type: String,
         required: true,
     },
+    customer_details: {
+        name: {
+            type: String,
+        },
+        email: {
+            type: String,
+        },
+        mobile: {
+            type: Number,
+        },
+    },
     products: [],
     totalQuantity: {
         type: Number,
@@ -38,7 +49,7 @@ const orderSchema = new Schema({
     },
     delivery_status: {
         type: String,
-        default: "pending",
+        default: "Pending",
     },
     stripe_response: {
         type: Boolean,

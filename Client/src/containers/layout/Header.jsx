@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { NavLink, Link } from 'react-router-dom';
 import { BsSearch } from 'react-icons/bs'
 import compare from '../../images/compare.svg'
@@ -13,15 +13,36 @@ import { IoIosLogOut } from 'react-icons/io';
 import { useSelector } from 'react-redux';
 
 const Header = () => {
-  const { userRole, isLoggedIn } = useSelector(state => state.auth);
+  const menuRef = useRef();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { users, isAuthenticated, userRole } = useSelector(state => state.auth);
   const { totalQuantity, cartTotalAmount } = useSelector((state) => state.cart);
 
-  const toggleMenu = () => {
-    let subMenu = document.getElementById('subMenu');
-    function toggleMenu() {
-      subMenu.classList.toggle('open-menu');
+  useEffect(() => {
+    function handleDocumentClick(event) {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        // Click occurred outside the menu, so close it
+        setIsMenuOpen(false);
+      }
     }
-    toggleMenu();
+    if (isMenuOpen) {
+      // Add the click event listener when the menu is open
+      document.addEventListener('click', handleDocumentClick);
+    }
+    return () => {
+      // Remove the click event listener when the component unmounts
+      document.removeEventListener('click', handleDocumentClick);
+    };
+  }, [isMenuOpen]);
+
+  const toggleMenu = (event) => {
+    event.stopPropagation();
+    setIsMenuOpen(!isMenuOpen);
+  };
+
+  const handleLogout = () => {
+    localStorage.clear();
+    window.location.reload()
   }
 
   return (
@@ -100,25 +121,24 @@ const Header = () => {
                   </NavLink>                                    
                 </div>
 
-                {isLoggedIn ? (
+                {isAuthenticated ? (
                   <div className='hero'>
 
                     <div className='profile-logo'>
                       <img src={user} className='wrap-logo' alt='' onClick={toggleMenu} />
                     </div>
 
-                    <div className='sub-menu-wrap' id='subMenu'>
+                    <div className={`sub-menu-wrap ${isMenuOpen ? 'open-menu' : ''}`} ref={menuRef}>
                       <div className='sub-menu'>
 
                         <div className='user-info'>
                           <img src={image} className='user-logo' alt='' />
-                          <h5>ye moe lwin</h5>
+                          <h5>{`${users?.firstname} ${users?.lastname}` }</h5>
                         </div>
                         <hr />
 
                         <div> 
                           <>
-
                               <div>
                                 <Link to={''} className='sub-menu-link'>
                                   <CgProfile className='logo-sl'/>
@@ -127,17 +147,17 @@ const Header = () => {
                               </div>
 
                               <div>
-                                <Link to={`/`} className='sub-menu-link'>
+                                <Link to={`/orderlists/${users?._id}`} className='sub-menu-link'>
                                   <FaLuggageCart className='logo-sl'/>
                                   <p>Order lists</p>
                                 </Link>
                               </div>
 
-                              <div>
-                                <Link to={''} className='sub-menu-link'>
+                              <div className='logout'>
+                                <button onClick={handleLogout} className='sub-menu-link'>
                                   <IoIosLogOut className='logo-sl' />
                                   <p>Logout</p>
-                                </Link>
+                                </button>
                               </div>
                             </>
                         </div>
@@ -148,7 +168,7 @@ const Header = () => {
                   </div>
                 ) : (
                   <div className='profile-login'>
-                    <Link to='/login' className='d-flex align-items-center gap-10 text-white'>
+                    <Link to={ users === null || [] ? '/login' : ''} className='d-flex align-items-center gap-10 text-white'>
                       <img src={user} alt='user'></img>
                       <p className='mb-0'>Login <br/> Account</p>
                     </Link>

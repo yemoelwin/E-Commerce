@@ -1,13 +1,15 @@
 import { createSlice, createAsyncThunk, createAction } from '@reduxjs/toolkit';
 import authService from './AuthServices';
+// import Cookies from 'js-cookie';
+const getUserfromLocalStorage = localStorage.getItem("user")
+    ? JSON.parse(localStorage.getItem("user"))
+    : null;
 
-// const getUserfromLocalStorage = localStorage.getItem("user")
-//     ? JSON.parse(localStorage.getItem("user"))
-//     : null;
+const role = getUserfromLocalStorage?.role;
+console.log(role)
 
 const initialState = {
     users : [],
-    orders: [],
     isAuthenticated: false,
     isLoggedIn: false,
     isError: false,
@@ -15,7 +17,7 @@ const initialState = {
     isSuccess: false,
     errorMessage: '',
     message: "",
-    userRole: null,
+    userRole: role,
 };
 
 export const register = createAsyncThunk('auth/register', async (data, thunkApi) => {
@@ -29,48 +31,9 @@ export const register = createAsyncThunk('auth/register', async (data, thunkApi)
 })
 
 export const login = createAsyncThunk('auth/login', async (userData, thunkApi) => {
+    console.log('sliceloginData', userData);
     try {
         const response = await authService.login(userData);
-        return response;
-    } catch (error) {
-        const errorMessage = error.message || "An error occurred.";
-        return thunkApi.rejectWithValue(errorMessage);
-    }
-});
-
-export const fetchOrders = createAsyncThunk('auth/get-orders', async(thunkApi) => {
-    try {
-        const response = await authService.getOrders();
-        return response;
-    } catch (error) {
-        const errorMessage = error.message || "An error occurred.";
-        return thunkApi.rejectWithValue(errorMessage);
-    }
-});
-
-export const getOrderbyUser = createAsyncThunk('auth/get-orderbyUser', async(id, thunkApi) => {
-    try {
-        const response = await authService.getOrder(id);
-        return response;
-    } catch (error) {
-        const errorMessage = error.message || "An error occurred.";
-        return thunkApi.rejectWithValue(errorMessage);
-    }
-});
-
-export const updateOrderStatus = createAsyncThunk('auth/update-order-status', async(data, thunkApi) => {
-    try {
-        const response = await authService.updateOrderStatus(data);
-        return response;
-    } catch (error) {
-        const errorMessage = error.message || "An error occurred.";
-        return thunkApi.rejectWithValue(errorMessage);
-    }
-});
-
-export const deleteOrder = createAsyncThunk('auth/delete-order', async(id, thunkApi) => {
-    try {
-        const response = await authService.deleteOrder(id);
         return response;
     } catch (error) {
         const errorMessage = error.message || "An error occurred.";
@@ -138,13 +101,16 @@ export const authSlice = createSlice({
             })
             .addCase(login.fulfilled, (state, action) => {
                 localStorage.setItem('user', JSON.stringify({ ...action.payload }));
+                // state.accessToken = action.payload.accessToken;
+                // console.log('slice accessTOken', accessToken)
+                // Cookies.set('user', JSON.stringify({ accessToken: action.payload.accessToken }));
                 state.isError = false;
                 state.isLoading = false;
                 state.isSuccess = true;
                 state.isLoggedIn = true;
+                state.errorMessage = null;
                 state.message = "Success";
                 state.users = action.payload;
-                state.errorMessage = null;
                 state.userRole = action.payload.role;
             })
             .addCase(login.rejected, (state, action) => {
@@ -157,91 +123,6 @@ export const authSlice = createSlice({
                 state.userRole = null;
                 state.errorMessage = action.payload
                 state.message = 'Failed'
-            })
-            /* Fetch Orders */
-            .addCase(fetchOrders.pending, (state) => {
-                state.isLoading = true;
-            })
-            .addCase(fetchOrders.fulfilled, (state, action) => {
-                state.orders = action.payload;
-                state.isAuthenticated = true;
-                state.isError = false;
-                state.isLoading = false;
-                state.isSuccess = true;
-                state.isLoggedIn = true;
-                state.message = "Success";
-                })
-            .addCase(fetchOrders.rejected, (state, action) => {
-                state.isLoading = false;
-                state.isAuthenticated = false;
-                state.isError = true;
-                state.isSuccess = false;
-                state.orders = null;
-                state.isLoggedIn = false;
-                state.message = action.error.message || "An error occurred.";
-            })
-            /* Get order by user */
-            .addCase(getOrderbyUser.pending, (state) => {
-                state.isLoading = true;
-            })
-            .addCase(getOrderbyUser.fulfilled, (state, action) => {
-                state.isAuthenticated = true;
-                state.isError = false;
-                state.isLoading = false;
-                state.isSuccess = true;
-                state.message = "Success";
-                state.orderProduct = action.payload;
-                })
-            .addCase(getOrderbyUser.rejected, (state, action) => {
-                state.isLoading = false;
-                state.isAuthenticated = false;
-                state.isError = true;
-                state.isSuccess = false;
-                state.orders = null;
-                state.isLoggedIn = false;
-                state.message = action.error.message || "An error occurred.";
-            })
-            /* Update Order Status */
-            .addCase(updateOrderStatus.pending, (state) => {
-                state.isLoading = true;
-            })
-            .addCase(updateOrderStatus.fulfilled, (state, action) => {
-                state.isAuthenticated = true;
-                state.isError = false;
-                state.isLoading = false;
-                state.isSuccess = true;
-                state.message = "Success";
-                state.updatedOrderStatus = action.payload;
-                })
-            .addCase(updateOrderStatus.rejected, (state, action) => {
-                state.isLoading = false;
-                state.isAuthenticated = false;
-                state.isError = true;
-                state.isSuccess = false;
-                state.isLoggedIn = false;
-                state.orders = null;
-                state.message = action.error.message || "An error occurred.";
-            })
-            /* Delete Order */
-            .addCase(deleteOrder.pending, (state) => {
-                state.isLoading = true;
-            })
-            .addCase(deleteOrder.fulfilled, (state, action) => {
-                state.isAuthenticated = true;
-                state.isError = false;
-                state.isLoading = false;
-                state.isSuccess = true;
-                state.message = "Success";
-                state.deletedOrder = action.payload;
-                })
-            .addCase(deleteOrder.rejected, (state, action) => {
-                state.isLoading = false;
-                state.isAuthenticated = false;
-                state.isError = true;
-                state.isSuccess = false;
-                state.orders = null;
-                state.isLoggedIn = false;
-                state.message = action.error.message || "An error occurred.";
             })
             .addCase(authResetState, () => initialState)
         

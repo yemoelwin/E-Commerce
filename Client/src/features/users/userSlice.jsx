@@ -3,6 +3,7 @@ import userService from "./userService";
 
 const initialState = {
     users: [],
+    orders:[],
     isError: false,
     isLoading: false,
     isSuccess: false,
@@ -21,7 +22,7 @@ export const getWishlist = createAsyncThunk('user/get-wishlist', async (thunkApi
 })
 
 export const createOrder = createAsyncThunk('user/create-order', async (data, thunkApi) => {
-    // console.log('slice Data', data)
+    console.log('slice Data', data)
     try {
         const response = await userService.saveOrder(data);
         return response;
@@ -41,6 +42,47 @@ export const getOrder = createAsyncThunk('user/get-order', async ({userId, trans
         return thunkApi.rejectWithValue(error);
     }
 });
+
+export const fetchOrders = createAsyncThunk('auth/get-user-orders', async (id, thunkApi) => {
+    console.log('slice Id', id)
+    try {
+        const response = await userService.getOrders(id);
+        return response;
+    } catch (error) {
+        const errorMessage = error.message || "An error occurred.";
+        return thunkApi.rejectWithValue(errorMessage);
+    }
+});
+
+// export const getOrderbyUser = createAsyncThunk('auth/get-orderbyUser', async(id, thunkApi) => {
+//     try {
+//         const response = await authService.getOrder(id);
+//         return response;
+//     } catch (error) {
+//         const errorMessage = error.message || "An error occurred.";
+//         return thunkApi.rejectWithValue(errorMessage);
+//     }
+// });
+
+// export const updateOrderStatus = createAsyncThunk('auth/update-order-status', async(data, thunkApi) => {
+//     try {
+//         const response = await authService.updateOrderStatus(data);
+//         return response;
+//     } catch (error) {
+//         const errorMessage = error.message || "An error occurred.";
+//         return thunkApi.rejectWithValue(errorMessage);
+//     }
+// });
+
+// export const deleteOrder = createAsyncThunk('auth/delete-order', async(id, thunkApi) => {
+//     try {
+//         const response = await authService.deleteOrder(id);
+//         return response;
+//     } catch (error) {
+//         const errorMessage = error.message || "An error occurred.";
+//         return thunkApi.rejectWithValue(errorMessage);
+//     }
+// });
 
 export const pdfInvoice = createAsyncThunk('invoie/pdf-invoice', async (id, thunkApi) => {
     console.log('order id', id)
@@ -132,6 +174,91 @@ export const userSlice = createSlice({
                 state.errorMessage = action.payload;
                 state.users = null;
             })
+            /* Fetch Orders */
+            .addCase(fetchOrders.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(fetchOrders.fulfilled, (state, action) => {
+                state.isAuthenticated = true;
+                state.isError = false;
+                state.isLoading = false;
+                state.isSuccess = true;
+                state.isLoggedIn = true;
+                state.orders = action.payload;
+                state.message = "Success";
+                })
+            .addCase(fetchOrders.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isAuthenticated = false;
+                state.isError = true;
+                state.isSuccess = false;
+                state.orders = null;
+                state.isLoggedIn = false;
+                state.message = action.error.message || "An error occurred.";
+            })
+            /* Get order by user */
+            // .addCase(getOrderbyUser.pending, (state) => {
+            //     state.isLoading = true;
+            // })
+            // .addCase(getOrderbyUser.fulfilled, (state, action) => {
+            //     state.isAuthenticated = true;
+            //     state.isError = false;
+            //     state.isLoading = false;
+            //     state.isSuccess = true;
+            //     state.message = "Success";
+            //     state.orderProduct = action.payload;
+            //     })
+            // .addCase(getOrderbyUser.rejected, (state, action) => {
+            //     state.isLoading = false;
+            //     state.isAuthenticated = false;
+            //     state.isError = true;
+            //     state.isSuccess = false;
+            //     state.orders = null;
+            //     state.isLoggedIn = false;
+            //     state.message = action.error.message || "An error occurred.";
+            // })
+            // /* Update Order Status */
+            // .addCase(updateOrderStatus.pending, (state) => {
+            //     state.isLoading = true;
+            // })
+            // .addCase(updateOrderStatus.fulfilled, (state, action) => {
+            //     state.isAuthenticated = true;
+            //     state.isError = false;
+            //     state.isLoading = false;
+            //     state.isSuccess = true;
+            //     state.message = "Success";
+            //     state.updatedOrderStatus = action.payload;
+            //     })
+            // .addCase(updateOrderStatus.rejected, (state, action) => {
+            //     state.isLoading = false;
+            //     state.isAuthenticated = false;
+            //     state.isError = true;
+            //     state.isSuccess = false;
+            //     state.isLoggedIn = false;
+            //     state.orders = null;
+            //     state.message = action.error.message || "An error occurred.";
+            // })
+            // /* Delete Order */
+            // .addCase(deleteOrder.pending, (state) => {
+            //     state.isLoading = true;
+            // })
+            // .addCase(deleteOrder.fulfilled, (state, action) => {
+            //     state.isAuthenticated = true;
+            //     state.isError = false;
+            //     state.isLoading = false;
+            //     state.isSuccess = true;
+            //     state.message = "Success";
+            //     state.deletedOrder = action.payload;
+            //     })
+            // .addCase(deleteOrder.rejected, (state, action) => {
+            //     state.isLoading = false;
+            //     state.isAuthenticated = false;
+            //     state.isError = true;
+            //     state.isSuccess = false;
+            //     state.orders = null;
+            //     state.isLoggedIn = false;
+            //     state.message = action.error.message || "An error occurred.";
+            // })
         /* Invoice */
             .addCase(pdfInvoice.pending, (state) => {
                 state.isLoading = true;

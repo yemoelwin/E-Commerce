@@ -1,6 +1,4 @@
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-// import { useNavigate } from 'react-router-dom';
 
 const base_url = 'http://localhost:8080/api';
 
@@ -9,13 +7,37 @@ const api =  axios.create({
 });
 
 const getTokenFromLocalStorage = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null;
+console.log('getTokenFromLocalStorage', getTokenFromLocalStorage)
 
 api.interceptors.request.use((req) => {
     if (getTokenFromLocalStorage) {
-        req.headers.Authorization = `Bearer ${getTokenFromLocalStorage !== null ? getTokenFromLocalStorage.token : null}`
+        req.headers.authorization = `Bearer ${getTokenFromLocalStorage.token}`
     }
     return req;
 })
+
+api.interceptors.response.use((response) => response, (error) => {
+        if (error.response && error.response.status === 401) {
+            console.log("token not found. Please log in again.");
+        }
+        return Promise.reject(error);
+    }
+);
+
+export default api;
+
+// api.interceptors.request.use((req) => {
+//     const accessToken = Cookies.get('accessToken');
+//     if (accessToken) {
+//         const parsedToken = JSON.parse(accessToken); // Parse the JSON here
+//         console.log('parsedToken', parsedToken);
+//         console.log('AccessToken', parsedToken.accessToken);
+//         req.headers.Authorization = `Bearer ${parsedToken.accessToken}`;
+//     }
+//     return req;
+// });
+
+
 // api.interceptors.request.use((req) => {
 //     if (localStorage.getItem("user")) {
 //         req.headers.Authorization = `Bearer ${
@@ -25,13 +47,5 @@ api.interceptors.request.use((req) => {
 //     return req;
 // });
 
-api.interceptors.request.use((response) => response, (error) => {
-    if (error.response && error.response.status === 401) {
-        const navigate = useNavigate();
-        navigate('/login');
-        console.log("Token has expired. Please log in again.");
-    }
-    return Promise.reject(error);
-})
 
-export default api ;
+

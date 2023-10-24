@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Document, Page, pdfjs } from 'react-pdf';
+// import { Document, Page, pdfjs } from 'react-pdf';
 // import { LiaLongArrowAltLeftSolid } from 'react-icons/lia';
 // import { IoCheckmarkCircle } from 'react-icons/io5';
 import { Link, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearCartItem } from '../features/cart/cartSlice';
 import { getOrder, pdfInvoice } from '../features/users/userSlice';
-import PDFButton from './PDFButton';
+import Invoice from './Invoice';
 
 const monthNames = [
     'January',
@@ -29,8 +29,9 @@ const CheckoutSuccess = () => {
     const userId = location.pathname.split('/')[2];
     const transitionId = location.pathname.split('/')[3];
     const orderData = useSelector((state) => state?.user?.orderDetail);
-    const paidAtDate = new Date(orderData.paidAt);
+    const paidAtDate = new Date(orderData?.paidAt);
     const formattedDate = `${monthNames[paidAtDate.getMonth()]} ${paidAtDate.getDate()}, ${paidAtDate.getFullYear()}, ${paidAtDate.toLocaleTimeString()}`;
+    const [isLoading, setIsLoading] = useState(true);
 
     console.log('orderData', orderData);
 
@@ -39,35 +40,46 @@ const CheckoutSuccess = () => {
     }, [dispatch]);
 
     useEffect(() => {
-        dispatch(getOrder({userId, transitionId}))
+        setIsLoading(true);
+        const fetchData = async () => {
+            try {
+            await dispatch(getOrder({ userId, transitionId }));
+            } catch (error) {
+            console.error('something went wrong', error);
+            throw error;
+            } finally {
+            setIsLoading(false);
+            }
+        }
+        fetchData();
     }, [userId, transitionId, dispatch])
 
-    const handleClick = async () => {
-        try {
-            await dispatch(pdfInvoice(orderData._id))
-        } catch (error) {
-            console.error('error occurred while downloading', error);
-            throw error;
-        }
+    // const handleClick = async () => {
+    //     try {
+    //         await dispatch(pdfInvoice(orderData._id))
+    //     } catch (error) {
+    //         console.error('error occurred while downloading', error);
+    //         throw error;
+    //     }
         
-    }
+    // }
 
     return (
         <>
             <div className="container">
                 <div className="col-md-12">
+                    {isLoading ? ( // Show loading indicator when isLoading is true
+                        <div className='invoice-loading gap-3'>
+                            <div className='loading-spinner'></div>
+                                <div className='load'>Loading ... </div>
+                            </div> 
+                    ) : (
                     <div className="invoice">
                         {/* <!-- begin invoice-company --> */}
                         <div className="invoice-company text-inverse f-w-600">
                             ShopSphere
                             <span className="pull-right hidden-print">
-                                {/* <button
-                                    onClick={handleClick}
-                                    className="btn btn-sm btn-white m-b-10 p-l-5 me-2">
-                                    <i className="fa fa-file t-plus-1 text-danger fa-fw fa-lg"></i>
-                                        Export as PDF
-                                </button> */}
-                                <PDFButton orderData={orderData}/>
+                                <Invoice orderData={orderData}/>
                                     
                                 
                                 <Link
@@ -96,6 +108,9 @@ const CheckoutSuccess = () => {
                                     <strong className="text-inverse text-modify">
                                         {orderData?.customer_details?.name}</strong><br />
                                     <span>
+                                        Email: {orderData?.customer_details?.email}
+                                    </span><br />
+                                    <span>
                                         Address: {orderData?.customer_details?.address?.line1} /
                                         {orderData?.customer_details?.address?.line2}
                                     </span><br />
@@ -115,7 +130,7 @@ const CheckoutSuccess = () => {
                                     {orderData?.paidAt ? formattedDate : ''}
                                 </div>
                                 <div className="invoice-detail">
-                                    <span>orderId: {orderData._id}</span><br/>
+                                    <span>orderId: {orderData?._id}</span><br/>
                                 </div>
                             </div>
                         </div>
@@ -135,22 +150,22 @@ const CheckoutSuccess = () => {
                                     </thead>
                                         
                                     <tbody>
-                                        {orderData.products.map((product, index) => (
+                                        {orderData?.products?.map((product, index) => (
                                             <tr key={index}>
                                                 <>
                                                     <td>
-                                                        <span className="text-inverse" title={product.title}>
-                                                            {product.title}
+                                                        <span className="text-inverse" title={product?.title}>
+                                                            {product?.title}
                                                         </span><br />
                                                     </td>
                                                     <td className="text-center">
-                                                        $ {(product.price).toFixed(2)}
+                                                        $ {(product?.price).toFixed(2)}
                                                     </td>
                                                     <td className="text-center">
-                                                        {product.quantity}
+                                                        {product?.quantity}
                                                     </td>
                                                     <td className="text-right">
-                                                        $ {(product.quantity * product.price).toFixed(2)}
+                                                        $ {(product?.quantity * product?.price).toFixed(2)}
                                                     </td>
                                                 </>
                                             </tr>
@@ -167,7 +182,7 @@ const CheckoutSuccess = () => {
                                         <div className="sub-price">
                                             <small>SUBTOTAL</small>
                                             <span className="text-inverse">
-                                                $ {(orderData.subTotalAmount).toFixed(2)}
+                                                $ {(orderData?.subTotalAmount)?.toFixed(2)}
                                             </span>
                                         </div>
 
@@ -185,7 +200,7 @@ const CheckoutSuccess = () => {
 
                                 <div className="invoice-price-right">
                                     <small>TOTAL</small> <span className="f-w-600">
-                                        $ {(orderData.subTotalAmount).toFixed(2)}
+                                        $ {(orderData?.subTotalAmount)?.toFixed(2)}
                                     </span>
                                 </div>
                             </div>
@@ -216,6 +231,7 @@ const CheckoutSuccess = () => {
                         </div>
 
                     </div>
+                    )}
                 </div>
             </div>
         </>

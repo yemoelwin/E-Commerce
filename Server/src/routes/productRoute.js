@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.post('/create-product', protect, isAdmin, productController.createProduct); /* finished */
 
-router.get('/:id', protect, isAdmin, productController.getProductById); /* finished */
+router.get('/retrieve/:id', productController.getProductById); /* finished */
 
 router.put('/update/:id', protect, isAdmin, productController.updateProduct); /* finished */
 
