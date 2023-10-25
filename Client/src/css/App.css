@@ -660,7 +660,7 @@ footer .input-group-text{
 
 .loading{
   display: flex;
-  justify-content: start;
+  justify-content: flex-start;
   font-size: 20px;
   /* color: blue; */
 }

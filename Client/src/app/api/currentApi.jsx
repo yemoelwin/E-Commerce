@@ -6,19 +6,28 @@ const api =  axios.create({
     baseURL: base_url,
 });
 
-const getTokenFromLocalStorage = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null;
-console.log('getTokenFromLocalStorage', getTokenFromLocalStorage)
+// const getTokenFromLocalStorage = JSON.parse(localStorage.getItem('user'));
+// console.log('getATokenFromLocalStorage', getTokenFromLocalStorage?.token);
 
-api.interceptors.request.use((req) => {
-    if (getTokenFromLocalStorage) {
-        req.headers.authorization = `Bearer ${getTokenFromLocalStorage.token}`
+api.interceptors.request.use((config) => {
+    const token = JSON.parse(localStorage.getItem('user'))?.token;
+    console.log('token api', token)
+    if (token) {
+        config.headers.authorization = `Bearer ${token}`;
     }
-    return req;
-})
+    return config;
+});
+
+// api.interceptors.request.use((req) => {
+//     if (getTokenFromLocalStorage?.token !== undefined) {
+//         return req.headers.authorization = `Bearer ${getTokenFromLocalStorage.token}`
+//     } 
+//     return req;
+// })
 
 api.interceptors.response.use((response) => response, (error) => {
         if (error.response && error.response.status === 401) {
-            console.log("token not found. Please log in again.");
+            console.log("something went wrong", error);
         }
         return Promise.reject(error);
     }

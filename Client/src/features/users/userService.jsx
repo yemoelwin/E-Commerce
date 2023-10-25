@@ -18,7 +18,7 @@ const getUserWishlist = async () => {
 const saveOrder = async (data) => {
     console.log('service data', data)
     try {
-        const response = await api.post('/user/order/create_userOrder', data);
+        const response = await api.post('/user/order/create_userOrder', {cartData: data.cartData, cartTotalAmount: data.cartTotalAmount, totalQuantity: data.totalQuantity, transitionId: data.transitionId});
         console.log('reponsedata', response.data)
         return response.data;
     } catch (error) {

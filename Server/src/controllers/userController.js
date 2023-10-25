@@ -153,7 +153,7 @@ const userLogin = asyncHandler(async (req, res) => {
                 role: userType,
                 token: accessToken,
                 refreshToken: refreshToken,
-                status: 'Login Success',
+                status: 'Success',
                 message: `${userType === 'admin' ? 'Admin' : 'User'} logged in successfully`,
             });
         } else {
@@ -171,8 +171,10 @@ const userLogin = asyncHandler(async (req, res) => {
 })
 
 const Logout = asyncHandler(async (req, res) => {
+    console.log('heelo')
     try {
         const cookie = req.cookies;
+        console.log('cookies', cookie)
         if (!cookie?.refreshToken) return res.status(401).json({message: 'No Refresh Token in Cookies.'});
         const refreshToken = cookie.refreshToken;
         const user = await User.findOne({ refreshToken });
@@ -184,7 +186,8 @@ const Logout = asyncHandler(async (req, res) => {
             })
             return res.sendStatus(403) /* forbidden */
         }
-        await User.findOneAndUpdate({ refreshToken: refreshToken },{ refreshToken: " "});
+         // Here, we are deleting it, but you can also mark it as invalid in your database
+        await User.findOneAndUpdate({ refreshToken }, { $unset: { refreshToken: 1 } });
         res.clearCookie('refreshToken', {
             httpOnly: true,
             secure: true,
@@ -506,6 +509,7 @@ const wishList = asyncHandler(async (req, res) => {
 
 const saveUserOrder = asyncHandler(async (req, res) => {
     const { _id } = req.user;
+    console.log("userID serverside", _id)
     const { cartData, cartTotalAmount, totalQuantity, transitionId } = req.body;
     console.log('cartData from backend', cartData, cartTotalAmount, totalQuantity, transitionId);
     try {

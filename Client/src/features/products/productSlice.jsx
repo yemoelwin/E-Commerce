@@ -55,7 +55,6 @@ export const removeWishlist = createAsyncThunk('product/remove_wishlist', async 
 });
 
 export const fetchProductData = createAsyncThunk('product/fetch-single-Product', async (prodId, thunkApi) => {
-    console.log('sliceProdId', prodId)
     try {
         const response = await productService.getProduct(prodId);
         return response;

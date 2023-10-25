@@ -4,8 +4,6 @@ import Meta from '../../containers/common/Meta';
 import BreadCrumb from '../../containers/common/BreadCrumb';
 import { useDispatch, useSelector } from 'react-redux';
 import { login, clearErrorMessage } from '../../features/auth/AuthSlice';
-// import { useFormik } from 'formik';
-// import * as yup from 'yup';
 
 const Login = () => {
     const userRef = useRef();

@@ -7,7 +7,17 @@ router.post('/register', userInfo.userRegister); /* finished */
 
 router.get('/verify_email/:token/:_id', userInfo.verifyRegisterEmail); /* finished */
 
-router.post('/auth/login', userInfo.userLogin); /* finished */ 
+router.post('/auth/login', userInfo.userLogin); /* finished */
+
+/* finished */
+
+router.post('/auth/user-logout', protect, userInfo.Logout);
+
+// Add a middleware function to log access to the route
+router.use('/auth/user-logout', (req, res, next) => {
+    console.log('Access to route /auth/user-logout');
+    next(); // Continue processing the route
+});
 
 // router.post('/admin-login', userInfo.adminLogin); /* finished */
 
@@ -40,8 +50,6 @@ router.get('/wish/user_wishlist', protect, userInfo.wishList); /* finished */
 router.put('/block-user/:id', protect, isAdmin, userInfo.blockUser); /* finished */
 
 router.put('/unblock-user/:id', protect, isAdmin, userInfo.unBlockUser); /* finished */
-
-router.post('/auth/logout', protect, userInfo.Logout); /* finished */
 
 router.get('/reset-password/:userId/:uniqueToken', userInfo.verifyResetToken); /* finished */
 

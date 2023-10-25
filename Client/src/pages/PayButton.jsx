@@ -3,33 +3,41 @@ import api from '../app/api/currentApi'
 import { useDispatch, useSelector } from 'react-redux';
 import { createOrder } from '../features/users/userSlice';
 import { v4 as uuidv4 } from 'uuid';
+import { useNavigate } from 'react-router-dom';
 
 const PayButton = (cartData) => {
     const dispatch = useDispatch();
-    const { _id } = useSelector((state) => state.auth.users);
-    console.log('userId', _id)
+    const navigate = useNavigate();
+    const authState = useSelector((state) => state?.auth?.users);
     const [isLoading, setLoading] = useState(false);
     const [transitionId, setTransitionId] = useState('');
+    const userId = authState?._id;
+    console.log('autStateUserId', authState?._id)
 
     useEffect(() => {
         const generatedTransitionId = uuidv4();
         setTransitionId(generatedTransitionId);
     }, []);
+
+    useEffect(() => {
+        if (!authState || !authState._id) {
+            navigate('/login');
+        }
+    }, [authState, navigate]);
     
     const handleConfirm = async () => {
-        try {
+        try {   
             setLoading(true);
 
             await dispatch(createOrder({...cartData, transitionId}));
 
             const response = await api.post(`/stripe/create-payment-intent`, {
                 cartItemData: cartData,
-                userId: _id,
+                userId: authState._id,
                 transitionId,
             })
             if (response.data.url) {
                 window.location.href = response.data.url;
-                
             } else {
                 console.error('No URL found in the response.');
             }

@@ -101,7 +101,7 @@ const OrderList = () => {
     for (let i = 0; i < orderState?.length; i++) {
         const userId = orderState[i]?.customerId;
         const transitionId = orderState[i]?.transitionId;
-        const date = new Date(orderState[i].paidAt)
+        const date = new Date(orderState[i]?.paidAt)
         const formattedDate = date.toLocaleString('en-US', {
             year: 'numeric',
             month: '2-digit',

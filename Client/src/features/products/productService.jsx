@@ -41,7 +41,6 @@ const removeFromToWishlist = async (prodId) => {
 }
 
 const getProduct = async (prodId) => {
-    console.log('serviceProdId', prodId)
     try {
         const response = await api.get(`/product/retrieve/${prodId}`);
         return response.data;

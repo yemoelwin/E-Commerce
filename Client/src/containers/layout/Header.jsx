@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { NavLink, Link } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { BsSearch } from 'react-icons/bs'
 import compare from '../../images/compare.svg'
 import wishlist from '../../images/wishlist.svg'
@@ -10,12 +10,17 @@ import { FaLuggageCart } from 'react-icons/fa';
 import { CgProfile } from 'react-icons/cg';
 import { IoIosLogOut } from 'react-icons/io';
 
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../../features/auth/AuthSlice';
+import { persistor } from '../../app/store';
+import { clearCartItem } from '../../features/cart/cartSlice';
 
 const Header = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const menuRef = useRef();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { users, isAuthenticated, userRole } = useSelector(state => state.auth);
+  const authState = useSelector((state) => state.auth.users);
   const { totalQuantity, cartTotalAmount } = useSelector((state) => state.cart);
 
   useEffect(() => {
@@ -40,9 +45,22 @@ const Header = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const handleLogout = () => {
-    localStorage.clear();
-    window.location.reload()
+  const handleLogout = async() => {
+    try {
+      await dispatch(logout());
+      dispatch(clearCartItem());
+      /* clear all data in the localStorage */
+      localStorage.clear();
+
+      // clear all data which are persisted by redux persist library
+      persistor.purge();
+      // navigate('/');
+
+    // Reload the page
+    // window.location.reload();
+    } catch (error) {
+      console.error('something went wrong',error)
+    }
   }
 
   return (
@@ -68,7 +86,7 @@ const Header = () => {
         <div className='container-xxl'>
           <div className='row align-items-center'>
 
-            {userRole === 'admin' ?
+            {authState && authState.role === 'admin' ?
               <div className='col-2'>
                 <h2>
                   <Link to='admin' className='dashboardBanner'>DashBoard</Link>
@@ -121,7 +139,7 @@ const Header = () => {
                   </NavLink>                                    
                 </div>
 
-                {isAuthenticated ? (
+                {authState && authState.status === 'Success' ? (
                   <div className='hero'>
 
                     <div className='profile-logo'>
@@ -133,7 +151,7 @@ const Header = () => {
 
                         <div className='user-info'>
                           <img src={image} className='user-logo' alt='' />
-                          <h5>{`${users?.firstname} ${users?.lastname}` }</h5>
+                          <h5>{`${authState?.firstname} ${authState?.lastname}` }</h5>
                         </div>
                         <hr />
 
@@ -147,7 +165,7 @@ const Header = () => {
                               </div>
 
                               <div>
-                                <Link to={`/orderlists/${users?._id}`} className='sub-menu-link'>
+                                <Link to={`/orderlists/${authState?._id}`} className='sub-menu-link'>
                                   <FaLuggageCart className='logo-sl'/>
                                   <p>Order lists</p>
                                 </Link>
@@ -168,7 +186,7 @@ const Header = () => {
                   </div>
                 ) : (
                   <div className='profile-login'>
-                    <Link to={ users === null || [] ? '/login' : ''} className='d-flex align-items-center gap-10 text-white'>
+                    <Link to="/login" className='d-flex align-items-center gap-10 text-white'>
                       <img src={user} alt='user'></img>
                       <p className='mb-0'>Login <br/> Account</p>
                     </Link>
