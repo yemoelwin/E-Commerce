@@ -126,7 +126,7 @@ function App() {
                 <Route path="edit-blog-category/:id" element={<AddBlogCategory />} />
                 <Route path="blog-category-list" element={<BlogCategoryList />} />
                 <Route path="orders" element= {<Orders />} />
-                <Route path="view-orders/:id" element= {<ViewOrders />} />
+                <Route path="view-orders/:userId/:transitionId" element= {<ViewOrders />} />
                 <Route path="customers" element= {<Customers />} />
                 <Route path="color-lists" element= {<Colors />} />
                 <Route path="add-color" element= {<AddColor />} />

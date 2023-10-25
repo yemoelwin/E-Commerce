@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Table } from "antd";
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 // import { getOrderbyUser } from '../../../features/auth/AuthSlice';
 import { MdDelete } from 'react-icons/md';
 import { BiArrowBack } from 'react-icons/bi';
+import { getOrder } from '../../../features/users/userSlice';
 
 const columns = [
     {
@@ -39,20 +40,21 @@ const columns = [
 
 const ViewOrders = () => {
     const dispatch = useDispatch();
-    const location = useLocation();
+    // const location = useLocation();
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(true);
-    const orderId = location.pathname.split('/')[3];
-    const orderProductState = useSelector((state) => state.auth.orderProduct);
-    console.log(orderProductState)
-    // console.log(orderProductState?.products?.product.color[0].label);
+    const { userId, transitionId } = useParams()
+    console.log('orderId', userId,transitionId)
+    const orderProductState = useSelector((state) => state?.user?.orderDetail);
+
+    console.log(orderProductState);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                if (orderId !== undefined) {
+                if (userId && transitionId !== undefined) {
                     setIsLoading(true);
-                    // await dispatch(getOrderbyUser(orderId));
+                    await dispatch(getOrder({userId, transitionId}))
                 }
             } catch (error) {
                 console.error('Error fetching order data:', error);
@@ -61,7 +63,7 @@ const ViewOrders = () => {
             }
         }
         fetchData();
-    }, [orderId]);
+    }, [userId, transitionId]);
 
     const goBack = () => {
         navigate(-1);
@@ -69,16 +71,31 @@ const ViewOrders = () => {
     
     const data1 = [];
     for (let i = 0; i < orderProductState?.products.length; i++) {
-        const product = orderProductState?.products[i].product;
-        const colors = product?.color.map((colorObj) => colorObj.label).join(', '); // Extract color labels and join them
+        const title = orderProductState?.products[i]?.title;
+        let productName;
+        if (title?.length > 15) {
+            const truncatedTitle = title.substr(0, 50);
+            const lastSpaceIndex = truncatedTitle.lastIndexOf(' ');
+            if (lastSpaceIndex !== -1) {
+                productName = `${truncatedTitle.substr(0, lastSpaceIndex)}...`
+            } else {
+                productName = `${truncatedTitle}...`;
+            }
+        } else {
+            productName = title;
+        }
         data1.push({
             key: i + 1,
-            productId: orderProductState?.products[i]?.product?._id,
-            productName: orderProductState?.products[i]?.product?.title,
-            brand: orderProductState?.products[i]?.product?.brand,
-            color: colors,
-            price: `$ ${orderProductState?.products[i]?.price}`,
-            quantity: orderProductState?.products[i]?.count,
+            productId: orderProductState?.products[i]?.productId,
+            productName: (
+                <>
+                    <span title={title}>{productName}</span>
+                </>
+            ),
+            brand: orderProductState?.products[i]?.brand,
+            color: orderProductState?.products[i]?.color,
+            price: `$ ${(orderProductState?.products[i]?.price).toFixed(2)}`,
+            quantity: orderProductState?.products[i]?.quantity,
             action: (
                 <>
                     <Link className=''>Edit</Link>

@@ -16,7 +16,6 @@ const getUserWishlist = async () => {
 };
 
 const saveOrder = async (data) => {
-    console.log('service data', data)
     try {
         const response = await api.post('/user/order/create_userOrder', {cartData: data.cartData, cartTotalAmount: data.cartTotalAmount, totalQuantity: data.totalQuantity, transitionId: data.transitionId});
         console.log('reponsedata', response.data)
@@ -33,10 +32,8 @@ const saveOrder = async (data) => {
 };
 
 const getOrder = async ({userId, transitionId}) => {
-    // console.log('service data', data)
     try {
         const response = await api.get(`/user/order/get_order/${userId}/${transitionId}`);
-        // console.log('reponsedata', response.data)
         return response.data;
     } catch (error) {
         if (error.response && error.response.data && error.response.data.message) {
@@ -50,7 +47,6 @@ const getOrder = async ({userId, transitionId}) => {
 };
 
 const getOrders = async (id) => {
-    console.log('service id', id)
     try {
         const response = await api.get(`/user/order/user-orders/${id}`)
         return response.data;
@@ -81,12 +77,18 @@ const getallUserOrders = async () => {
 // };
 
 const updateOrderStatus = async (data) => {
+    console.log('orderServiceData', data);
     try {
-        const response = await api.put(`/user/order/update_user_order_status/${data.id}`, {orderStatus: data.data})
+        const response = await api.put(`/user/order/order_status/${data.id}`, {delivery_status: data.delivery_status})
         return response.data;
     } catch (error) {
-        console.error("An error occurred while updating order status", error);
-        throw error; // Re-throw the error for higher-level handling
+        if (error.response && error.response.data && error.response.data.message) {
+            // Extract and return the error message from the backend
+            throw new Error(error.response.data.message);
+        } else {
+            console.error("error", error);
+            throw new Error('An error occurred while updating order status.'); // Fallback error message
+        }
     }   
 };
 
@@ -96,16 +98,19 @@ const deleteOrder = async (id) => {
         const response = await api.delete(`/user/delete_order/${id}`)
         return response.data;
     } catch (error) {
-        console.error("An error occurred while updating order status", error);
-        throw error; // Re-throw the error for higher-level handling
+        if (error.response && error.response.data && error.response.data.message) {
+            // Extract and return the error message from the backend
+            throw new Error(error.response.data.message);
+        } else {
+            console.error("error", error);
+            throw new Error('An error occurred while deleting order.'); // Fallback error message
+        }
     }   
 };
 
 const invoicePDF = async (id) => {
-    console.log('service id',id)
     try {
         const response = await api.get(`/invoice/pdf-invoice/${id}`);
-        console.log('reponsedata', response.data)
         return response.data;
     } catch (error) {
         if (error.response && error.response.data && error.response.data.message) {
@@ -124,6 +129,7 @@ const userService = {
     saveOrder,
     getOrder,
     getOrders,
+    updateOrderStatus,
     getallUserOrders,
     invoicePDF,
 };

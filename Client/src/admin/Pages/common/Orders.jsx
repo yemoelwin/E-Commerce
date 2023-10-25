@@ -7,6 +7,7 @@ import { MdDelete } from 'react-icons/md';
 import { CustomModal } from '../../../containers/common/CustomModal';
 // import { deleteOrder } from '../../../features/auth/AuthSlice';
 import { showToast } from '../../../containers/common/ShowToast';
+import { allUserOrders, updateOrderStatus } from '../../../features/users/userSlice';
 
 const columns = [
     {
@@ -52,13 +53,14 @@ const Orders = () => {
     const [open, setOpen] = useState(false);
     const [orderId, setOrderId] = useState('');
     const [selectedOrder, setSelectedOrder] = useState([]);
-    const orderState = useSelector((state) => state.auth.orders);
+    const orderState = useSelector((state) => state?.user?.userOrders);
+    console.log('orderState', orderState)
 
     useEffect(() => {
         setIsLoading(true);
         const fetchData = async() => {
             try {
-                // await dispatch(fetchOrders());
+                await dispatch(allUserOrders());
             } catch (error) {
                 console.error('Error fetching all orders:', error);
             } finally {
@@ -93,55 +95,48 @@ const Orders = () => {
         }
     }
         
-    // const handleUpdateStatus = async(statusData, orderId) => {
-    //     console.log(statusData, orderId);
-    //     setIsLoading(true);
-    //     const data = { id: orderId, data: statusData };
-    //     try {
-    //         await dispatch(updateOrderStatus(data));
-    //         await dispatch(fetchOrders());
-    //         showToast('Order status has been changed successfully.');
-    //     } catch (error) {
-    //         console.error('Error occurred while updating order status:', error);
-    //     } finally {
-    //         setIsLoading(false);
-    //     }
-    // }
+    const handleUpdateStatus = async(statusData, orderId) => {
+        console.log(statusData, orderId);
+        setIsLoading(true);
+        const data = { id: orderId, delivery_status: statusData };
+        try {
+            await dispatch(updateOrderStatus(data));
+            await dispatch(allUserOrders());
+            showToast('delivery status has been updated successfully.');
+        } catch (error) {
+            console.error('Error occurred while updating delivery status:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    }
     
     const data1 = [];
     for (let i = 0; i < orderState?.length; i++) {
 
-        const createdAtDate = new Date(orderState[i]?.createdAt);
+        const createdAtDate = new Date(orderState[i]?.paidAt);
         const formattedDate = createdAtDate.toLocaleString('en-US', {
             year: 'numeric',
             month: '2-digit',
             day: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
         });
         data1.push({
             key: i + 1,
             orderId: orderState[i]?._id,
             date: formattedDate,
-            customerName: orderState[i]?.orderby[0].firstname + ' ' + orderState[i]?.orderby[0].lastname,
-            amount: `$ ${orderState[i]?.payment[0]?.amount}`,
-            product: <Link className='viewColor' to={`/admin/view-orders/${orderState[i]?._id}`}>View Item</Link>,
+            customerName: orderState[i]?.customer_details.name,
+            amount: `$ ${(orderState[i]?.subTotalAmount).toFixed(2)}`,
+            product: <Link className='viewColor' to={`/admin/view-orders/${orderState[i]?.customerId}/${orderState[i]?.transitionId}`}>View Item</Link>,
             status: (
                 <>
                     <select
                         name="" id=''
-                        // defaultValue={orderState[i]?.orderStatus ? orderState[i]?.orderStatus : 'Not Processed'}
+                        defaultValue={orderState[i]?.delivery_status ? orderState[i]?.delivery_status : 'Pending'}
                         className='form-control form-select'
-                        // onChange={(e) => handleUpdateStatus(e.target.value, orderState[i]?._id)}
+                        onChange={(e) => handleUpdateStatus(e.target.value, orderState[i]?._id)}
                     >
-                        {/* <option value="Not Processed" className=''>Not Processed</option>
-                        <option value="Processing" className=''>Processing</option>
-                        <option value="Cash on Delivery" className=''>Cash on Delivery</option>
-                        <option value="Prepaid" className=''>Prepaid</option>
-                        <option value="Cancelled" className=''>Cancelled</option> */}
+                        <option value="Pending" className=''>Pending</option>
                         <option value="Delivered" className=''>Delivered</option>
-                        <option value="Canceled" className=''>Canceled</option>
+                        <option value="Cancelled" className=''>Cancelled</option>
                     </select>
                 </>
             ),

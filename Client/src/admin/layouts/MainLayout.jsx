@@ -20,6 +20,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Link, useNavigate } from 'react-router-dom';
 import { Outlet } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 const { Header, Content, Footer, Sider } = Layout;
 
 function getItem(label, key, icon, children) {
@@ -63,6 +64,10 @@ const MainLayout = () => {
     const [collapsed, setCollapsed] = useState(false);
     const [showText, setShowText] = useState(false);
     const navigate = useNavigate();
+    const authState = useSelector(state => state.auth.users);
+
+    const userName = `${authState?.firstname} ${authState?.lastname}`;
+    
     const handleSideBarTrigger = () => {
         setShowText((prevShowLargeText) => !prevShowLargeText)
     }
@@ -113,7 +118,7 @@ const MainLayout = () => {
                                     <img className="img-thumbnail" src="https://stroyka-admin.html.themeforest.scompiler.ru/variants/ltr/images/customers/customer-4-64x64.jpg" alt="" />
                                 </div>
                                 <div className='pe-4' >
-                                    <h5 className='font-size'>ye moe lwin</h5>
+                                    <h5 className='font-size'>{userName}</h5>
                                     {/* <p className='font-size1'>yemoelwin142@gmail.com</p> */}
                                 </div>
                                 <div className='dropdown-menu ' aria-labelledby="dropdownMenuLink">

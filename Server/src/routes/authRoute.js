@@ -41,7 +41,7 @@ router.get('/order/user-orders/:id', protect, userInfo.getUserOrders); /* finish
 
 router.get('/order/all-orders', protect, isAdmin, userInfo.getAllOrders); /* finished */
 
-router.put('/order/update_user_order_status/:id', protect, isAdmin, userInfo.updateOrderStatus); /*finished*/
+router.put('/order/order_status/:id', protect, isAdmin, userInfo.updateOrderStatus); /*finished*/
 
 router.delete('/delete_order/:id', protect, isAdmin, userInfo.deleteOrder); /* finished */
 

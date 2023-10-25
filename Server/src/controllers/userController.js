@@ -565,7 +565,6 @@ const getOrder = asyncHandler(async (req, res) => {
 
 const getUserOrders = asyncHandler(async (req, res) => {
     const { id } = req.params;
-    console.log('backend Id', id)
     try {
         const userOrders = await Order.find({ customerId: id, stripe_response: true });
         if (!userOrders) {
@@ -589,22 +588,25 @@ const getAllOrders = asyncHandler(async (req, res) => {
     }
 });
 
-
-
-// const createOrder = asyncHandler(async (customer, data) => {
-//     // const { shippingInfo, paymentInfo, orderItems, totalPrice, discountedPrice } = req.body;
-
-//     const { _id } = req.user;
-//     try {
-//         const order = await Order.create(
-//             { user:_id, shippingInfo, paymentInfo, orderItems, totalPrice, discountedPrice }
-//         )
-//         res.status(200).json({message: 'Successfully created order', order})
-//     } catch (error) {
-//         console.error(error)
-//         throw error;
-//     }
-// })
+const updateOrderStatus = asyncHandler(async (req, res) => {
+    const { delivery_status } = req.body;
+    console.log('delivery_status', delivery_status)
+    const { id } = req.params;
+    console.log('orderId', id)
+    validateMongodbID(id);
+    try {
+        const updateOrderStatus = await Order.findByIdAndUpdate(id,
+        {
+            delivery_status: delivery_status,
+        },
+        { new: true }
+        );
+        res.json(updateOrderStatus);
+    } catch (error) {
+        console.log('error', error);
+        res.status(500).json({ message: "Error Occurred while ordering." });
+    }
+});
 
 /* ------------------- Unnecessary function --------------------- */
 
@@ -712,29 +714,6 @@ const creatOrderX = asyncHandler(async (req, res) => {
 
 
 
-const updateOrderStatus = asyncHandler(async (req, res) => {
-    const { orderStatus } = req.body;
-    const { id } = req.params;
-    validateMongodbID(id);
-    try {
-        const updateOrderStatus = await Order.findByIdAndUpdate(
-            id,
-            // { $set: { 'orderStatus': status, 'payment.$.status': status } },
-            // { new: true },
-        {
-            orderStatus: orderStatus,
-            payment: {
-                status: orderStatus,
-            },
-        },
-        { new: true }
-        );
-        res.json(updateOrderStatus);
-    } catch (error) {
-        console.log('error', error);
-        res.status(500).json({ message: "Error Occurred while ordering." });
-    }
-});
 
 const deleteOrder = asyncHandler(async (req, res) => {
     const { id } = req.params;
