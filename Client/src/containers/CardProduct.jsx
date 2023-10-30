@@ -1,31 +1,18 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import ReactStars from "react-rating-stars-component";
 import { Link, useLocation } from 'react-router-dom';
 import prodcompare from "../images/prodcompare.svg";
 import wish from '../images/wish.svg'
 import addcart from "../images/add-cart.svg";
 import view from "../images/view.svg";
-import { useDispatch, useSelector } from 'react-redux';
-import { addToWishlistProduct, addToWishListReset } from '../features/products/productSlice';
-import { showToast } from './common/ShowToast';
+import { useDispatch } from 'react-redux';
+import { addToWishlistProduct } from '../features/products/productSlice';
 
 const CardProduct = (props) => {
     const { grid, prodData } = props;
     console.log('prodData', prodData)
     let location = useLocation();
     const dispatch = useDispatch();
-    // const navigate = useNavigate();
-    const addToWishlistMessage = useSelector((state) => state?.product?.addToWishList);
-    // const message = addToWishlistMessage?.message;
-
-    // useEffect(() => {
-    //     if (message && !message.includes('already exists')) {
-    //         showToast(message, 'success')
-    //     } else if(message){
-    //         showToast(message, 'info');
-    //     }
-    //     dispatch(addToWishListReset());
-    // }, [message, dispatch])
 
     const handleWishlist = async(prodId) => {
         alert(prodId);

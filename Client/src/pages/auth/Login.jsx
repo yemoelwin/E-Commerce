@@ -11,19 +11,19 @@ const Login = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { isLoading, isSuccess, isError, errorMessage } = useSelector((state) => state.auth);
+    const { isLoading, isError, errorMessage, users } = useSelector((state) => state.auth);
 
     useEffect(() => {
         userRef.current.focus()
     }, [])
 
     useEffect(() => {
-        if (isSuccess === true) {
-            navigate('/');
-        } else if (isError) {
-            navigate('/login');
-        }
-    }, [isSuccess, isError, navigate]);
+        if (users === null) {
+                navigate('/login');
+            } else {
+                navigate('/');
+            }
+    },[navigate, users])
 
     const handleEmailChange = (e) => {
         e.preventDefault();
@@ -104,7 +104,7 @@ const Login = () => {
                                 </div>
                                 <div className='formlink'>
                                     <Link to={`/signup`} className=''>Go to Register</Link>
-                                    <Link to={`/signup`} className=''>Forgot Password?</Link>
+                                    <Link to={`/forgot-password`} className=''>Forgot Password?</Link>
                                 </div>
                                 <button className="btn" type='submit'>{isLoading ? 'Signing In...' : 'Sign In'}</button>
                             </form>

@@ -7,19 +7,32 @@ import BreadCrumb from '../containers/common/BreadCrumb';
 import Meta from '../containers/common/Meta';
 import { useDispatch, useSelector } from 'react-redux';
 import { getProducts } from '../features/products/productSlice';
+import ShowMoreList from '../containers/ShowMoreList';
+import { getAllCategory } from '../features/category/categorySlice';
+import NoData from '../containers/common/NoData';
+import { getBrands } from '../features/brand/brandSlice';
 
 const ProductPage = () => {
     const dispatch = useDispatch();
     const [grid, setGrid] = useState(4);
     const [isChecked, setIsChecked] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
+    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [selectedBrand, setSelectedBrand] = useState(null);
+    const [selectedOption, setSelectedOption] = useState('Categories');
     const productState = useSelector((state) => state.product.products);
-    // console.log('abc',productState[0].quantity)
+    const [filteredProducts, setFilteredProducts] = useState(productState);
+    const searchProductState = useSelector((state) => state.product.searchProducts);
+    const categoryList = useSelector(state => state.category.categories);
+    const brandList = useSelector(state => state.brand.brands);
+
     useEffect(() => {
         const getAllProducts = async () => {
             try {
                 setIsLoading(true);
                 await dispatch(getProducts());
+                await dispatch(getAllCategory());
+                await dispatch(getBrands());
             } catch (error) {
                 console.error("error", error);
                 setIsLoading(false);
@@ -31,12 +44,61 @@ const ProductPage = () => {
         getAllProducts();
     },[])
 
-    
     // alert (grid)
 
     const handleCheckboxChange = (event) => {
         setIsChecked(event.target.checked);
     };
+
+    const handleOption = (e) => {
+        setSelectedOption(e.target.value);
+    }
+
+    const handleAllProduct = () => {
+        setSelectedCategory('');
+        setSelectedBrand('');
+    }
+
+    useEffect(() => {
+        if (searchProductState && searchProductState.length > 0) {
+            let filtered = [];
+            for (let index = 0; index < searchProductState.length; index++) {
+                const element = searchProductState[index];
+                const products = productState.filter(product => product._id === element._id);
+                filtered = filtered.concat(products);
+            }
+            setFilteredProducts(filtered);
+        } else {
+            setFilteredProducts('');
+        }
+    }, [searchProductState, productState]);
+
+    // console.log('searchProductState', searchProductState)
+    // console.log('filteredProducts', filteredProducts)
+
+    useEffect(() => {
+        if (selectedCategory) {
+            // Filter based on selected category only
+            const filtered = productState.filter(product => product.category === selectedCategory);
+            setFilteredProducts(filtered);
+        } else {
+            // No category filter, set to all products
+            setFilteredProducts(productState);
+        }
+    }, [selectedCategory, productState]);
+
+// Handle brand filtering
+    useEffect(() => {
+        if (selectedBrand) {
+            // Filter based on selected brand only
+            const filtered = productState.filter(product => product.brand === selectedBrand);
+            setFilteredProducts(filtered);
+        } else {
+            // No brand filter, set to all products
+            setFilteredProducts(productState);
+        }
+    }, [selectedBrand, productState]);
+
     return (
         <>
             <Meta title={"Our Store"} />
@@ -47,17 +109,27 @@ const ProductPage = () => {
 
                     <div className="col-3">
                         <div className='filter-card mb-3'>
-                            <h3 className='filter-title'>
-                                Shop By Categories
-                            </h3>
                             <div>
-                                <ul className='ps-0 '>
-                                    <li className='my-2'>Home</li>
-                                    <li className='my-2'>Store</li>
-                                    <li className='my-2'>Blogs</li>
-                                    <li className='my-2'>Contact</li>
-                                </ul>
+                                <h3 className='filter-title'>
+                                    Shop By 
+                                    <select
+                                        name="shopby" id=""
+                                        className='shopby'
+                                        value={selectedOption}
+                                        onChange={handleOption}
+                                    >
+                                        <option>Categories</option>
+                                        <option>Brand</option>
+                                    </select>
+                                </h3>
                             </div>
+                            <ShowMoreList
+                                selectedOption={selectedOption}
+                                categories={categoryList}
+                                brands={brandList}
+                                onCategoryClick={(category) => setSelectedCategory(category)}
+                                onBrandClick={(brand) => setSelectedBrand(brand)}
+                            />
                         </div>
 
                         <div className='filter-card mb-3'>
@@ -247,7 +319,7 @@ const ProductPage = () => {
                                 </div>
                             
                                 <div className='d-flex align-items-center gap-10'>
-                                    <p className="totalproducts mb-0">21 Products</p>
+                                    <button className="totalproducts mb-0" onClick={handleAllProduct}>{`All Products`}</button>
                                     <div className="d-flex gap-10 align-items-center grid">
                                         <img
                                             onClick={() => {
@@ -286,7 +358,6 @@ const ProductPage = () => {
                     
                         </div>
 
-                
                         <div className="products-list pb-5">
                             <div className='d-flex flex-wrap gap-10'>
                                 {isLoading ? ( // Show loading indicator when isLoading is true
@@ -295,7 +366,11 @@ const ProductPage = () => {
                                         <div className='load'>Loading ... </div>
                                     </div> 
                                 ) : (
-                                    <CardProduct prodData={productState} grid={grid} />  
+                                    filteredProducts?.length > 0 ? (
+                                        <CardProduct prodData={filteredProducts} grid={grid} />
+                                    ) : (
+                                        <NoData />
+                                    )
                                 )}
                             </div>
                         </div>

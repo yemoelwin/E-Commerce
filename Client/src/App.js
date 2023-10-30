@@ -60,7 +60,7 @@ import ViewInquiry from './admin/Pages/common/ViewInquiry';
 import DataTable from './containers/common/DataTable';
 import SpecificDataPage from './admin/Pages/common/SpecificDataPage';
 import ViewOrders from './admin/Pages/common/ViewOrders';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setUser } from './features/auth/AuthSlice';
 import { PrivateRoutes } from './routes/privateRoutes';
 
@@ -68,7 +68,6 @@ import { PrivateRoutes } from './routes/privateRoutes';
 
 function App() {
   const dispatch = useDispatch();
-  // const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
   useEffect(() => {
     // Attempt to retrieve user data from local storage
@@ -98,6 +97,7 @@ function App() {
             <Route path='blog/:id' element={< SingleBlog />} />
             <Route path='cart' element={<PrivateRoutes>< Cart /></PrivateRoutes>} />
             <Route path='checkout-success/:userId/:transitionId' element={< CheckoutSuccess />} />
+            <Route path='canceled' element={< CheckoutCancel />} />
             <Route path='orderlists/:id' element={< OrderList />} />
             <Route path='cancel' element={< CheckoutCancel />} />
             <Route path='checkout' element={< Checkout />} />
@@ -106,7 +106,7 @@ function App() {
             <Route path='login' element={<Login />} />
             <Route path='signup' element={<SignUp />} />
             <Route path='forgot-password' element={<ForgotPassword />} />
-            <Route path='reset-password' element={<ResetPassword />} />
+            <Route path='reset-password/:id/:uniqueToken' element={<ResetPassword />} />
             <Route path='shipping-policy' element={<ShippingPolicy/>} />
             <Route path='privacy-policy' element={<PrivacyPolicy />} />
             <Route path='refund-policy' element={<RefundPolicy />} />

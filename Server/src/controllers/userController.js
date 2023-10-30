@@ -69,9 +69,6 @@ const verifyRegisterEmail = asyncHandler(async (req, res) => {
                 token,
                 expiredAt: { $gt: Date.now()}
             });
-        // console.log('verificationRecord', verificationRecord);
-        // console.log('Current timestamp:', Date.now());
-        // console.log('Expired timestamp:', verificationRecord.expiredAt);
         if (!verificationRecord) {
             return res.status(400).json({
                     status: 'FAILED',
@@ -83,7 +80,6 @@ const verifyRegisterEmail = asyncHandler(async (req, res) => {
             { $set: { verified: true } },
             { new: true }
         );
-        // await UserVerification.findOneAndDelete({ userId, uniqueString: token });
         return res.json({ message: 'Email verified successfully.You can login now.' });
     } catch (error) {
         console.error('Error during email verification:', error);
@@ -100,9 +96,7 @@ const userLogin = asyncHandler(async (req, res) => {
         if (!email || !password) {
             return res.status(400).json({message: 'All fields are required.'})
         }
-        // console.log('email', email, 'password', password);
         const user = await User.findOne({ email });
-        // console.log('userEmail', user);
         const genericErrorMessage = 'Invalid email or password';
         const verifyEmailMessage = 'Verify Your Email';
         if (!user) {
@@ -119,25 +113,15 @@ const userLogin = asyncHandler(async (req, res) => {
             })
         }
         const isMatched = await bcrypt.compare(password, user.password)
-        // console.log(isMatched);
         if (isMatched) {
             const userType = user.role === 'admin' ? 'admin' : 'user';
             const refreshToken = generateRefreshToken(user?._id);
-            // console.log('refreshToken', refreshToken);
             const accessToken = generateAccessToken(user?._id);
-            // console.log('accessToken', accessToken);
             await User.findByIdAndUpdate(user._id, {
                 refreshToken
             }, {
                 new: true
             })
-            // res.cookie('accessToken', accessToken, {
-            //     httpOnly: true,
-            //     secure: true, // Use only on HTTPS connections
-            //     sameSite: 'None',
-            //     maxAge: 60 * 60 * 1000, // 1 hour in milliseconds
-            //     domain: '.localhost', 
-            // });
             res.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
                 secure: true, // Use only on HTTPS connections
@@ -218,38 +202,14 @@ const handleRefreshToken = asyncHandler(async (req, res) => {
     })
 })
 
-const verifyResetToken = asyncHandler(async (req, res) => {
-    const { userId, uniqueToken } = req.params;
-    console.log('userId', userId);
-    console.log('resetPasswordToken', uniqueToken);
-    try {
-        const verifyResetToken = await UserPasswordVerification.findOne({
-            userId,
-            uniqueToken,
-            uniqueTokenExpiredAt: { $gt: Date.now() }
-        })
-        console.log('verifyResetToken', verifyResetToken);
-        if (!verifyResetToken) {
-            return res.status(400).json({
-                status: 'FAILED',
-                message: 'Invalid or expired reset password token.'
-            });
-        }
-        res.status(200).json({message: 'enter your new password.'})
-    } catch (error) {
-        console.error('Error resetting email password :', error);
-        res.status(500).json({
-            status: 'FAILED',
-            message: 'An error occurred during password reset. Please try again later.'
-        });
-    }
-})
-
 const resetPassword = asyncHandler(async (req, res) => {
     try {
         const { userId, uniqueToken } = req.params;
-        const { newPassword } = req.body;
-        if (!newPassword) {
+        console.log('userId', userId);
+        console.log('uniqueToken', uniqueToken);
+        const { password } = req.body;
+        console.log('password', password);
+        if (!password) {
             return res.status(400).json({
                 status: 'FAILED',
                 message: 'New password is missing in the request body.',
@@ -266,7 +226,7 @@ const resetPassword = asyncHandler(async (req, res) => {
             message: 'Invalid or expired reset token.',
         });
         }
-        const hashedPassword = await bcrypt.hash(newPassword, 12);
+        const hashedPassword = await bcrypt.hash(password, 12);
         const updatedUser = await User.findById(userId);
         if (!updatedUser) {
             return res.status(404).json({ message: 'User not found.' });
@@ -319,7 +279,7 @@ const forgotPasswordToken = asyncHandler(async (req, res) => {
     try {
         const { email } = req.body;
         const user = await User.findOne({ email });
-        if (!user) return res.status(404).json({ message: 'User not found.' });
+        if (!user) return res.status(404).json({ message: 'email does not exist.' });
         const resetToken = await ResetPasswordToken({ _id: user._id, email });
         res.status(200).json(resetToken);
     } catch (error) {
@@ -590,9 +550,7 @@ const getAllOrders = asyncHandler(async (req, res) => {
 
 const updateOrderStatus = asyncHandler(async (req, res) => {
     const { delivery_status } = req.body;
-    console.log('delivery_status', delivery_status)
     const { id } = req.params;
-    console.log('orderId', id)
     validateMongodbID(id);
     try {
         const updateOrderStatus = await Order.findByIdAndUpdate(id,
@@ -608,7 +566,34 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
     }
 });
 
-/* ------------------- Unnecessary function --------------------- */
+/* -------------------Beaware Unnecessary function --------------------- */
+
+const verifyResetToken = asyncHandler(async (req, res) => {
+    const { userId, uniqueToken } = req.params;
+    console.log('userId', userId);
+    console.log('resetPasswordToken', uniqueToken);
+    try {
+        const verifyResetToken = await UserPasswordVerification.findOne({
+            userId,
+            uniqueToken,
+            uniqueTokenExpiredAt: { $gt: Date.now() }
+        })
+        console.log('verifyResetToken', verifyResetToken);
+        if (!verifyResetToken) {
+            return res.status(400).json({
+                status: 'FAILED',
+                message: 'Invalid or expired reset password token.'
+            });
+        }
+        res.status(200).json({message: 'enter your new password.'})
+    } catch (error) {
+        console.error('Error resetting email password :', error);
+        res.status(500).json({
+            status: 'FAILED',
+            message: 'An error occurred during password reset. Please try again later.'
+        });
+    }
+})
 
 const addToCart = asyncHandler(async (req, res) => {
     const { productId, title, brand, color, quantity, price } = req.body;
@@ -712,9 +697,6 @@ const creatOrderX = asyncHandler(async (req, res) => {
     }
 })
 
-
-
-
 const deleteOrder = asyncHandler(async (req, res) => {
     const { id } = req.params;
     validateMongodbID(id)
@@ -774,8 +756,6 @@ const deleteOrder = asyncHandler(async (req, res) => {
 //         res.status(500).json({ message: "Error Occurred while adding the product to the user's cart" });
 //     }
 // })
-
-
 
 const addToCartOne = asyncHandler(async (req, res) => {
     const { cart } = req.body;
@@ -888,4 +868,4 @@ const emptyCart = asyncHandler(async (req, res) => {
     }
 })
 
-export const userInfo = { userRegister, userLogin, getAllUser, getUserById, deleteUser, updatedUser, wishList, blockUser, unBlockUser, handleRefreshToken, Logout, verifyResetToken, forgotPasswordToken, updatePassword, verifyRegisterEmail, resetPassword, saveAddress, saveUserOrder, addToCart, getUserCart, emptyCart, applyCoupon, getOrder, getUserOrders, getAllOrders,  updateOrderStatus, deleteOrder, removeItemFromCart, updateItemQuantity };
+export const userInfo = { userRegister, userLogin, getAllUser, getUserById, deleteUser, updatedUser, wishList, blockUser, unBlockUser, handleRefreshToken, Logout, forgotPasswordToken, updatePassword, verifyRegisterEmail, resetPassword, saveAddress, saveUserOrder, getOrder, getUserOrders, getAllOrders,  updateOrderStatus, deleteOrder };

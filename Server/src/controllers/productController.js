@@ -148,6 +148,29 @@ const fetchAllProduct = asyncHandler(async (req, res) => {
     }
 })
 
+const searchProducts = asyncHandler(async (req, res) => {
+    try {
+        const searchQuery = req.query.search;
+        console.log('searchQueryBackend', searchQuery);
+        const priceQuery = !isNaN(searchQuery) ? { price: searchQuery } : null;
+        const filteredProducts = await Product.find({
+            $or: [
+                { title: { $regex: searchQuery, $options: 'i'}},
+                { brand: { $regex: searchQuery, $options: 'i'}},
+                { category: { $regex: searchQuery, $options: 'i'}},
+                priceQuery,
+            ].filter(Boolean)
+        })
+        res.status(200).json(filteredProducts);
+    } catch (error) {
+        console.error("Error searching products:", error);
+        res.status(500).json({
+            status: "ERROR",
+            message: 'Internal Server Error.'
+        });
+    }
+})
+
 const updateProduct = asyncHandler(async (req, res) => {
     const { id } = req.params;
     const { title, description, price, brand, category, quantity, color, images, tags } = req.body;
@@ -336,7 +359,7 @@ const filterProduct = asyncHandler(async (req, res) => {
     }
 })
 
-export const productController = { createProduct, getProductById, fetchAllProduct, deleteProduct, addToWishlist, removeFromWishlist, updateProduct, starRating };
+export const productController = { createProduct, getProductById, fetchAllProduct, deleteProduct, addToWishlist, removeFromWishlist, updateProduct, starRating, searchProducts };
 
 
 // const generateUniqueSlug = async (title) => {

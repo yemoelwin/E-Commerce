@@ -16,7 +16,6 @@ const register = async (data) => {
 };
 
 const login = async (data) => {
-    console.log('serviceLogindata', data);
     try {
         const response = await api.post(`/user/auth/login`, {email: data.email, password: data.password});
         return response.data;
@@ -28,8 +27,39 @@ const login = async (data) => {
             throw new Error('An error occurred while signing in.'); // Fallback error message
         }
     }
-    
 };
+
+const forgotPasswordToken = async (data) => {
+    console.log('servicePasswordData', data)
+    try {
+        const response = await api.post(`/user/forgot-password`, {email: data.email});
+        return response.data;
+    } catch (error) {
+        if (error.response && error.response.data && error.response.data.message) {
+            throw new Error(error.response.data.message);
+        } else {
+            console.error("error", error);
+            throw new Error('An error occurred while signing in.'); // Fallback error message
+        }
+    }
+};
+
+const resetPassword = async (data) => {
+    console.log('resetPassword', data)
+    try {
+        const response = await api.post(`/user/reset-password/${data.userId}/${data.uniqueToken}`, {password: data.password});
+        return response.data;
+    } catch (error) {
+        if (error.response && error.response.data && error.response.data.message) {
+            throw new Error(error.response.data.message);
+        } else {
+            console.error("error", error);
+            throw new Error('An error occurred while signing in.'); // Fallback error message
+        }
+    }
+};
+
+
 
 // const logout = async () => {
 //     try {
@@ -51,6 +81,8 @@ const login = async (data) => {
 const authService = {
     register,
     login,
+    forgotPasswordToken,
+    resetPassword,
     // logout,
 };
 

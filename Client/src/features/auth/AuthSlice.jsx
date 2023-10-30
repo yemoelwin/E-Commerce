@@ -3,19 +3,16 @@ import authService from './AuthServices';
 // import Cookies from 'js-cookie';
 const getUserfromLocalStorage = JSON.parse(localStorage.getItem("user"))
 const role = getUserfromLocalStorage?.role;
-const token = getUserfromLocalStorage?.token;
-console.log(role, token)
 
 const initialState = {
     users: getUserfromLocalStorage ? getUserfromLocalStorage : [],
-    token: '',
     isAuthenticated: false,
     isLoggedIn: false,
     isError: false,
     isLoading: false,
     isSuccess: false,
-    errorMessage: '',
     message: "",
+    errorMessage: '',
     userRole: role,
 };
 
@@ -40,6 +37,27 @@ export const login = createAsyncThunk('auth/login', async (userData, thunkApi) =
     }
 });
 
+export const forgotPasswordToken = createAsyncThunk('auth/forgot-password', async (data, thunkApi) => {
+    console.log('sliceresetEmail', data);
+    try {
+        const response = await authService.forgotPasswordToken(data);
+        return response;
+    } catch (error) {
+        const errorMessage = error.message || "An error occurred.";
+        return thunkApi.rejectWithValue(errorMessage);
+    }
+});
+
+export const resetNewPassword = createAsyncThunk('auth/reset-password', async (data, thunkApi) => {
+    console.log('resetNewPassword', data);
+    try {
+        const response = await authService.resetPassword(data);
+        return response;
+    } catch (error) {
+        const errorMessage = error.message || "An error occurred.";
+        return thunkApi.rejectWithValue(errorMessage);
+    }
+})
 // export const userLogout = createAsyncThunk('auth/logout', async (thunkApi) => {
 //     try {
 //         const response = await authService.logout();
@@ -66,7 +84,7 @@ export const authSlice = createSlice({
             state.isSuccess = false;
             state.isLoggedIn = false;
             state.errorMessage = null;
-            state.message = "Successfully clear user's token";
+            state.message = "Success";
             state.users = null;
             state.userRole = null;
         },
@@ -125,6 +143,60 @@ export const authSlice = createSlice({
                 state.isLoggedIn = false;
                 state.userRole = null;
                 state.errorMessage = action.payload
+                state.message = 'Failed'
+            })
+            /* Request Confirmation to Reset Password */
+            .addCase(forgotPasswordToken.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(forgotPasswordToken.fulfilled, (state, action) => {
+                state.isError = false;
+                state.isLoading = false;
+                state.isSuccess = true;
+                state.isLoggedIn = false;
+                state.isAuthenticated = false;
+                state.errorMessage = null;
+                state.users = null;
+                state.userRole = null;
+                state.message = "Success";
+                state.returnData = action.payload;
+            })
+            .addCase(forgotPasswordToken.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isAuthenticated = false;
+                state.isError = true;
+                state.isSuccess = false;
+                state.users = null;
+                state.isLoggedIn = false;
+                state.userRole = null;
+                state.errorMessage = action.payload;
+                state.message = 'Failed'
+            })
+            /* Reset the New Password */
+            .addCase(resetNewPassword.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(resetNewPassword.fulfilled, (state, action) => {
+                state.isError = false;
+                state.isLoading = false;
+                state.isSuccess = true;
+                state.isLoggedIn = false;
+                state.errorMessage = null;
+                state.isAuthenticated = false;
+                state.message = "Success";
+                state.users = null;
+                state.userRole = null;
+                state.newPassword = action.payload;
+            })
+            .addCase(resetNewPassword.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isAuthenticated = false;
+                state.isError = true;
+                state.isSuccess = false;
+                state.users = null;
+                state.isLoggedIn = false;
+                state.userRole = null;
+                state.errorMessage = action.payload;
                 state.message = 'Failed'
             })
             /* Logout */

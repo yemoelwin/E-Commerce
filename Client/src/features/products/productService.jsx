@@ -10,6 +10,19 @@ const getProducts = async () => {
     }
 };
 
+const searchProducts = async (searchInput) => {
+    try {
+        const response = await api.get(`/product/search-products/?search=${searchInput}`);
+        console.log('responseData of searchINput', response.data);
+        return response.data;
+    } catch (error) {
+        console.error("An error occurred during fetching all search products:", error);
+        throw error; // Re-throw the error for higher-level handling
+    }
+};
+
+
+
 const createProduct = async (prod) => {
     try {
         const response = await api.post('/product/create-product', prod);
@@ -72,6 +85,7 @@ const deleteProduct = async (id) => {
 
 const productService = {
     getProducts,
+    searchProducts,
     createProduct,
     addToWishlist,
     removeFromToWishlist,

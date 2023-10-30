@@ -12,7 +12,7 @@ router.put('/updateBlog/:id', protect, Blog.updateBlog); /* finished */
 
 // router.put('/upload/:id', protect, isAdmin, blogMiddleware.array('images',2),  Blog.uploadBlogImages); /* under development process( now works as local storage but cannot upload to cloud server ) */
 
-router.get('/:id', protect, Blog.getBlogById); /* finished */
+router.get('/:id', Blog.getBlogById); /* finished */
 
 // router.put('/like-dislike', protect, Blog.LikedAndDisLiked);
 

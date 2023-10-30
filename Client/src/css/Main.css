@@ -180,4 +180,68 @@ a {
 
 /* tooltip */
 
+/* see more/less button */
+.see-more-button{
+    border: none;
+    outline: none;
+    font-size: 11px;
+    background: none;
+    text-decoration: underline;
+    color: blue;
+}
 
+.side-bar-display ul li:hover {
+    color: #2c2c2c !important;
+}
+
+.side-bar-display ul li {
+    text-transform: lowercase !important;
+    transition: transform 0.3s ease;
+    transform-origin: left;
+}
+
+.side-bar-display ul li:hover {
+    color: #2c2c2c !important;
+    transform: scale(1.05);
+}
+
+.side-bar-display ul li.slide-out {
+    transform: translateY(-100%);
+    opacity: 0;
+}
+
+.side-bar-display ul li.slide-in {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+
+/* No Data */
+
+.no-data{
+    /* text-align: center; */
+    display: flex !important;
+    justify-content: center;
+}
+
+.totalproducts{
+    cursor: pointer;
+    font-size: 13px;
+    border: 1px solid rgb(192, 191, 191);
+    padding: 0.3rem;
+    background: none;
+    border-radius: 5px;
+    color: rgb(110, 153, 23);
+    /* outline: none; */
+}
+
+.shopby{
+    padding: 2px;
+    margin-left: 5px;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.shopby option{
+    width: 100px;
+}

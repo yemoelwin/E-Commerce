@@ -15,6 +15,7 @@ import { showToast } from "../containers/common/ShowToast";
 import copy from 'copy-to-clipboard';
 import { addToCart } from "../features/cart/cartSlice";
 import { RxCross1 } from 'react-icons/rx';
+import IsLoading from "../containers/common/IsLoading";
 
 const SingleProduct = () => {
     const dispatch = useDispatch();
@@ -121,13 +122,32 @@ const SingleProduct = () => {
                             </div>
 
                         {/* Sub Images */}
-                            <div className="other-product-images d-flex flex-wrap gap-15">
+                        <div className="other-product-images d-flex flex-wrap gap-15">
+                            {isLoading ? ( // Show loading indicator when isLoading is true
+                                <IsLoading />
+                            ) : (
                                 <div><img src={product?.images[0].url} className='img-fluid' alt="" /></div>
+                            )}
+
+                            {isLoading ? ( // Show loading indicator when isLoading is true
+                                <IsLoading />
+                            ) : (
                                 <div><img src={product?.images[0].url} className='img-fluid' alt="" /></div>
+                            )}
+
+                            {isLoading ? ( // Show loading indicator when isLoading is true
+                                <IsLoading />
+                            ) : (
                                 <div><img src={product?.images[0].url} className='img-fluid' alt="" /></div>
+                            )}
+
+                            {isLoading ? ( // Show loading indicator when isLoading is true
+                                <IsLoading />
+                            ) : (
                                 <div><img src={product?.images[0].url} className='img-fluid' alt="" /></div>
-                                
-                            </div>
+                            )}
+
+                        </div>
 
                         </div>
 
@@ -159,32 +179,35 @@ const SingleProduct = () => {
                                     </a>
                                 </div>
 
-                            <div className=" py-3">
-                                {/* Type */}
+                            {isLoading ? ( 
+                                <IsLoading />
+                            ) : (
+                                <div className=" py-3">
+                                    {/* Type */}
                                     <div className="d-flex gap-10 align-items-center my-2">
                                         <h3 className="product-heading">Type :</h3>
                                         <p className="product-data">{product?.category}</p>
                                     </div>
 
-                                {/* Brand */}
+                                    {/* Brand */}
                                     <div className="d-flex gap-10 align-items-center my-2">
                                         <h3 className="product-heading">Brand :</h3>
-                                    <p className="product-data">{product?.brand}</p>
+                                        <p className="product-data">{product?.brand}</p>
                                     </div>
 
-                                {/* Category */}
+                                    {/* Category */}
                                     <div className="d-flex gap-10 align-items-center my-2">
                                         <h3 className="product-heading">Category :</h3>
                                         <p className="product-data">{product?.category}</p>
                                     </div>
 
-                                {/* Tags */}
+                                    {/* Tags */}
                                     <div className="d-flex gap-10 align-items-center my-2">
                                         <h3 className="product-heading">Tags :</h3>
                                         <p className="product-data">{product?.tags}</p>
                                     </div>
 
-                                {/* Availablity */}
+                                    {/* Availablity */}
                                     {/* <div className="d-flex gap-10 align-items-center my-2">
                                         <h3 className="product-heading">Availablity :</h3>
                                     <p className="product-data">
@@ -193,177 +216,177 @@ const SingleProduct = () => {
                                         </span>
                                     </p>
                                     </div> */}
-                                {product ? (
-                                    <div className="d-flex gap-10 align-items-center my-2">
-                                        <h3 className="product-heading">Availability :</h3>
-                                        <p className="product-data">
-                                        <span>
-                                            {product.quantity > 0 ? `in stock (${product.quantity})` : 'out of stock'}
-                                        </span>
-                                        </p>
-                                    </div>
-                                ) : (
-                                    // Render a loading indicator or error message
-                                    <p>Loading product data...</p>
-                                )}
+                                    {product ? (
+                                        <div className="d-flex gap-10 align-items-center my-2">
+                                            <h3 className="product-heading">Availability :</h3>
+                                            <p className="product-data">
+                                                <span>
+                                                    {product.quantity > 0 ? `in stock (${product.quantity})` : 'out of stock'}
+                                                </span>
+                                            </p>
+                                        </div>
+                                    ) : (
+                                        // Render a loading indicator or error message
+                                        <p>Loading product data...</p>
+                                    )}
 
-                                {/* Size */}
+                                    {/* Size */}
                                     <div className="d-flex gap-10 flex-column mt-2 mb-3">
                                         <h3 className="product-heading">Size :</h3>
                                         <div className="d-flex flex-wrap gap-15">
                                             <span className="badge border border-1 bg-white text-dark border-secondary">
-                                            S
+                                                S
                                             </span>
                                             <span className="badge border border-1 bg-white text-dark border-secondary">
-                                            M
+                                                M
                                             </span>
                                             <span className="badge border border-1 bg-white text-dark border-secondary">
-                                            XL
+                                                XL
                                             </span>
                                             <span className="badge border border-1 bg-white text-dark border-secondary">
-                                            XXL
+                                                XXL
                                             </span>
                                         </div>
-                                </div>
+                                    </div>
 
-                                {/* Color */}
-                                <div className="mt-2 mb-3">
-                                    {alreadyAdded === false && 
-                                        <>
-                                            <div className="d-flex gap-10">
-                                                <h3 className="product-heading">Available Color : </h3>
-                                                <Colors setColor={setColor} colorData={product} />
-                                            </div>
-                                            <div>
-                                                <h3 className="product-heading">
-                                                Selected Color: {color ? color : ""}</h3>
-                                            </div>
-                                        </>
-                                    }
-                                </div>
-
-                                {/* Add to Cart */}
-                                <div >
-                                    {(product && product.quantity > 0) ? (
-                                        <div className={alreadyAdded ? 'ms-0' : "mt-3"}>
-                                            {alreadyAdded ? (
-                                                <p className="font-sizeX">This item already added.</p>
-                                            ) : (
-                                                <button
-                                                    className="buttonX"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#staticBackdrop"
-                                                    type="button"
-                                                    onClick={() => handleAddToCart()}
-                                                >
-                                                    Add to Cart
-                                                </button>
-                                            )}
-                                        </div>
-                                    ) : (
-                                        <p className="fs-6 text-danger">Currently not available</p>
-                                    )}
-                                    
-                                    <div
-                                        className="modal fade"
-                                        id="staticBackdrop"
-                                        data-bs-backdrop="static"
-                                        data-bs-keyboard="false"
-                                        tabIndex="-1"
-                                        aria-labelledby="staticBackdropLabel"
-                                        aria-hidden="true"
-                                    >
-                                        <div className="modal-dialog">
-                                            <div className="modal-content">
-                                                    
-                                                <div className="modal-header">
-                                                    <h5 className="modal-title" id="staticBackdropLabel">
-                                                        Are you sure to add this item?
-                                                    </h5>
-                                                    <RxCross1
-                                                        type="button"
-                                                        // className="btn-close"
-                                                        data-bs-dismiss="modal"
-                                                        aria-label="Close"
-                                                    >
-                                                                    
-                                                    </RxCross1>
+                                    {/* Color */}
+                                    <div className="mt-2 mb-3">
+                                        {alreadyAdded === false &&
+                                            <>
+                                                <div className="d-flex gap-10">
+                                                    <h3 className="product-heading">Available Color : </h3>
+                                                    <Colors setColor={setColor} colorData={product} />
                                                 </div>
-                                                        
-                                                <div className="modal-body">
-                                                    <div className="d-flex align-items-center">
-                                                        <div className="flex-grow-1 w-50 modal-img">
-                                                            <img
-                                                                src={product?.images[0]?.url}
-                                                                className="img-fluid"
-                                                                alt="product images"
-                                                            />
-                                                        </div>
-                                                            
-                                                        <div className="d-flex flex-column flex-grow-1 w-50 align-items-center p-3">
-                                                            <div>
-                                                                <h6 className="mb-3" title={product?.title}>
+                                                <div>
+                                                    <h3 className="product-heading">
+                                                        Selected Color: {color ? color : ""}</h3>
+                                                </div>
+                                            </>
+                                        }
+                                    </div>
+
+                                    {/* Add to Cart */}
+                                    <div >
+                                        {(product && product.quantity > 0) ? (
+                                            <div className={alreadyAdded ? 'ms-0' : "mt-3"}>
+                                                {alreadyAdded ? (
+                                                    <p className="font-sizeX">This item already added.</p>
+                                                ) : (
+                                                    <button
+                                                        className="buttonX"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#staticBackdrop"
+                                                        type="button"
+                                                        onClick={() => handleAddToCart()}
+                                                    >
+                                                        Add to Cart
+                                                    </button>
+                                                )}
+                                            </div>
+                                        ) : (
+                                            <p className="fs-6 text-danger">Currently not available</p>
+                                        )}
+                                    
+                                        <div
+                                            className="modal fade"
+                                            id="staticBackdrop"
+                                            data-bs-backdrop="static"
+                                            data-bs-keyboard="false"
+                                            tabIndex="-1"
+                                            aria-labelledby="staticBackdropLabel"
+                                            aria-hidden="true"
+                                        >
+                                            <div className="modal-dialog">
+                                                <div className="modal-content">
+                                                    
+                                                    <div className="modal-header">
+                                                        <h5 className="modal-title" id="staticBackdropLabel">
+                                                            Are you sure to add this item?
+                                                        </h5>
+                                                        <RxCross1
+                                                            type="button"
+                                                            // className="btn-close"
+                                                            data-bs-dismiss="modal"
+                                                            aria-label="Close"
+                                                        >
                                                                     
-                                                                    {
-                                                                        product?.title?.length > 15 ? (() => {
-                                                                            const truncatedTitle = product?.title.substr(0, 70);
-                                                                            const lastSpaceIndex = truncatedTitle.lastIndexOf(" ");
-                                                                            if (!lastSpaceIndex) {
-                                                                            return `${truncatedTitle}...`;
-                                                                            }
-                                                                            return `${truncatedTitle.substr(0, lastSpaceIndex)}...`;
-                                                                        })() : product?.title
-                                                                    }
-                                                                </h6>
+                                                        </RxCross1>
+                                                    </div>
+                                                        
+                                                    <div className="modal-body">
+                                                        <div className="d-flex align-items-center">
+                                                            <div className="flex-grow-1 w-50 modal-img">
+                                                                <img
+                                                                    src={product?.images[0]?.url}
+                                                                    className="img-fluid"
+                                                                    alt="product images"
+                                                                />
+                                                            </div>
+                                                            
+                                                            <div className="d-flex flex-column flex-grow-1 w-50 align-items-center p-3">
+                                                                <div>
+                                                                    <h6 className="mb-3" title={product?.title}>
+                                                                    
+                                                                        {
+                                                                            product?.title?.length > 15 ? (() => {
+                                                                                const truncatedTitle = product?.title.substr(0, 70);
+                                                                                const lastSpaceIndex = truncatedTitle.lastIndexOf(" ");
+                                                                                if (!lastSpaceIndex) {
+                                                                                    return `${truncatedTitle}...`;
+                                                                                }
+                                                                                return `${truncatedTitle.substr(0, lastSpaceIndex)}...`;
+                                                                            })() : product?.title
+                                                                        }
+                                                                    </h6>
                                                                 
-                                                                <p className="mb-1 modal-font-size">price: ${product?.price}</p>
-                                                                <p className="mb-1 modal-font-size">color: {color}</p>
-                                                                <p className="mb-1 modal-font-size">Size: abcd</p>
+                                                                    <p className="mb-1 modal-font-size">price: ${product?.price}</p>
+                                                                    <p className="mb-1 modal-font-size">color: {color}</p>
+                                                                    <p className="mb-1 modal-font-size">Size: abcd</p>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                </div>
                                                         
-                                                <div className="modal-footer border-0 gap-10">
-                                                    <button
-                                                        type="submit"
-                                                        className="btn btn-primary"
-                                                        data-bs-dismiss="modal"
-                                                        onClick={() => {
-                                                            navigate(`/cart`)
-                                                        }}
-                                                    >View Cart</button>
-                                                    <button
-                                                        type="submit"
-                                                        className="btn btn-primary"
-                                                        data-bs-dismiss="modal"
-                                                        onClick={() => { handleConfirm()}}
-                                                    >Confirm</button>  
-                                                </div>    
+                                                    <div className="modal-footer border-0 gap-10">
+                                                        <button
+                                                            type="submit"
+                                                            className="btn btn-primary"
+                                                            data-bs-dismiss="modal"
+                                                            onClick={() => {
+                                                                navigate(`/cart`);
+                                                            }}
+                                                        >View Cart</button>
+                                                        <button
+                                                            type="submit"
+                                                            className="btn btn-primary"
+                                                            data-bs-dismiss="modal"
+                                                            onClick={() => { handleConfirm(); }}
+                                                        >Confirm</button>
+                                                    </div>
                                                             
                                                     
+                                                </div>
+
                                             </div>
-
                                         </div>
-                                    </div>
                                     
-                                </div>
+                                    </div>
 
-                                {/* Add to Compare & Add to Wishlist*/}
+                                    {/* Add to Compare & Add to Wishlist*/}
                                     <div className="d-flex align-items-center gap-15 mt-4">
                                         <div className="compareandwishlist">
                                             <Link to="">
-                                            <TbGitCompare className="fs-5 me-2" /> Add to Compare
+                                                <TbGitCompare className="fs-5 me-2" /> Add to Compare
                                             </Link>
                                         </div>
                                         <div className="compareandwishlist">
                                             <Link to="">
-                                            <AiOutlineHeart className="fs-5 me-2" /> Add to Wishlist
+                                                <AiOutlineHeart className="fs-5 me-2" /> Add to Wishlist
                                             </Link>
                                         </div>
                                     </div>
 
-                                {/* Shipping & Returns */}
+                                    {/* Shipping & Returns */}
                                     <div className="d-flex gap-10 flex-column my-3 mt-4">
                                         <h3 className="product-heading"><b>Shipping & Returns :</b></h3>
                                         <p className="product-data fs-7">
@@ -373,7 +396,7 @@ const SingleProduct = () => {
                                         </p>
                                     </div>
 
-                                {/* Copy ClipBoard */}
+                                    {/* Copy ClipBoard */}
                                     <div className="d-flex gap-10 align-items-center my-3">
                                         <h3 className="product-heading"><b>Product Link:</b></h3>
                                         <Link
@@ -381,8 +404,8 @@ const SingleProduct = () => {
                                             onClick={() => {
                                                 copy(window.location.href);
                                                 showToast('Product link copied to clipboard', 'success');
-                                            // copyToClipboard(
-                                            // );
+                                                // copyToClipboard(
+                                                // );
                                             }}
                                         >
                                             Copy Product Link
@@ -390,6 +413,8 @@ const SingleProduct = () => {
                                         
                                     </div>
                                 </div>
+                            )}
+                            
 
                             </div>
                             

@@ -14,6 +14,8 @@ router.put('/update/:id', protect, isAdmin, productController.updateProduct); /*
 
 router.get('/', productController.fetchAllProduct); /* finished */
 
+router.get('/search-products', productController.searchProducts); /* finished */
+
 router.put('/wishlist', protect, productController.addToWishlist); /* finished */
 
 router.put('/remove_wishlist', protect, productController.removeFromWishlist); /* finished */

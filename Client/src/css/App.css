@@ -686,8 +686,8 @@ footer .input-group-text{
   border-right: 2px solid #4b4b4b;
   /* border-top: 2px solid #4b4b4b; */
   border-radius: 50%;
-  width: 25px;
-  height: 25px;
+  width: 23px;
+  height: 23px;
   animation: spin 1s linear infinite;
   margin-bottom: 0px;
 }
@@ -705,6 +705,14 @@ footer .input-group-text{
   align-items: center;
   font-size: 17px;
   margin-bottom: 3rem;
+}
+
+.loading-span {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  font-size: 14px;
+  margin-top: 1rem;
 }
 
 .loadingM {

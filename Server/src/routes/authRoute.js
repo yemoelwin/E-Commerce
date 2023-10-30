@@ -9,8 +9,6 @@ router.get('/verify_email/:token/:_id', userInfo.verifyRegisterEmail); /* finish
 
 router.post('/auth/login', userInfo.userLogin); /* finished */
 
-/* finished */
-
 router.post('/auth/user-logout', protect, userInfo.Logout);
 
 // Add a middleware function to log access to the route
@@ -18,8 +16,6 @@ router.use('/auth/user-logout', (req, res, next) => {
     console.log('Access to route /auth/user-logout');
     next(); // Continue processing the route
 });
-
-// router.post('/admin-login', userInfo.adminLogin); /* finished */
 
 router.get('/refresh-token', userInfo.handleRefreshToken); /* finished */
 
@@ -30,8 +26,6 @@ router.get('/:id', protect, userInfo.getUserById); /* finished */
 router.put('/edit-user', protect, userInfo.updatedUser); /* finished */
 
 router.put('/save-address/:_id', protect, userInfo.saveAddress); /* finished */
-
-router.post('/cart?addtocart', protect, userInfo.addToCart); /* finished */
 
 router.post('/order/create_userOrder', protect, userInfo.saveUserOrder); /* finished */
 
@@ -51,8 +45,6 @@ router.put('/block-user/:id', protect, isAdmin, userInfo.blockUser); /* finished
 
 router.put('/unblock-user/:id', protect, isAdmin, userInfo.unBlockUser); /* finished */
 
-router.get('/reset-password/:userId/:uniqueToken', userInfo.verifyResetToken); /* finished */
-
 router.post('/update-password', protect, userInfo.updatePassword); /* finished */
 
 router.post('/forgot-password', userInfo.forgotPasswordToken); /* finished */
@@ -61,16 +53,21 @@ router.post('/reset-password/:userId/:uniqueToken', userInfo.resetPassword); /* 
 
 router.delete('/:id', protect, isAdmin, userInfo.deleteUser); /* finished */
 
+export default router;
+
 /* --------------------Unnecessary Code--------------------- */
 
-router.post('/cart/apply_coupon', protect, userInfo.applyCoupon);
+// router.post('/cart?addtocart', protect, userInfo.addToCart);
 
-router.get('/cart/get-usercart', protect, userInfo.getUserCart); /* finished */
+// router.get('/reset-password/:userId/:uniqueToken', userInfo.verifyResetToken); 
 
-router.delete('/cart/delete-cart-products', protect, userInfo.emptyCart); /* finished */
+// router.post('/cart/apply_coupon', protect, userInfo.applyCoupon);
 
-router.delete('/cart/remove-cart-products', protect, userInfo.removeItemFromCart); /* finished */
+// router.get('/cart/get-usercart', protect, userInfo.getUserCart); 
 
-router.put('/cart/update-cart-items-quantity', protect, userInfo.updateItemQuantity); /* finished */
+// router.delete('/cart/delete-cart-products', protect, userInfo.emptyCart);
 
-export default router
+// router.delete('/cart/remove-cart-products', protect, userInfo.removeItemFromCart);
+
+// router.put('/cart/update-cart-items-quantity', protect, userInfo.updateItemQuantity);
+

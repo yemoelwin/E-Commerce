@@ -59,7 +59,7 @@ export const sendVerificationEmail = async ({ _id, email }) => {
             // to proceed.</p>`
         };
         await transporter.sendMail(mailOptions);       
-        console.log('Email sent successfully.');        
+        // console.log('Email sent successfully.');        
         return {
             status: 'SUCCESS',
             message: 'Verification email sent successfully'
@@ -81,7 +81,7 @@ const generateResetToken = () => {
 
 export const ResetPasswordToken = async ({ _id, email }) => {
     try {
-        const resetURL = 'http://localhost:8080/api/';
+        const resetURL = 'http://localhost:3000/';
         const resetPasswordToken = generateResetToken();
         const expiryDurationInMilliseconds = 1 * 60 * 60 * 1000;
         const newUserPassVerification = new userPasswordVerification({
@@ -95,11 +95,11 @@ export const ResetPasswordToken = async ({ _id, email }) => {
         const EmailOptions = {
             from: process.env.AUTH_EMAIL,
             to: email,
-            subject: 'Reset Your Email Password' + + new Date(),
+            subject: 'Link To Reset Your Email Password' + + new Date(),
             html:
-                `<p>You have been sent an email to reset your password.</p><br/>
-                <p>This link expires in <b>1 hour.</b></p>
-                <p><a href=${resetURL + 'user/reset-password/' + _id + "/" + resetPasswordToken}>Click here</a>
+                `<p>An email have been sent to reset your password.</p><br/>
+                <p>This link will expires in <b>1 hour.</b></p>
+                <p><a href=${resetURL + 'reset-password/' + _id + "/" + resetPasswordToken}>Click here</a>
             to proceed.</p>`
         }
         await transporter.sendMail(EmailOptions)

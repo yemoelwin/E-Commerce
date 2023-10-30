@@ -1,8 +1,10 @@
 import { createSlice, createAsyncThunk, createAction } from '@reduxjs/toolkit';
 import productService from './productService';
+import { showToast } from '../../containers/common/ShowToast';
 
 const initialState = {
     products: [],
+    searchProducts: [],
     addToWishList:[],
     isError: false,
     isLoading: false,
@@ -13,6 +15,17 @@ const initialState = {
 export const getProducts = createAsyncThunk('product/getProducts', async (thunkApi) => {
     try {
         const response = await productService.getProducts();
+        return response;
+    } catch (error) {
+        console.log(error);
+        const errorMessage = error.message || "An error occurred.";
+        return thunkApi.rejectWithValue(errorMessage);
+    }
+});
+
+export const searchInputProducts = createAsyncThunk('product/search-Products', async (searchInput, thunkApi) => {
+    try {
+        const response = await productService.searchProducts(searchInput);
         return response;
     } catch (error) {
         console.log(error);
@@ -113,6 +126,24 @@ export const productSlice = createSlice({
                 state.isLoading = false;
                 state.message = action.error.message || "An error occurred.";
             })
+            /* Search Products */
+            .addCase(searchInputProducts.pending, (state) => {
+                state.isLoading = true;
+            })
+            .addCase(searchInputProducts.fulfilled, (state, action) => {
+                state.isError = false;
+                state.isLoading = false;
+                state.isSuccess = true;
+                state.message = "Success"
+                state.searchProducts = action.payload;
+            })
+            .addCase(searchInputProducts.rejected, (state, action) => {
+                state.searchProducts = null;
+                state.isError = true;
+                state.isSuccess = false;
+                state.isLoading = false;
+                state.message = action.error.message || "An error occurred.";
+            })
             /* Create Product */
             .addCase(createProduct.pending, (state) => {
                 state.isLoading = true;
@@ -196,6 +227,11 @@ export const productSlice = createSlice({
                 state.isLoading = false;
                 state.message = "Success";
                 state.addToWishList = action.payload;
+                if (state.addToWishList.message && state.addToWishList.message.includes('already exists')) {
+                    showToast(state.addToWishList.message, 'info');
+                } else if (state.addToWishList.message && state.addToWishList.message.includes('Product added to wishlist.')) {
+                    showToast(state.addToWishList.message, 'success');
+                }
             })
             .addCase(addToWishlistProduct.rejected, (state, action) => {
                 state.products = null;

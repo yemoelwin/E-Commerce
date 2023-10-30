@@ -59,7 +59,6 @@ const SignUp = () => {
             <div className="form-bg">
                 <div className="container d-flex justify-content-center">
                     <div className="form-containerX">
-                        {/* <div className="verifyMessage">{showMessage}</div> */}
                         {isSuccess ? (
                             <div className="verifyMessage">{showMessage}</div>
                         ) : (

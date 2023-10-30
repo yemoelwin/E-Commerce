@@ -9,18 +9,24 @@ import cart from '../../images/cart.svg';
 import { FaLuggageCart } from 'react-icons/fa';
 import { CgProfile } from 'react-icons/cg';
 import { IoIosLogOut } from 'react-icons/io';
-
+// import { showToast } from '../common/ShowToast';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../features/auth/AuthSlice';
 import { persistor } from '../../app/store';
 import { clearCartItem } from '../../features/cart/cartSlice';
+// import SearchBar from '../SearchBar';
+// import api from '../../app/api/currentApi';
+import { searchInputProducts } from '../../features/products/productSlice';
+import { showToast } from '../common/ShowToast';
 
 const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const menuRef = useRef();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [searchInput, setSearchInput] = useState('');
   const authState = useSelector((state) => state.auth.users);
+  const searchProductData = useSelector((state) => state.product.searchProducts);
   const { totalQuantity, cartTotalAmount } = useSelector((state) => state.cart);
 
   useEffect(() => {
@@ -45,6 +51,20 @@ const Header = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
+  const handleSearchProduct = async () => {
+    try {
+      await dispatch(searchInputProducts(searchInput));
+      if (searchProductData && searchProductData.length > 0) {
+        navigate('/product');
+        // navigate('/product', { state: { products: searchProductData } });
+      } else {
+        showToast('No products found', 'info');
+      }
+    } catch (error) {
+      console.error('Error searching for products:', error);
+    }
+  }
+
   const handleLogout = async() => {
     try {
       await dispatch(logout());
@@ -54,7 +74,7 @@ const Header = () => {
 
       // clear all data which are persisted by redux persist library
       persistor.purge();
-      // navigate('/');
+      navigate('/login');
 
     // Reload the page
     // window.location.reload();
@@ -103,11 +123,18 @@ const Header = () => {
               <div className="input-group">
                 <input
                   type="text"
-                  className="form-control py-2"
-                  placeholder="Search Product Here ..."
-                  aria-label="Search Product Here ..."
-                  aria-describedby="basic-addon2" />
-                <span className="input-group-text p-3" id="basic-addon2"><BsSearch className='fs-6'/></span>
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  placeholder="Search for products..."
+                />
+                {/* <SearchBar
+                  handleSearchProduct={handleSearchProduct}
+                  handleSearchInput={handleSearchInput}
+                  // filteredProducts={filteredProducts}
+                /> */}
+                <span className="input-group-text p-3" id="basic-addon2">
+                  <BsSearch onClick={handleSearchProduct} className='fs-6' />
+                </span>
               </div>
             </div>
 
@@ -139,7 +166,7 @@ const Header = () => {
                   </NavLink>                                    
                 </div>
 
-                {authState && authState.status === 'Success' ? (
+                {authState && authState !== null ? (
                   <div className='hero'>
 
                     <div className='profile-logo'>
