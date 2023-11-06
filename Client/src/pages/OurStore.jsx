@@ -6,7 +6,7 @@ import Container from '../containers/common/Container';
 import BreadCrumb from '../containers/common/BreadCrumb';
 import Meta from '../containers/common/Meta';
 import { useDispatch, useSelector } from 'react-redux';
-import { getProducts } from '../features/products/productSlice';
+import { clearSearchState, getProducts } from '../features/products/productSlice';
 import ShowMoreList from '../containers/ShowMoreList';
 import { getAllCategory } from '../features/category/categorySlice';
 import NoData from '../containers/common/NoData';
@@ -14,14 +14,14 @@ import { getBrands } from '../features/brand/brandSlice';
 
 const ProductPage = () => {
     const dispatch = useDispatch();
-    const [grid, setGrid] = useState(4);
+    const [grid, setGrid] = useState(4);    
     const [isChecked, setIsChecked] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [selectedBrand, setSelectedBrand] = useState(null);
     const [selectedOption, setSelectedOption] = useState('Categories');
+    const [filteredProducts, setFilteredProducts] = useState([]);
     const productState = useSelector((state) => state.product.products);
-    const [filteredProducts, setFilteredProducts] = useState(productState);
     const searchProductState = useSelector((state) => state.product.searchProducts);
     const categoryList = useSelector(state => state.category.categories);
     const brandList = useSelector(state => state.brand.brands);
@@ -45,59 +45,64 @@ const ProductPage = () => {
     },[])
 
     // alert (grid)
+    const filterProducts = () => {
+        let filtered = productState;
+        if (selectedCategory) {
+            filtered = filtered.filter(product => product.category === selectedCategory);
+        }
+
+        if (selectedBrand) {
+            filtered = filtered.filter(product => product.brand === selectedBrand);
+        }
+        setFilteredProducts(filtered);
+    }    
+
+    // console.log('filteredProducts', filteredProducts)
+    // console.log("selectedBrand", selectedBrand)
+    // console.log("selectedCategory", selectedCategory)
+    // console.log("searchProductState", searchProductState)
 
     const handleCheckboxChange = (event) => {
         setIsChecked(event.target.checked);
     };
 
-    const handleOption = (e) => {
+    const handleOption = async (e) => {
         setSelectedOption(e.target.value);
+        if (e.target.value === 'Brand') {
+            setSelectedCategory(null);
+        } else {
+            setSelectedBrand(null);
+        }
     }
 
     const handleAllProduct = () => {
-        setSelectedCategory('');
-        setSelectedBrand('');
+        setFilteredProducts(productState);
+        clearSelectedFilters()
     }
 
-    useEffect(() => {
-        if (searchProductState && searchProductState.length > 0) {
-            let filtered = [];
-            for (let index = 0; index < searchProductState.length; index++) {
-                const element = searchProductState[index];
-                const products = productState.filter(product => product._id === element._id);
-                filtered = filtered.concat(products);
-            }
-            setFilteredProducts(filtered);
-        } else {
-            setFilteredProducts('');
-        }
-    }, [searchProductState, productState]);
+    const clearSelectedFilters = () => {
+        setSelectedCategory(null);
+        setSelectedBrand(null);
+    }
 
-    // console.log('searchProductState', searchProductState)
-    // console.log('filteredProducts', filteredProducts)
+    const displayProducts = searchProductState ? searchProductState : filteredProducts;
+
+    // useEffect(() => {
+    //     if (searchProductState && searchProductState.length > 0) {
+    //         // Create a set of unique product IDs from the search results
+    //         const searchProductIds = new Set(searchProductState.map(product => product._id));
+
+    //         // Filter the productState to include only products whose IDs are in searchProductIds
+    //         const filtered = productState.filter(product => searchProductIds.has(product._id));
+    //         setFilteredProducts(filtered);
+    //     } else {
+    //         setFilteredProducts(productState); 
+    //     }
+    // }, [searchProductState, productState]);
 
     useEffect(() => {
-        if (selectedCategory) {
-            // Filter based on selected category only
-            const filtered = productState.filter(product => product.category === selectedCategory);
-            setFilteredProducts(filtered);
-        } else {
-            // No category filter, set to all products
-            setFilteredProducts(productState);
-        }
-    }, [selectedCategory, productState]);
-
-// Handle brand filtering
-    useEffect(() => {
-        if (selectedBrand) {
-            // Filter based on selected brand only
-            const filtered = productState.filter(product => product.brand === selectedBrand);
-            setFilteredProducts(filtered);
-        } else {
-            // No brand filter, set to all products
-            setFilteredProducts(productState);
-        }
-    }, [selectedBrand, productState]);
+        filterProducts();
+    }, [selectedCategory, selectedBrand, productState]);
 
     return (
         <>
@@ -366,8 +371,12 @@ const ProductPage = () => {
                                         <div className='load'>Loading ... </div>
                                     </div> 
                                 ) : (
-                                    filteredProducts?.length > 0 ? (
-                                        <CardProduct prodData={filteredProducts} grid={grid} />
+                                    displayProducts?.length > 0 ? (
+                                        <CardProduct
+                                            prodData={filteredProducts}
+                                            grid={grid}
+                                            searchProducts={searchProductState}
+                                        />
                                     ) : (
                                         <NoData />
                                     )

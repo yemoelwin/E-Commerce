@@ -1,8 +1,6 @@
 import { createSlice, createAsyncThunk, createAction } from '@reduxjs/toolkit';
 import authService from './AuthServices';
-// import Cookies from 'js-cookie';
 const getUserfromLocalStorage = JSON.parse(localStorage.getItem("user"))
-const role = getUserfromLocalStorage?.role;
 
 const initialState = {
     users: getUserfromLocalStorage ? getUserfromLocalStorage : [],
@@ -13,7 +11,6 @@ const initialState = {
     isSuccess: false,
     message: "",
     errorMessage: '',
-    userRole: role,
 };
 
 export const register = createAsyncThunk('auth/register', async (data, thunkApi) => {
@@ -30,6 +27,7 @@ export const login = createAsyncThunk('auth/login', async (userData, thunkApi) =
     console.log('sliceloginData', userData);
     try {
         const response = await authService.login(userData);
+        localStorage.setItem('user', JSON.stringify(response));
         return response;
     } catch (error) {
         const errorMessage = error.message || "An error occurred.";
@@ -83,10 +81,10 @@ export const authSlice = createSlice({
             state.isLoading = false;
             state.isSuccess = false;
             state.isLoggedIn = false;
+            state.isAuthenticated = false;
             state.errorMessage = null;
             state.message = "Success";
-            state.users = null;
-            state.userRole = null;
+            state.users = [];
         },
         clearErrorMessage: (state) => {
             state.isError = false;
@@ -123,16 +121,15 @@ export const authSlice = createSlice({
                 state.isLoading = true;
             })
             .addCase(login.fulfilled, (state, action) => {
-                localStorage.setItem('user', JSON.stringify({ ...action.payload }));
+                // localStorage.setItem('user', JSON.stringify({ ...action.payload }));
                 state.isError = false;
                 state.isLoading = false;
+                state.errorMessage = null;
                 state.isSuccess = true;
                 state.isLoggedIn = true;
-                state.errorMessage = null;
                 state.isAuthenticated = true;
                 state.message = "Success";
                 state.users = action.payload;
-                state.userRole = action.payload.role;
             })
             .addCase(login.rejected, (state, action) => {
                 state.isLoading = false;
@@ -141,7 +138,6 @@ export const authSlice = createSlice({
                 state.isSuccess = false;
                 state.users = null;
                 state.isLoggedIn = false;
-                state.userRole = null;
                 state.errorMessage = action.payload
                 state.message = 'Failed'
             })
@@ -157,7 +153,6 @@ export const authSlice = createSlice({
                 state.isAuthenticated = false;
                 state.errorMessage = null;
                 state.users = null;
-                state.userRole = null;
                 state.message = "Success";
                 state.returnData = action.payload;
             })
@@ -168,7 +163,6 @@ export const authSlice = createSlice({
                 state.isSuccess = false;
                 state.users = null;
                 state.isLoggedIn = false;
-                state.userRole = null;
                 state.errorMessage = action.payload;
                 state.message = 'Failed'
             })
@@ -185,7 +179,6 @@ export const authSlice = createSlice({
                 state.isAuthenticated = false;
                 state.message = "Success";
                 state.users = null;
-                state.userRole = null;
                 state.newPassword = action.payload;
             })
             .addCase(resetNewPassword.rejected, (state, action) => {
@@ -195,35 +188,9 @@ export const authSlice = createSlice({
                 state.isSuccess = false;
                 state.users = null;
                 state.isLoggedIn = false;
-                state.userRole = null;
                 state.errorMessage = action.payload;
                 state.message = 'Failed'
             })
-            /* Logout */
-            // .addCase(userLogout.pending, (state) => {
-            //     state.isLoading = true;
-            // })
-            // .addCase(userLogout.fulfilled, (state, action) => {
-            //     state.isError = false;
-            //     state.isLoading = false;
-            //     state.isSuccess = true;
-            //     state.isLoggedIn = false;
-            //     state.errorMessage = null;
-            //     state.message = "Successfully clear user's token";
-            //     state.users = null;
-            //     state.userRole = null;
-            // })
-            // .addCase(userLogout.rejected, (state, action) => {
-            //     state.isLoading = false;
-            //     state.isAuthenticated = false;
-            //     state.isError = true;
-            //     state.isSuccess = false;
-            //     state.users = null;
-            //     state.isLoggedIn = false;
-            //     state.userRole = null;
-            //     state.errorMessage = action.payload
-            //     state.message = 'Failed'
-            // })
             .addCase(authResetState, () => initialState)
         
     },

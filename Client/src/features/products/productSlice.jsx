@@ -102,6 +102,7 @@ export const deleteProduct = createAsyncThunk('product/deleteProduct', async (id
 
 export const productResetState = createAction('reset_all');
 export const addToWishListReset = createAction('reset_addToWishlists');
+export const clearSearchState = createAction('clear-searchData')
 
 export const productSlice = createSlice({
     name: 'product',
@@ -261,6 +262,9 @@ export const productSlice = createSlice({
             .addCase(productResetState, () => initialState)
             .addCase(addToWishListReset, (state) => {
                 state.addToWishList = null;
+            })
+            .addCase(clearSearchState, (state) => {
+                state.searchProducts = null;
             })
     }
 });

@@ -9,15 +9,11 @@ import cart from '../../images/cart.svg';
 import { FaLuggageCart } from 'react-icons/fa';
 import { CgProfile } from 'react-icons/cg';
 import { IoIosLogOut } from 'react-icons/io';
-// import { showToast } from '../common/ShowToast';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../features/auth/AuthSlice';
 import { persistor } from '../../app/store';
 import { clearCartItem } from '../../features/cart/cartSlice';
-// import SearchBar from '../SearchBar';
-// import api from '../../app/api/currentApi';
 import { searchInputProducts } from '../../features/products/productSlice';
-import { showToast } from '../common/ShowToast';
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -26,7 +22,6 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchInput, setSearchInput] = useState('');
   const authState = useSelector((state) => state.auth.users);
-  const searchProductData = useSelector((state) => state.product.searchProducts);
   const { totalQuantity, cartTotalAmount } = useSelector((state) => state.cart);
 
   useEffect(() => {
@@ -54,12 +49,7 @@ const Header = () => {
   const handleSearchProduct = async () => {
     try {
       await dispatch(searchInputProducts(searchInput));
-      if (searchProductData && searchProductData.length > 0) {
-        navigate('/product');
-        // navigate('/product', { state: { products: searchProductData } });
-      } else {
-        showToast('No products found', 'info');
-      }
+      navigate('/product');
     } catch (error) {
       console.error('Error searching for products:', error);
     }
@@ -106,35 +96,37 @@ const Header = () => {
         <div className='container-xxl'>
           <div className='row align-items-center'>
 
-            {authState && authState.role === 'admin' ?
+            {authState && authState?.role === 'admin' ? (
               <div className='col-2'>
                 <h2>
                   <Link to='admin' className='dashboardBanner'>DashBoard</Link>
                 </h2>
-              </div> :
+              </div>
+            ) : (
               <div className='col-2'>
                 <h2>
                   <div className='navBanner'>ShopSphere</div>
                 </h2>
-              </div>}
-            
+              </div>
+            )}
 
             <div className='col-5'>
               <div className="input-group">
-                <input
-                  type="text"
-                  value={searchInput}
-                  onChange={(e) => setSearchInput(e.target.value)}
-                  placeholder="Search for products..."
-                />
-                {/* <SearchBar
-                  handleSearchProduct={handleSearchProduct}
-                  handleSearchInput={handleSearchInput}
-                  // filteredProducts={filteredProducts}
-                /> */}
-                <span className="input-group-text p-3" id="basic-addon2">
-                  <BsSearch onClick={handleSearchProduct} className='fs-6' />
-                </span>
+                  <input
+                    type="text"
+                    className='form-control'
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        handleSearchProduct();
+                      }
+                    }}
+                    placeholder="Search for by name, brand & category..."
+                  />
+                  <span className="input-group-text p-3" id="basic-addon2" style={{cursor: 'pointer'}}>
+                    <BsSearch onClick={handleSearchProduct} className='fs-6'/>
+                  </span>
               </div>
             </div>
 
@@ -166,7 +158,7 @@ const Header = () => {
                   </NavLink>                                    
                 </div>
 
-                {authState && authState !== null ? (
+                {(authState && authState.status === 'Success') ? (
                   <div className='hero'>
 
                     <div className='profile-logo'>

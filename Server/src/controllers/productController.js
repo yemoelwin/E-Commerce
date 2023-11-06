@@ -150,7 +150,7 @@ const fetchAllProduct = asyncHandler(async (req, res) => {
 
 const searchProducts = asyncHandler(async (req, res) => {
     try {
-        const searchQuery = req.query.search;
+        const searchQuery = req.query.query;
         console.log('searchQueryBackend', searchQuery);
         const priceQuery = !isNaN(searchQuery) ? { price: searchQuery } : null;
         const filteredProducts = await Product.find({

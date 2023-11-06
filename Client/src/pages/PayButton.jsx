@@ -11,8 +11,8 @@ const PayButton = (cartData) => {
     const authState = useSelector((state) => state?.auth?.users);
     const [isLoading, setLoading] = useState(false);
     const [transitionId, setTransitionId] = useState('');
-    const userId = authState?._id;
-    console.log('autStateUserId', authState?._id)
+    // const userId = authState?._id;
+    // console.log('autStateUserId', authState?._id)
 
     useEffect(() => {
         const generatedTransitionId = uuidv4();
@@ -36,6 +36,7 @@ const PayButton = (cartData) => {
                 userId: authState._id,
                 transitionId,
             })
+            console.log('resposne', response)
             if (response.data.url) {
                 window.location.href = response.data.url;
             } else {

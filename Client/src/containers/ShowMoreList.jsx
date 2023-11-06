@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { clearSearchState } from '../features/products/productSlice';
 
 const ShowMoreList = ({ categories, brands, selectedOption, onBrandClick, onCategoryClick }) => {
+    const dispatch = useDispatch();
     const [showAll, setShowAll] = useState(false);
     const [showCategory, setShowCategory] = useState([]);
     const [showBrand, setShowBrand] = useState([]);
@@ -28,12 +31,18 @@ const ShowMoreList = ({ categories, brands, selectedOption, onBrandClick, onCate
         }
     }, [brands])
 
-    const handleChangeOption = (itemName) => {
-        if (selectedOption === 'Categories') {
-            onCategoryClick(itemName);
-        } else if (selectedOption === 'Brand') {
-            onBrandClick(itemName);
+    const handleChangeOption = async (itemName) => {
+        try {
+            await dispatch(clearSearchState());
+            if (selectedOption === 'Categories') {
+                onCategoryClick(itemName);
+            } else {
+                onBrandClick(itemName);
+            }
+        } catch (error) {
+            console.error("error", error)
         }
+        
     }
 
     const visibleCategoryItems = showAll ? showCategory : showCategory.slice(0, maxItemsToShow);

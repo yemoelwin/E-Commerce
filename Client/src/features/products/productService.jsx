@@ -12,8 +12,8 @@ const getProducts = async () => {
 
 const searchProducts = async (searchInput) => {
     try {
-        const response = await api.get(`/product/search-products/?search=${searchInput}`);
-        console.log('responseData of searchINput', response.data);
+        const response = await api.get(`/product/search/?query=${searchInput}`);
+        // console.log('responseData of searchINput', response.data);
         return response.data;
     } catch (error) {
         console.error("An error occurred during fetching all search products:", error);

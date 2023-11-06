@@ -9,8 +9,9 @@ import { useDispatch } from 'react-redux';
 import { addToWishlistProduct } from '../features/products/productSlice';
 
 const CardProduct = (props) => {
-    const { grid, prodData } = props;
-    console.log('prodData', prodData)
+    const { grid, prodData, searchProducts } = props;
+    // console.log('prodData', prodData)
+    // console.log('searchProduct', searchProducts)
     let location = useLocation();
     const dispatch = useDispatch();
 
@@ -24,10 +25,12 @@ const CardProduct = (props) => {
         }
     }
 
+    const dataToDisplay = searchProducts ? searchProducts : prodData;
+
     return (
         <>
             {
-                prodData?.map((item, index) => {
+                dataToDisplay?.map((item, index) => {
                     return (
                         <div className={`${location.pathname === '/product' ? `gr-${grid}` : "col-3"}`}
                             key={index}

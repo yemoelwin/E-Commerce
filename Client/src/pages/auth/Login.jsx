@@ -11,19 +11,12 @@ const Login = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { isLoading, isError, errorMessage, users } = useSelector((state) => state.auth);
+    const { isLoading, isError, errorMessage, isAuthenticated } = useSelector((state) => state.auth);
+    const authState = useSelector((state) => state.auth.users);
 
     useEffect(() => {
         userRef.current.focus()
     }, [])
-
-    useEffect(() => {
-        if (users === null) {
-                navigate('/login');
-            } else {
-                navigate('/');
-            }
-    },[navigate, users])
 
     const handleEmailChange = (e) => {
         e.preventDefault();
@@ -47,6 +40,14 @@ const Login = () => {
             throw new Error('Error occurred while logging in.')
         }
     }
+
+    useEffect(() => {
+        if (!isAuthenticated) {
+            navigate('/login')
+        } else {
+            navigate('/')
+        }
+    }, [authState]);
 
     const removeErrorMessage = () => {
     if (isError) {
