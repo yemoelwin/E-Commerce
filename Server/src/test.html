@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				margin: 0;
+				padding: 0;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				min-height: 100vh;
+				background-color: #f4f4f4;
+			}
+
+			#invoice-container {
+				width: 100%;
+				display: flex;
+				justify-content: center;
+				margin-top: 4rem;
+				background-color: #ebeaea;
+				box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+			}
+
+			#flex-div {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				width: 100%;
+			}
+
+			#flex-table {
+				width: 100%;
+			}
+
+			#company-logo img {
+				width: 100px;
+			}
+
+			#company-info {
+				margin-top: 10px;
+				text-align: right;
+			}
+
+			#company-info p {
+				margin: 8px 0;
+				color: white;
+			}
+
+			#order-info {
+				margin-top: 20px;
+				padding: 20px;
+				display: flex;
+				justify-content: space-between;
+				/* align-items: flex-start; */
+			}
+
+			#customer-details p,
+			#i_order-details p {
+				margin: 4px 0;
+			}
+
+			table {
+				width: 100%;
+				margin: 20px auto;
+				border-collapse: collapse;
+			}
+
+			.t_head {
+				width: 90%;
+			}
+
+			th,
+			td {
+				padding: 16px;
+				text-align: right;
+			}
+
+			th {
+				background-color: #d42323;
+				font-size: 17px;
+				color: white;
+			}
+
+			tbody {
+				background-color: white;
+				width: 60%;
+				border-radius: 10px;
+			}
+
+			tfoot {
+				border-top: 1px solid rgb(180, 176, 176);
+			}
+
+			tbody tr td,
+			tfoot tr td {
+				font-size: 15px;
+			}
+
+			.border-radius {
+				border-radius: 10px;
+			}
+
+			.rounded-top-corners {
+				border-top-left-radius: 10px;
+				border-top-right-radius: 10px;
+			}
+
+			.rounded-bottom-corners {
+				border-bottom-left-radius: 10px;
+				border-bottom-right-radius: 10px;
+			}
+
+			footer {
+				/* margin-top: 20px; */
+				text-align: center;
+				/* padding: 20px; */
+				color: white;
+				font-size: 13px;
+				width: 100%;
+			}
+
+			#footer {
+				margin-top: 20px;
+				text-align: center;
+				color: white;
+				font-size: 13px;
+				width: 100%;
+				background-color: #d42323;
+			}
+
+			#i_paragraph {
+				text-align: center;
+				font-size: 13.5px;
+				color: darkblue;
+				letter-spacing: 0.3px;
+				font-weight: bold;
+			}
+
+			.i_text_align_left {
+				text-align: left;
+			}
+
+			.i_text_align_center {
+				text-align: center;
+			}
+		</style>
+	</head>
+	<body>
+		<table id="invoice-container" class="border-radius">
+			<tr
+				id="flex-div"
+				class="rounded-top-corners"
+				style="background-color: #d42323"
+			>
+				<td id="company-logo">
+					<img
+						src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTi-qQN0Vp3fGM7wKGvJie3OrRXev3JiW7r4A&usqp=CAU"
+					/>
+				</td>
+				<!-- <td style="text-align: center" id="flex-table"></td>  -->
+				<td id="company-info">
+					<p style="font-size: 20px">Shop Sphere Inc.</p>
+					<p style="font-size: 14px">yemoelwin142@gmail.com</p>
+					<p style="font-size: 14px">Mobile: +95-9257879097</p>
+					<p style="font-size: 14px">Fax: (070) - 142996</p>
+				</td>
+				<!-- </td> -->
+			</tr>
+
+			<tr id="order-info">
+				<td id="customer-details">
+					<p style="font-size: 14px; font-weight: bold; text-align: left">to</p>
+					<p
+						style="
+							font-size: 16px;
+							font-weight: bold;
+							text-align: left;
+							color: rgb(211, 187, 50);
+						"
+					>
+						Customer Name
+					</p>
+					<p style="text-align: left">Address Line 1</p>
+					<p style="text-align: left">Address Line 2</p>
+					<p style="text-align: left">City, Zip Code</p>
+					<p style="text-align: left">Email: customer@email.com</p>
+					<p style="text-align: left">Phone: +123456789</p>
+				</td>
+				<!-- <td style="text-align: center" id="flex-table"></td> -->
+				<td id="i_order-details">
+					<p style="text-align: right; margin-top: 14px">
+						<span style="font-weight: bold">Order ID</span><br /><span
+							>1221323232323345</span
+						>
+					</p>
+					<p style="text-align: right; margin-top: 14px">
+						<span style="font-weight: bold">Date</span> <br />January 1, 2023
+					</p>
+					<p style="text-align: right; margin-top: 14px">
+						<span style="font-weight: bold">Payment Method</span><br />Credit
+						Card
+					</p>
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<table class="t_head">
+						<thead>
+							<tr>
+								<th class="i_text_align_left">No</th>
+								<th class="i_text_align_left">Description</th>
+								<th class="i_text_align_center">Quantity</th>
+								<th>Price</th>
+								<th>Amount</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="i_text_align_left" style="font-size: 14px">1</td>
+								<td class="i_text_align_left" style="font-size: 14px">
+									Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed
+									sapiente aut alias nobis.
+								</td>
+								<td class="i_text_align_center" style="font-size: 14px">2</td>
+								<td style="font-size: 14px">$20.00</td>
+								<td style="font-size: 14px">$40.00</td>
+							</tr>
+						</tbody>
+						<tfoot>
+							<tr>
+								<td colspan="4">Total Amount</td>
+								<td>$4400.00</td>
+							</tr>
+							<tr>
+								<td colspan="4">Tax (10%)</td>
+								<td>$4.00</td>
+							</tr>
+							<tr style="font-weight: 600">
+								<td colspan="4">Grand Total Amount</td>
+								<td>$4400.00</td>
+							</tr>
+						</tfoot>
+					</table>
+				</td>
+			</tr>
+
+			<tr>
+				<td id="i_paragraph">
+					All items will be delivered within 8 days starting from tomorrow.
+				</td>
+			</tr>
+
+			<tr id="footer">
+				<td class="rounded-bottom-corners">
+					<footer>
+						<p>
+							Thank you so much for your purchase. We truly appreciate your
+							business.
+						</p>
+						<p>
+							If you have any questions, concerns, or if there's anything else
+							we can assist you with,
+						</p>
+						<p>
+							please don't hesitate to contact us. Your satisfaction is our top
+							priority.
+						</p>
+					</footer>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>

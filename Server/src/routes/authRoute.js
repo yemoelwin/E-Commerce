@@ -1,57 +1,65 @@
-import express from 'express';
-import { userInfo } from '../controllers/userController.js';
-import { protect, isAdmin } from '../middlewares/authMiddleware.js';
+import express from "express";
+import { userInfo } from "../controllers/userController.js";
+import { protect, isAdmin } from "../middlewares/authMiddleware.js";
 const router = express.Router();
 
-router.post('/register', userInfo.userRegister); /* finished */
+router.post("/register", userInfo.userRegister);
 
-router.get('/verify_email/:token/:_id', userInfo.verifyRegisterEmail); /* finished */
+router.get("/verify_email/:token/:_id", userInfo.verifyRegisterEmail);
 
-router.post('/auth/login', userInfo.userLogin); /* finished */
+router.post("/auth/login", userInfo.userLogin);
 
-router.post('/auth/user-logout', protect, userInfo.Logout);
+router.post("/auth/user-logout", protect, userInfo.Logout);
 
 // Add a middleware function to log access to the route
-router.use('/auth/user-logout', (req, res, next) => {
-    console.log('Access to route /auth/user-logout');
-    next(); // Continue processing the route
+router.use("/auth/user-logout", (req, res, next) => {
+	console.log("Access to route /auth/user-logout");
+	next(); // Continue processing the route
 });
 
-router.get('/refresh-token', userInfo.handleRefreshToken); /* finished */
+router.get("/refresh-token", userInfo.handleRefreshToken);
 
-router.get('/alluser', protect, isAdmin, userInfo.getAllUser); /* finished */
+router.get("/alluser", protect, isAdmin, userInfo.getAllUser);
 
-router.get('/:id', protect, userInfo.getUserById); /* finished */
+router.get("/:id", protect, userInfo.getUserById);
 
-router.put('/edit-user', protect, userInfo.updatedUser); /* finished */
+router.put("/edit-user", protect, userInfo.updatedUser);
 
-router.put('/save-address/:_id', protect, userInfo.saveAddress); /* finished */
+router.put("/save-address/:_id", protect, userInfo.saveAddress);
 
-router.post('/order/create_userOrder', protect, userInfo.saveUserOrder); /* finished */
+router.post("/order/create_userOrder", protect, userInfo.saveUserOrder);
 
-router.get('/order/get_order/:userId/:transitionId', protect, userInfo.getOrder); /* finished */
+router.get(
+	"/order/get_order/:userId/:transitionId",
+	protect,
+	userInfo.getOrder,
+);
+router.get("/order/user-orders/:id", protect, userInfo.getUserOrders);
 
-router.get('/order/user-orders/:id', protect, userInfo.getUserOrders); /* finished */
+router.get("/order/all-orders", protect, isAdmin, userInfo.getAllOrders);
 
-router.get('/order/all-orders', protect, isAdmin, userInfo.getAllOrders); /* finished */
+router.put(
+	"/order/order_status/:id",
+	protect,
+	isAdmin,
+	userInfo.updateOrderStatus,
+);
 
-router.put('/order/order_status/:id', protect, isAdmin, userInfo.updateOrderStatus); /*finished*/
+router.delete("/delete_order/:id", protect, isAdmin, userInfo.deleteOrder);
 
-router.delete('/delete_order/:id', protect, isAdmin, userInfo.deleteOrder); /* finished */
+router.get("/wish/user_wishlist", protect, userInfo.wishList);
 
-router.get('/wish/user_wishlist', protect, userInfo.wishList); /* finished */
+router.put("/block-user/:id", protect, isAdmin, userInfo.blockUser);
 
-router.put('/block-user/:id', protect, isAdmin, userInfo.blockUser); /* finished */
+router.put("/unblock-user/:id", protect, isAdmin, userInfo.unBlockUser);
 
-router.put('/unblock-user/:id', protect, isAdmin, userInfo.unBlockUser); /* finished */
+router.post("/update-password", protect, userInfo.updatePassword);
 
-router.post('/update-password', protect, userInfo.updatePassword); /* finished */
+router.post("/forgot-password", userInfo.forgotPasswordToken);
 
-router.post('/forgot-password', userInfo.forgotPasswordToken); /* finished */
+router.post("/reset-password/:userId/:uniqueToken", userInfo.resetPassword);
 
-router.post('/reset-password/:userId/:uniqueToken', userInfo.resetPassword); /* finished */
-
-router.delete('/:id', protect, isAdmin, userInfo.deleteUser); /* finished */
+router.delete("/:id", protect, isAdmin, userInfo.deleteUser);
 
 export default router;
 
@@ -59,15 +67,14 @@ export default router;
 
 // router.post('/cart?addtocart', protect, userInfo.addToCart);
 
-// router.get('/reset-password/:userId/:uniqueToken', userInfo.verifyResetToken); 
+// router.get('/reset-password/:userId/:uniqueToken', userInfo.verifyResetToken);
 
 // router.post('/cart/apply_coupon', protect, userInfo.applyCoupon);
 
-// router.get('/cart/get-usercart', protect, userInfo.getUserCart); 
+// router.get('/cart/get-usercart', protect, userInfo.getUserCart);
 
 // router.delete('/cart/delete-cart-products', protect, userInfo.emptyCart);
 
 // router.delete('/cart/remove-cart-products', protect, userInfo.removeItemFromCart);
 
 // router.put('/cart/update-cart-items-quantity', protect, userInfo.updateItemQuantity);
-

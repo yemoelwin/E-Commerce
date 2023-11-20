@@ -1,155 +1,299 @@
-// import logo from './logo.svg';
-import React, { useEffect } from 'react';
-import './css/App.css';
-import './css/Product.css';
-import './css/Contact.css';
-import './css/invoice.css';
-import './css/CompareProduct.css';
-import './css/Login.css';
-import './css/signup.css';
-import './css/Cart.css';
-import './css/Dashboard.css';
-import './admin/layouts/MainLayout.css';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Layout from './containers/layout/Layout';
-import Home from './pages/Home';
-import About from './pages/About';
-import OurStore from './pages/OurStore';
-import CompareProduct from './pages/CompareProduct';
-import Login from './pages/auth/Login';
-import ForgotPassword from './pages/auth/ForgotPassword';
-import SignUp from './pages/auth/SignUp';
-import ResetPassword from './pages/auth/ResetPassword';
-import SingleBlog from './pages/SingleBlog';
-import ShippingPolicy from './pages/ShippingPolicy';
-import PrivacyPolicy from './pages/PrivacyPolicy';
-import RefundPolicy from './pages/RefundPolicy';
-import TermAndConditions from './pages/TermAndConditions';
-import SingleProduct from './pages/SingleProduct';
-import Cart from './pages/Cart';
-import Checkout from './pages/Checkout';
-import ContactUs from './pages/ContactUs';
-import BlogPage from './pages/BlogPage';
-import WishList from './pages/WishList';
-import NotFound from './pages/NotFound';
-import CheckoutCancel from './containers/common/CheckoutCancel';
-import OrderList from './pages/OrderList';
-import CheckoutSuccess from './pages/CheckoutSuccess';
+import React, { useEffect, lazy, Suspense, startTransition } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setUser } from "./features/auth/AuthSlice";
+import { PrivateRoutes } from "./routes/privateRoutes";
+import "./css/App.css";
+import "./css/Product.css";
+import "./css/Contact.css";
+import "./css/invoice.css";
+import "./css/CompareProduct.css";
+import "./css/Login.css";
+import "./css/signup.css";
+import "./css/Cart.css";
+import "./css/Dashboard.css";
+import "./admin/layouts/MainLayout.css";
 
-/* admin */
-import MainLayout from "./admin/layouts/MainLayout";
-import Inquiry from "./admin/Pages/common/Inquiry";
-import BlogList from "./admin/Pages/common/BlogList";
-import BlogCategoryList from "./admin/Pages/common/BlogCategoryList";
-import Orders from "./admin/Pages/common/Orders";
-import Customers from "./admin/Pages/customers/Customers";
-import Colors from "./admin/Pages/common/Colors";
-import CategoryList from "./admin/Pages/common/CategoryList";
-import BrandList from "./admin/Pages/common/BrandList";
-import ProductList from "./admin/Pages/common/ProductList";
-import DashBoard from "./admin/Pages/dashBoard/DashBoard";
-import AddBlog from "./admin/Pages/common/AddBlog";
-import AddBlogCategory from "./admin/Pages/common/AddBlogCategory";
-import AddColor from "./admin/Pages/common/AddColor";
-import AddCategory from "./admin/Pages/common/AddCategory";
-import AddBrand from "./admin/Pages/common/AddBrand";
-import AddProduct from "./admin/Pages/common/AddProduct";
-import AddCoupon from './admin/Pages/common/AddCoupon';
-import CouponList from './admin/Pages/common/CouponList';
-import ViewInquiry from './admin/Pages/common/ViewInquiry';
-import DataTable from './containers/common/DataTable';
-import SpecificDataPage from './admin/Pages/common/SpecificDataPage';
-import ViewOrders from './admin/Pages/common/ViewOrders';
-import { useDispatch } from 'react-redux';
-import { setUser } from './features/auth/AuthSlice';
-import { PrivateRoutes } from './routes/privateRoutes';
+/* Main Application */
 
+// import OurStore from "./pages/OurStore";
+// import CompareProduct from "./pages/CompareProduct";
+// import Login from "./pages/auth/Login";
+// import ForgotPassword from "./pages/auth/ForgotPassword";
+// import SignUp from "./pages/auth/SignUp";
+// import ResetPassword from "./pages/auth/ResetPassword";
+// import SingleBlog from "./pages/SingleBlog";
+// import SingleProduct from "./pages/SingleProduct";
+// import Cart from "./pages/Cart";
+// import ContactUs from "./pages/ContactUs";
+// import BlogPage from "./pages/BlogPage";
+// import WishList from "./pages/WishList";
+// import OrderList from "./pages/OrderList";
+// import CheckoutCancel from "./containers/common/CheckoutCancel";
+// import CheckoutSuccess from "./pages/CheckoutSuccess";
+import Layout from "./containers/layout/Layout";
+import Home from "./pages/Home";
+import ShippingPolicy from "./pages/ShippingPolicy";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import RefundPolicy from "./pages/RefundPolicy";
+import TermAndConditions from "./pages/TermAndConditions";
+import NotFound from "./pages/NotFound";
+import IsLoading from "./containers/common/IsLoading";
+import InfiniteScrolling from "./pages/InfiniteScrolling";
 
+const OurStore = lazy(() => import("./pages/OurStore"));
+const ContactUs = lazy(() => import("./pages/ContactUs"));
+const SingleProduct = lazy(() => import("./pages/SingleProduct"));
+const BlogPage = lazy(() => import("./pages/BlogPage"));
+const SingleBlog = lazy(() => import("./pages/SingleBlog"));
+const OrderList = lazy(() => import("./pages/OrderList"));
+const CompareProduct = lazy(() => import("./pages/CompareProduct"));
+const WishList = lazy(() => import("./pages/WishList"));
+const Login = lazy(() => import("./pages/auth/Login"));
+const SignUp = lazy(() => import("./pages/auth/SignUp"));
+const ForgotPassword = lazy(() => import("./pages/auth/ForgotPassword"));
+const ResetPassword = lazy(() => import("./pages/auth/ResetPassword"));
+const Cart = lazy(() => import("./pages/Cart"));
+const CheckoutCancel = lazy(() => import("./containers/common/CheckoutCancel"));
+const CheckoutSuccess = lazy(() => import("./pages/CheckoutSuccess"));
+
+/* Admin */
+const MainLayout = lazy(() => import("./admin/layouts/MainLayout"));
+const Inquiry = lazy(() => import("./admin/Pages/common/Inquiry"));
+const BlogList = lazy(() => import("./admin/Pages/common/BlogList"));
+const BlogCategoryList = lazy(() =>
+	import("./admin/Pages/common/BlogCategoryList"),
+);
+const Orders = lazy(() => import("./admin/Pages/common/Orders"));
+const Customers = lazy(() => import("./admin/Pages/customers/Customers"));
+const Colors = lazy(() => import("./admin/Pages/common/Colors"));
+const CategoryList = lazy(() => import("./admin/Pages/common/CategoryList"));
+const BrandList = lazy(() => import("./admin/Pages/common/BrandList"));
+const ProductList = lazy(() => import("./admin/Pages/common/ProductList"));
+const DashBoard = lazy(() => import("./admin/Pages/dashBoard/DashBoard"));
+const AddBlog = lazy(() => import("./admin/Pages/common/AddBlog"));
+const AddBlogCategory = lazy(() =>
+	import("./admin/Pages/common/AddBlogCategory"),
+);
+const AddColor = lazy(() => import("./admin/Pages/common/AddColor"));
+const AddCategory = lazy(() => import("./admin/Pages/common/AddCategory"));
+const AddBrand = lazy(() => import("./admin/Pages/common/AddBrand"));
+const AddProduct = lazy(() => import("./admin/Pages/common/AddProduct"));
+const AddCoupon = lazy(() => import("./admin/Pages/common/AddCoupon"));
+const CouponList = lazy(() => import("./admin/Pages/common/CouponList"));
+const ViewInquiry = lazy(() => import("./admin/Pages/common/ViewInquiry"));
+const DataTable = lazy(() => import("./containers/common/DataTable"));
+const SpecificDataPage = lazy(() =>
+	import("./admin/Pages/common/SpecificDataPage"),
+);
+const ViewOrders = lazy(() => import("./admin/Pages/common/ViewOrders"));
+
+function AdminRoutes() {
+	return (
+		<Routes>
+			<Route element={<MainLayout />}>
+				<Route index element={<DashBoard />} />
+				<Route path='product-lists' element={<ProductList />} />
+				<Route path='add-product' element={<AddProduct />} />
+				<Route path='edit-product/:id' element={<AddProduct />} />
+				<Route path='add-blog' element={<AddBlog />} />
+				<Route path='edit-blog/:id' element={<AddBlog />} />
+				<Route path='blog-list' element={<BlogList />} />
+				<Route path='add-blog-category' element={<AddBlogCategory />} />
+				<Route path='edit-blog-category/:id' element={<AddBlogCategory />} />
+				<Route path='blog-category-list' element={<BlogCategoryList />} />
+				<Route path='orders' element={<Orders />} />
+				<Route
+					path='view-orders/:userId/:transitionId'
+					element={<ViewOrders />}
+				/>
+				<Route path='customers' element={<Customers />} />
+				<Route path='color-lists' element={<Colors />} />
+				<Route path='add-color' element={<AddColor />} />
+				<Route path='edit-color/:id' element={<AddColor />} />
+				<Route path='category-lists' element={<CategoryList />} />
+				<Route path='add-category' element={<AddCategory />} />
+				<Route path='edit-category/:id' element={<AddCategory />} />
+				<Route path='brand-lists' element={<BrandList />} />
+				<Route path='add-product-brand' element={<AddBrand />} />
+				<Route path='edit-product-brand/:id' element={<AddBrand />} />
+				<Route path='add-coupon' element={<AddCoupon />} />
+				<Route path='coupon-lists' element={<CouponList />} />
+				<Route path='inquiry' element={<Inquiry />} />
+				<Route path='view-inquiry/:id' element={<ViewInquiry />} />
+				<Route path='specific-data' element={<SpecificDataPage />} />
+				<Route path='table' element={<DataTable />} />
+			</Route>
+		</Routes>
+	);
+}
 
 function App() {
-  const dispatch = useDispatch();
+	const dispatch = useDispatch();
 
-  useEffect(() => {
-    // Attempt to retrieve user data from local storage
-    try {
-      const user = JSON.parse(localStorage.getItem('user'));
-      if (user) {
-        // Dispatch the user data to set the user in your Redux store
-        dispatch(setUser(user));
-      }
-    } catch (error) {
-      // Handle any errors that occur while retrieving or parsing user data
-      console.error('Error retrieving user data:', error);
-    }
-  }, [dispatch]);
-  return (
-    <>
-      <BrowserRouter>
-        <Routes>
-          <Route path='/' element={< Layout />}>
-            <Route path='not-found' element={<NotFound />} />
-            <Route index exact element={< Home />} />
-            <Route path='about' element={< About />} />
-            <Route path='contact' element={< ContactUs />} />
-            <Route path='product' element={< OurStore />} />
-            <Route path='product/:id' element={< SingleProduct />} />
-            <Route path='blog' element={< BlogPage />} />
-            <Route path='blog/:id' element={< SingleBlog />} />
-            <Route path='cart' element={<PrivateRoutes>< Cart /></PrivateRoutes>} />
-            <Route path='checkout-success/:userId/:transitionId' element={< CheckoutSuccess />} />
-            <Route path='canceled' element={< CheckoutCancel />} />
-            <Route path='orderlists/:id' element={< OrderList />} />
-            <Route path='cancel' element={< CheckoutCancel />} />
-            <Route path='checkout' element={< Checkout />} />
-            <Route path='compare-product' element={<CompareProduct />} />
-            <Route path='wishlist' element={<WishList />} />
-            <Route path='login' element={<Login />} />
-            <Route path='signup' element={<SignUp />} />
-            <Route path='forgot-password' element={<ForgotPassword />} />
-            <Route path='reset-password/:id/:uniqueToken' element={<ResetPassword />} />
-            <Route path='shipping-policy' element={<ShippingPolicy/>} />
-            <Route path='privacy-policy' element={<PrivacyPolicy />} />
-            <Route path='refund-policy' element={<RefundPolicy />} />
-            <Route path='term-conditions' element={<TermAndConditions />} />
-            <Route path="*" element={<NotFound /> } />
-          </Route>
+	useEffect(() => {
+		startTransition(() => {
+			// Attempt to retrieve user data from local storage
+			try {
+				const user = JSON.parse(localStorage.getItem("user"));
+				if (user) {
+					// Dispatch the user data to set the user in your Redux store
+					dispatch(setUser(user));
+				}
+			} catch (error) {
+				// Handle any errors that occur while retrieving or parsing user data
+				console.error("Error retrieving user data:", error);
+			}
+		});
+	}, [dispatch]);
 
-          <Route path="admin" element={<MainLayout />} >
-            <Route index element={<DashBoard />} />
-                <Route path="product-lists" element= {<ProductList />} />
-                <Route path="add-product" element={<AddProduct />} />
-                <Route path="edit-product/:id" element={<AddProduct />} />
-                <Route path="add-blog" element={<AddBlog />} />
-                <Route path="edit-blog/:id" element={<AddBlog />} />
-                <Route path="blog-list" element= {<BlogList />} />
-                <Route path="add-blog-category" element={<AddBlogCategory />} />
-                <Route path="edit-blog-category/:id" element={<AddBlogCategory />} />
-                <Route path="blog-category-list" element={<BlogCategoryList />} />
-                <Route path="orders" element= {<Orders />} />
-                <Route path="view-orders/:userId/:transitionId" element= {<ViewOrders />} />
-                <Route path="customers" element= {<Customers />} />
-                <Route path="color-lists" element= {<Colors />} />
-                <Route path="add-color" element= {<AddColor />} />
-                <Route path="edit-color/:id" element= {<AddColor />} />
-                <Route path="category-lists" element= {<CategoryList />} />
-                <Route path="add-category" element= {<AddCategory />} />
-                <Route path="edit-category/:id" element= {<AddCategory />} />
-                <Route path="brand-lists" element= {<BrandList />} />
-                <Route path="add-product-brand" element= {<AddBrand />} />
-                <Route path="edit-product-brand/:id" element= {<AddBrand />} />
-                <Route path="add-coupon" element={<AddCoupon/>} />
-                <Route path="coupon-lists" element={<CouponList />} />
-                <Route path="inquiry" element= {<Inquiry />} />
-                <Route path="view-inquiry/:id" element= {<ViewInquiry />} />
-                <Route path="specific-data" element= {<SpecificDataPage />} />
-                <Route path="table" element= {<DataTable />} />
-          </Route>
-        </Routes>
-      </BrowserRouter >
-    </>
-  );
+	return (
+		<>
+			<BrowserRouter>
+				<Routes>
+					<Route path='/' element={<Layout />}>
+						<Route index exact element={<Home />} />
+						<Route path='*' element={<NotFound />} />
+						<Route
+							path='contact'
+							element={
+								<Suspense fallback={<IsLoading />}>
+									<ContactUs />
+								</Suspense>
+							}
+						/>
+						<Route
+							path='product'
+							element={
+								<Suspense fallback={<IsLoading />}>
+									<OurStore />
+								</Suspense>
+							}
+						/>
+						<Route
+							path='product/:id'
+							element={
+								<Suspense fallback={<IsLoading />}>
+									<SingleProduct />
+								</Suspense>
+							}
+						/>
+						<Route
+							path='blog'
+							element={
+								<Suspense fallback={<IsLoading />}>
+									<BlogPage />
+								</Suspense>
+							}
+						/>
+						<Route
+							path='blog/:id'
+							element={
+								<Suspense fallback={<IsLoading />}>
+									<SingleBlog />
+								</Suspense>
+							}
+						/>
+						<Route
+							path='cart'
+							element={
+								<PrivateRoutes>
+									<Suspense fallback={<IsLoading />}>
+										<Cart />
+									</Suspense>
+								</PrivateRoutes>
+							}
+						/>
+						<Route
+							path='checkout-success/:userId/:transitionId'
+							element={
+								<Suspense fallback={<IsLoading />}>
+									<CheckoutSuccess />
+								</Suspense>
+							}
+						/>
+						<Route
+							path='orderlists/:id'
+							element={
+								<Suspense fallback={<IsLoading />}>
+									<OrderList />
+								</Suspense>
+							}
+						/>
+						<Route
+							path='canceled'
+							element={
+								<Suspense fallback={<IsLoading />}>
+									<CheckoutCancel />
+								</Suspense>
+							}
+						/>
+						<Route
+							path='compare-product'
+							element={
+								<Suspense fallback={<IsLoading />}>
+									<CompareProduct />
+								</Suspense>
+							}
+						/>
+						<Route
+							path='wishlist'
+							element={
+								<Suspense fallback={<IsLoading />}>
+									<WishList />
+								</Suspense>
+							}
+						/>
+						<Route
+							path='login'
+							element={
+								<Suspense fallback={<IsLoading />}>
+									<Login />
+								</Suspense>
+							}
+						/>
+						<Route
+							path='signup'
+							element={
+								<Suspense fallback={<IsLoading />}>
+									<SignUp />
+								</Suspense>
+							}
+						/>
+						<Route
+							path='forgot-password'
+							element={
+								<Suspense fallback={<IsLoading />}>
+									<ForgotPassword />
+								</Suspense>
+							}
+						/>
+						<Route
+							path='reset-password/:id/:uniqueToken'
+							element={
+								<Suspense fallback={<IsLoading />}>
+									<ResetPassword />
+								</Suspense>
+							}
+						/>
+						<Route path='infinite-scroll' element={<InfiniteScrolling />} />
+						<Route path='shipping-policy' element={<ShippingPolicy />} />
+						<Route path='privacy-policy' element={<PrivacyPolicy />} />
+						<Route path='refund-policy' element={<RefundPolicy />} />
+						<Route path='term-conditions' element={<TermAndConditions />} />
+					</Route>
+					<Route
+						path='/admin/*'
+						element={
+							<Suspense fallback={<IsLoading />}>
+								<AdminRoutes />
+							</Suspense>
+						}
+					/>
+				</Routes>
+			</BrowserRouter>
+		</>
+	);
 }
 
 export default App;
-
-

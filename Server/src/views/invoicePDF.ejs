@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title><%= order.pageTitle || "Invoice" %></title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				margin: 0;
+				padding: 0;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				min-height: 100vh;
+				background-color: #f4f4f4;
+			}
+
+			#invoice-container {
+				width: 100%;
+				display: flex;
+				justify-content: center;
+				margin-top: 4rem;
+				background-color: white;
+				box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+			}
+
+			#flex-div {
+				background-color: #fb0001;
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				width: 100%;
+			}
+
+			#flex-table {
+				width: 100%;
+			}
+
+			#company-logo img {
+				width: 150px;
+			}
+
+			#company-info {
+				text-align: right;
+			}
+
+			#company-info p {
+				margin: 8px 0;
+				color: white;
+			}
+
+			#order-info {
+				margin-top: 20px;
+				padding: 20px;
+				display: flex;
+				justify-content: space-between;
+				align-items: flex-start;
+			}
+
+			#i_order-details p {
+				text-align: right;
+			}
+
+			#customer-details p,
+			#i_order-details p {
+				margin: 4px 0;
+			}
+
+			table {
+				width: 100%;
+				margin: 20px auto;
+				border-collapse: collapse;
+			}
+
+			.t_head {
+				width: 90%;
+			}
+
+			th,
+			td {
+				padding: 16px;
+				text-align: right;
+			}
+
+			th {
+				background-color: #d42323;
+				font-size: 17px;
+				color: white;
+			}
+
+			tbody {
+				width: 65%;
+				background-color: white;
+				border-radius: 10px;
+			}
+
+			tfoot {
+				border-top: 1px solid rgb(180, 176, 176);
+			}
+
+			tbody tr td,
+			tfoot tr td {
+				font-size: 15px;
+			}
+
+			.border-radius {
+				border-radius: 10px;
+			}
+
+			.rounded-top-corners {
+				border-top-left-radius: 10px;
+				border-top-right-radius: 10px;
+			}
+
+			.rounded-bottom-corners {
+				border-bottom-left-radius: 10px;
+				border-bottom-right-radius: 10px;
+			}
+
+			footer {
+				text-align: center;
+				color: white;
+				font-size: 13px;
+				width: 100%;
+			}
+
+			#footer {
+				margin-top: 20px;
+				text-align: center;
+				color: white;
+				font-size: 13px;
+				width: 100%;
+				background-color: #d42323;
+			}
+
+			#i_paragraph {
+				text-align: center;
+				font-size: 13.5px;
+				color: darkblue;
+				letter-spacing: 0.3px;
+				font-weight: bold;
+			}
+
+			.i_text_align_left {
+				text-align: left;
+			}
+
+			.i_text_align_center {
+				text-align: center;
+			}
+		</style>
+	</head>
+	<body>
+		<table id="invoice-container" class="border-radius">
+			<tr
+				id="flex-div"
+				class="rounded-top-corners"
+				style="background-color: #d42323"
+			>
+				<td id="company-logo">
+					<img
+						src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTi-qQN0Vp3fGM7wKGvJie3OrRXev3JiW7r4A&usqp=CAU"
+					/>
+				</td>
+				<td id="flex-table"></td>
+				<td id="company-info" style="text-align: right; margin-top: 10px">
+					<p style="font-size: 19px; text-align: right">Shop Sphere Inc.</p>
+					<p style="font-size: 13px; text-align: right">
+						yemoelwin142@gmail.com
+					</p>
+					<p style="font-size: 13px; text-align: right">
+						Mobile: +95-9257879097
+					</p>
+					<p style="font-size: 13px; text-align: right">Fax: (070) - 142996</p>
+				</td>
+			</tr>
+
+			<tr id="order-info">
+				<td id="customer-details">
+					<p style="font-size: 14px; font-weight: bold; text-align: left">to</p>
+					<p style="font-size: 16px; font-weight: bold; text-align: left">
+						<%= order.customer_info.name %>
+					</p>
+					<p style="text-align: left">
+						<%= order.customer_info.address.line1 %>/<%=
+						order.customer_info.address.line2 %>
+					</p>
+					<p style="text-align: left">
+						City: <%= order.customer_info.address.city %>, Zip Code: <%=
+						order.customer_info.address.postal_code %>
+					</p>
+					<p style="text-align: left">Email: <%= order.email %></p>
+					<p style="text-align: left">
+						Phone: <%= order.customer_info.phone %>
+					</p>
+				</td>
+				<td id="flex-table"></td>
+				<td id="i_order-details" style="text-align: right">
+					<p style="text-align: right; margin-top: 14px">
+						<span style="font-weight: bold">Order ID</span><br />
+						<span><%= order.orderId %></span>
+					</p>
+					<p style="text-align: right; margin-top: 14px">
+						<span style="font-weight: bold">Date</span> <br />
+						<%= order.purchase_Date.toLocaleDateString("en-US", { weekday:
+						"long", year: "numeric", month: "long", day: "numeric", hour:
+						"2-digit", minute: "2-digit", second: "2-digit" }) %>
+					</p>
+					<p style="text-align: right; margin-top: 14px">
+						<span style="font-weight: bold">Payment Method</span><br />Credit
+						Card
+					</p>
+				</td>
+			</tr>
+
+			<tr>
+				<td>
+					<table class="t_head">
+						<thead>
+							<tr>
+								<th class="i_text_align_left">No</th>
+								<th class="i_text_align_left">Description</th>
+								<th class="i_text_align_center">Quantity</th>
+								<th>Price</th>
+								<th>Amount</th>
+							</tr>
+						</thead>
+						<tbody>
+							<% let rowNum = 1; %> <% order.items.forEach(product => { %>
+							<tr>
+								<td class="i_text_align_left"><%= rowNum %></td>
+								<td class="i_text_align_left"><%= product.title %></td>
+								<td class="i_text_align_center"><%= product.quantity %></td>
+								<td>$<%= product.price.toFixed(2) %></td>
+								<td>$<%= product.quantity * product.price.toFixed(2) %></td>
+							</tr>
+							<% rowNum++; %> <% }); %>
+						</tbody>
+						<tfoot>
+							<tr>
+								<td colspan="4">Total Amount</td>
+								<td>$<%= order.totalAmount.toFixed(2) %></td>
+							</tr>
+							<tr>
+								<td colspan="4">Tax (10%)</td>
+								<td>$4.00</td>
+							</tr>
+							<tr style="font-weight: 600">
+								<td colspan="4">Grand Total Amount</td>
+								<td>$<%= order.totalAmount.toFixed(2) %></td>
+							</tr>
+						</tfoot>
+					</table>
+				</td>
+			</tr>
+
+			<tr>
+				<td id="i_paragraph">
+					All items will be delivered within 8 days starting from tomorrow.
+				</td>
+			</tr>
+
+			<tr id="footer">
+				<td class="rounded-bottom-corners">
+					<footer>
+						<p>
+							Thank you so much for your purchase. We truly appreciate your
+							business.
+						</p>
+						<p>
+							If you have any questions, concerns, or if there's anything else
+							we can assist you with,
+						</p>
+						<p>
+							please don't hesitate to contact us. Your satisfaction is our top
+							priority.
+						</p>
+					</footer>
+				</td>
+			</tr>
+		</table>
+	</body>
+</html>

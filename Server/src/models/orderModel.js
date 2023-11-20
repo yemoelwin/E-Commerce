@@ -1,75 +1,77 @@
-import { model, Schema } from 'mongoose'; // Erase if already required
+import { model, Schema } from "mongoose"; // Erase if already required
 
-const orderSchema = new Schema({
-    transitionId: {
-        type: String,
-        required: true,
-    },
-    customerId: {
-        type: String,
-        required: true,
-    },
-    customer_details: {
-        name: {
-            type: String,
-        },
-        email: {
-            type: String,
-        },
-        mobile: {
-            type: Number,
-        },
-    },
-    products: [],
-    totalQuantity: {
-        type: Number,
-        required: true,
-    },
-    subTotalAmount: {
-        type: Number,
-        required: true,
-    },
-    currency: {
-        type: String,
-        defautl: 'usd'
-    },
-    payment_intent: {
-        type: String,
-    },
-    customer_details: {
-        type: Object,
-        default: {},
-    },
-    shipping_details: {
-        type: Object,
-        default: {},
-    },
-    shipping_amount: {
-        type: Number,
-    },
-    delivery_status: {
-        type: String,
-        default: "Pending",
-    },
-    stripe_response: {
-        type: Boolean,
-        default: false,
-    },
-    payment_status: {
-        type: String,
-    },
-    createdAt: {
-        type: Date,  
-    },
-    paidAt: {
-        type: Date,  
-    },
-}, {
-    timestamps: true,
-    }
-)
+const orderSchema = new Schema(
+	{
+		transitionId: {
+			type: String,
+			required: true,
+		},
+		customerId: {
+			type: String,
+			required: true,
+		},
+		// customer_details: {
+		//     name: {
+		//         type: String,
+		//     },
+		//     email: {
+		//         type: String,
+		//     },
+		//     mobile: {
+		//         type: Number,
+		//     },
+		// },
+		products: [],
+		totalQuantity: {
+			type: Number,
+			required: true,
+		},
+		subTotalAmount: {
+			type: Number,
+			required: true,
+		},
+		currency: {
+			type: String,
+			defautl: "usd",
+		},
+		payment_intent: {
+			type: String,
+		},
+		customer_details: {
+			type: Object,
+			default: {},
+		},
+		shipping_details: {
+			type: Object,
+			default: {},
+		},
+		shipping_amount: {
+			type: Number,
+		},
+		delivery_status: {
+			type: String,
+			default: "Pending",
+		},
+		stripe_response: {
+			type: Boolean,
+			default: false,
+		},
+		payment_status: {
+			type: String,
+		},
+		createdAt: {
+			type: Date,
+		},
+		paidAt: {
+			type: Date,
+		},
+	},
+	{
+		timestamps: true,
+	},
+);
 
-export default model('Order', orderSchema);
+export default model("Order", orderSchema);
 
 // var orderSchema = new Schema(
 //     {
@@ -77,7 +79,7 @@ export default model('Order', orderSchema);
 //             type: mongoose.Schema.Types.ObjectId,
 //             ref: 'User',
 //             required: true,
-//         }, 
+//         },
 //         shippingInfo: {
 //             firstName: {
 //                 type: String,
@@ -159,7 +161,5 @@ export default model('Order', orderSchema);
 //     {
 //         timestamps: true,
 //     }
-    
+
 // );
-
-
