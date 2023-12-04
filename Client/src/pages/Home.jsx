@@ -1,4 +1,9 @@
 import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllBlog } from "../features/blog/blogSlice";
+import { getProducts } from "../features/products/productSlice";
+import Container from "../containers/common/Container";
+
 import BlogCart from "../containers/BlogCart";
 import CardProduct from "../containers/CardProduct";
 import SpecialProduct from "../containers/SpecialProduct";
@@ -7,10 +12,6 @@ import MarqueeSlider from "../containers/Marquee";
 import Offer from "../containers/Offer";
 import Items from "../containers/Items";
 import BannerProduct from "../containers/BannerProduct";
-import Container from "../containers/common/Container";
-import { useDispatch, useSelector } from "react-redux";
-import { getAllBlog } from "../features/blog/blogSlice";
-import { getProducts } from "../features/products/productSlice";
 
 const Home = () => {
 	const dispatch = useDispatch();
@@ -27,8 +28,9 @@ const Home = () => {
 				throw new Error("Something went wrong while fetching blog data");
 			}
 		};
+
 		indexPosts();
-	}, []);
+	}, [dispatch]);
 
 	const latest4Blogs = [...(indexBlogData || [])]
 		.sort((a, b) => {
@@ -54,7 +56,6 @@ const Home = () => {
 
 			<Items />
 
-			{/* <Suspense fallback={<IsLoading />}> */}
 			<Container class1='featured-wrapper py-5 home-wrapper-2 '>
 				<div className='row'>
 					<div className='col-12'>
@@ -64,7 +65,6 @@ const Home = () => {
 					<CardProduct prodData={featuredProducts} />
 				</div>
 			</Container>
-			{/* </Suspense> */}
 
 			<FamousProduct />
 

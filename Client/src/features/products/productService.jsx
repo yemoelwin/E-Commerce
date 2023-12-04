@@ -1,8 +1,16 @@
 import api from "../../app/api/currentApi";
 
-const getProducts = async () => {
+const getProducts = async (data) => {
 	try {
-		const response = await api.get("/product/");
+		const response = await api.get(
+			`/product/?` +
+				`${data?.brand ? `brand=${data.brand}&` : ""}` +
+				`${data?.category ? `category=${data.category}&` : ""}` +
+				`${data?.tag ? `tags=${data.tag}&` : ""}` +
+				`${data?.minPrice ? `price[gte]=${data.minPrice}&` : ""}` +
+				`${data?.maxPrice ? `price[lte]=${data.maxPrice}&` : ""}` +
+				`${data?.sort ? `sort=${data.sort}&` : ""}`,
+		);
 		return response.data;
 	} catch (error) {
 		console.error("An error occurred during fetching all products:", error);
@@ -94,6 +102,25 @@ const deleteProduct = async (id) => {
 	}
 };
 
+const rating = async (data) => {
+	console.log("rating service data", data);
+	try {
+		const response = await api.put(`/product/star-rating/comment`, {
+			stars: data.stars,
+			prodId: data.prodId,
+			comment: data.comment,
+		});
+		// console.log('responseData of searchINput', response.data);
+		return response.data;
+	} catch (error) {
+		console.error(
+			"An error occurred during fetching all search products:",
+			error,
+		);
+		throw error; // Re-throw the error for higher-level handling
+	}
+};
+
 const productService = {
 	getProducts,
 	searchProducts,
@@ -103,6 +130,7 @@ const productService = {
 	getProduct,
 	updateProduct,
 	deleteProduct,
+	rating,
 };
 
 export default productService;

@@ -1,84 +1,77 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { clearSearchState } from "../features/products/productSlice";
 
 const ShowMoreList = ({
-	categories,
 	brands,
-	selectedOption,
-	onBrandClick,
-	onCategoryClick,
+	categories,
+	option,
+	setCategory,
+	setBrand,
+	setTag,
+	setMinPrice,
+	setMaxPrice,
 }) => {
 	const dispatch = useDispatch();
-	const [showAll, setShowAll] = useState(false);
-	const [showCategory, setShowCategory] = useState([]);
-	const [showBrand, setShowBrand] = useState([]);
+
 	const maxItemsToShow = 6;
 
-	useEffect(() => {
-		let data = [];
-		for (let index = 0; index < categories?.length; index++) {
-			const element = categories[index];
-			data.push({
-				name: element?.title,
-			});
-			setShowCategory(data);
-		}
-	}, [categories]);
+	const [selectedItem, setSelectedItem] = useState(null);
 
-	useEffect(() => {
-		let brandData = [];
-		for (let index = 0; index < brands?.length; index++) {
-			const element = brands[index];
-			brandData.push({
-				name: element?.title,
-			});
-			setShowBrand(brandData);
-		}
-	}, [brands]);
+	const [showAll, setShowAll] = useState(false);
 
-	const handleChangeOption = async (itemName) => {
+	const clearFilterState = () => {
+		setTag("");
+		setMinPrice("");
+		setMaxPrice("");
+	};
+
+	const handleFilterOption = async (itemName) => {
+		await dispatch(clearSearchState());
 		try {
-			await dispatch(clearSearchState());
-			if (selectedOption === "Categories") {
-				onCategoryClick(itemName);
+			if (option === "Categories") {
+				setCategory(itemName);
+				setBrand("");
+				clearFilterState();
 			} else {
-				onBrandClick(itemName);
+				setBrand(itemName);
+				setCategory("");
+				clearFilterState();
 			}
 		} catch (error) {
 			console.error("error", error);
 		}
+		setSelectedItem(itemName);
 	};
 
 	const visibleCategoryItems = showAll
-		? showCategory
-		: showCategory.slice(0, maxItemsToShow);
+		? categories
+		: categories.slice(0, maxItemsToShow);
 
-	const visibleBrandItems = showAll
-		? showBrand
-		: showBrand.slice(0, maxItemsToShow);
+	const visibleBrandItems = showAll ? brands : brands.slice(0, maxItemsToShow);
 
 	return (
 		<div
 			className='side-bar-display'
 			style={{ overflow: "hidden", transition: "height 0.3s" }}
 		>
-			<ul style={{ margin: 0, padding: 0 }}>
-				{(selectedOption === "Categories"
-					? visibleCategoryItems
-					: visibleBrandItems
-				).map((item, index) => (
-					<li
-						key={index}
-						className='item-name'
-						onClick={() => handleChangeOption(item.name)}
-					>
-						{item.name}
-					</li>
-				))}
-			</ul>
+			{(option === "Categories" ? visibleCategoryItems : visibleBrandItems).map(
+				(item, index) => (
+					<ul key={index} style={{ margin: 0, padding: 0 }}>
+						<li
+							className={`item-name ${
+								selectedItem === item ? "selected-item" : ""
+							}`}
+							onClick={() => handleFilterOption(item)}
+						>
+							{item}
+						</li>
+					</ul>
+				),
+			)}
+
 			<div className=''>
-				{(showCategory ? showCategory : showBrand)?.length > maxItemsToShow && (
+				{(categories ? categories : brands)?.length > maxItemsToShow && (
 					<button
 						className='see-more-button'
 						onClick={() => setShowAll(!showAll)}

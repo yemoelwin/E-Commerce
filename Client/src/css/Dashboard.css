@@ -1,54 +1,53 @@
 :root {
-    --color-212529: #212529;
-    --color-ffd333: #ffd333;
-    --color-47ad24: #47ad24;
-    --color-e52e2e: #e52e2e;
-    --color-828599: #828599;
-    --color-3d464d: #3d464d;
-    --color-ced4da: #ced4da;
+	--color-212529: #212529;
+	--color-ffd333: #ffd333;
+	--color-47ad24: #47ad24;
+	--color-e52e2e: #e52e2e;
+	--color-828599: #828599;
+	--color-3d464d: #3d464d;
+	--color-ced4da: #ced4da;
 }
 
 body {
-    font-family: 'Roboto', sans-serif;
-    padding: 0;
-    margin: 0;
+	font-family: "Roboto", sans-serif;
+	padding: 0;
+	margin: 0;
 }
 
 .quill {
-    background-color: white;
+	background-color: white;
 }
 
 .font {
-    font-size: 14px;
+	font-size: 14px;
 }
 
 .product-form-control {
-    box-shadow: none;
-    border-color: var(--color-ced4da);
-    font-size: 1rem;
-    font-weight: 300;
-    width: 100%;
+	box-shadow: none;
+	border-color: var(--color-ced4da);
+	font-size: 1rem;
+	font-weight: 300;
+	width: 100%;
 }
 
 .title {
-    font-family: 'Roboto' !important;
-    font-size: 26px;
-    color: var(--color-212529);
+	font-family: "Roboto" !important;
+	font-size: 26px;
+	color: var(--color-212529);
 }
 
 .title1 {
-    font-family: 'Roboto' !important;
+	font-family: "Roboto" !important;
 }
 
 .sub-title {
-    font-size: 24px;
-    font-family: 'Roboto' !important;
-    color: var(--color-212529);
+	font-size: 16px;
+	font-family: "Roboto" !important;
+	color: var(--color-212529);
 }
 
 .desc {
-    font-size: 14px;
-    font-family: 'Roboto' !important;
-    color: var(--color-828599);
+	font-size: 14px;
+	font-family: "Roboto" !important;
+	color: var(--color-828599);
 }
-

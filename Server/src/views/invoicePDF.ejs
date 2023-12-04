@@ -38,7 +38,10 @@
 			}
 
 			#company-logo img {
-				width: 150px;
+				width: 100px;
+				border-radius: 5px;
+				align-items: center;
+				margin-top: 12px;
 			}
 
 			#company-info {
@@ -187,8 +190,8 @@
 						order.customer_info.address.line2 %>
 					</p>
 					<p style="text-align: left">
-						City: <%= order.customer_info.address.city %>, Zip Code: <%=
-						order.customer_info.address.postal_code %>
+						City: <%= order.customer_info.address.city %>, <br />
+						Zip Code: <%= order.customer_info.address.postal_code %>
 					</p>
 					<p style="text-align: left">Email: <%= order.email %></p>
 					<p style="text-align: left">

@@ -84,7 +84,11 @@ const getProductById = async (req, res) => {
 	const { id } = req.params;
 	console.log("backendProdId", id);
 	try {
-		const fetchProduct = await Product.findById(id);
+		const fetchProduct = await Product.findById(id).populate({
+			path: "ratings.postedby",
+			model: "User",
+			select: "firstname lastname",
+		});
 		if (!fetchProduct) {
 			return res.status(404).json({
 				status: "FAILED",
@@ -105,7 +109,6 @@ const fetchAllProduct = asyncHandler(async (req, res) => {
 		const queryObj = { ...req.query };
 		const excludeFields = ["page", "sort", "limit", "fields"];
 		excludeFields.forEach((element) => delete queryObj[element]);
-		console.log(queryObj);
 		let queryStr = JSON.stringify(queryObj).replace(
 			/\b(gte|gt|lte|lt)\b/g,
 			(match) => `$${match}`,
@@ -114,13 +117,10 @@ const fetchAllProduct = asyncHandler(async (req, res) => {
 
 		// sorting
 		if (req.query.sort) {
-			console.log("sortingResult:", req.query.sort);
 			const sortBy = req.query.sort.split(",").join(" ");
-			console.log("sortByResult:", sortBy);
 			productQuery = productQuery
 				.collation({ locale: "en", caseLevel: false })
 				.sort(sortBy);
-			// console.log('productQueryResult:',productQuery);
 		} else {
 			productQuery = productQuery.sort({ createdAt: -1 });
 		}
@@ -174,6 +174,7 @@ const searchProducts = asyncHandler(async (req, res) => {
 				priceQuery,
 			].filter(Boolean),
 		});
+
 		res.status(200).json(filteredProducts);
 	} catch (error) {
 		console.error("Error searching products:", error);
@@ -325,7 +326,7 @@ const starRating = asyncHandler(async (req, res) => {
 	const { _id } = req.user;
 	console.log("_id", _id);
 	const { stars, prodId, comment } = req.body;
-	console.log("star n prodId", stars, prodId);
+	console.log("star n prodId n comment", stars, prodId, comment);
 	try {
 		const product = await Product.findById(prodId);
 		if (!product)
@@ -342,7 +343,7 @@ const starRating = asyncHandler(async (req, res) => {
 					$set: { "ratings.$.stars": stars, "ratings.$.comment": comment },
 				},
 				{ new: true },
-			);
+			).populate("ratings.postedby", "firstname lastname");
 		} else {
 			await Product.findByIdAndUpdate(
 				prodId,
@@ -356,28 +357,40 @@ const starRating = asyncHandler(async (req, res) => {
 					},
 				},
 				{ new: true },
-			);
+			).populate("ratings.postedby", "firstname lastname");
 		}
-		const getAllRatings = await Product.findById(prodId);
-		let totalRating = getAllRatings.ratings.length;
+
+		const updatedProduct = await Product.findById(prodId).populate({
+			path: "ratings.postedby",
+			model: "User", // Assuming your User model is named "User"
+			select: "firstname lastname", // Fields to select from the User model
+		});
+
+		// const getAllRatings = await Product.findById(prodId);
+
+		let totalRating = updatedProduct.ratings.length;
+
 		console.log("totalRating", totalRating);
-		let sumRating = getAllRatings.ratings
+
+		let sumRating = updatedProduct.ratings
 			.map((product) => product.stars)
 			.reduce((prev, current) => prev + current, 0);
 		console.log("sumRating", sumRating);
+
 		let actualRating = Math.round(sumRating / totalRating);
 		// let actualRating = Math.round(9 / 2);
 		console.log("actualRating", actualRating);
-		let updatedProduct = await Product.findByIdAndUpdate(
-			prodId,
-			{
-				totalrating: actualRating,
-			},
-			{ new: true },
-		);
+
+		updatedProduct.totalrating = actualRating;
+		await updatedProduct.save();
+
 		res.json(updatedProduct);
 	} catch (error) {
-		res.status(500).json({ message: "Error Occurred while rating stars." });
+		console.error("Error Occurred while rating stars:", error);
+		res.status(500).json({
+			status: "ERROR",
+			message: "Internal Server Error. Please try again.",
+		});
 	}
 });
 

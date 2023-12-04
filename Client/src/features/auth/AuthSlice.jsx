@@ -29,7 +29,6 @@ export const register = createAsyncThunk(
 export const login = createAsyncThunk(
 	"auth/login",
 	async (userData, thunkApi) => {
-		console.log("sliceloginData", userData);
 		try {
 			const response = await authService.login(userData);
 			localStorage.setItem("user", JSON.stringify(response));
@@ -44,7 +43,6 @@ export const login = createAsyncThunk(
 export const forgotPasswordToken = createAsyncThunk(
 	"auth/forgot-password",
 	async (data, thunkApi) => {
-		console.log("sliceresetEmail", data);
 		try {
 			const response = await authService.forgotPasswordToken(data);
 			return response;
@@ -58,7 +56,6 @@ export const forgotPasswordToken = createAsyncThunk(
 export const resetNewPassword = createAsyncThunk(
 	"auth/reset-password",
 	async (data, thunkApi) => {
-		console.log("resetNewPassword", data);
 		try {
 			const response = await authService.resetPassword(data);
 			return response;

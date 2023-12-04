@@ -9,13 +9,9 @@ router.get("/verify_email/:token/:_id", userInfo.verifyRegisterEmail);
 
 router.post("/auth/login", userInfo.userLogin);
 
+/*  */
 router.post("/auth/user-logout", protect, userInfo.Logout);
-
-// Add a middleware function to log access to the route
-router.use("/auth/user-logout", (req, res, next) => {
-	console.log("Access to route /auth/user-logout");
-	next(); // Continue processing the route
-});
+/*  */
 
 router.get("/refresh-token", userInfo.handleRefreshToken);
 

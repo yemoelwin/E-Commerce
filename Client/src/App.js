@@ -31,16 +31,13 @@ import "./admin/layouts/MainLayout.css";
 // import OrderList from "./pages/OrderList";
 // import CheckoutCancel from "./containers/common/CheckoutCancel";
 // import CheckoutSuccess from "./pages/CheckoutSuccess";
-import Layout from "./containers/layout/Layout";
-import Home from "./pages/Home";
-import ShippingPolicy from "./pages/ShippingPolicy";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import RefundPolicy from "./pages/RefundPolicy";
-import TermAndConditions from "./pages/TermAndConditions";
 import NotFound from "./pages/NotFound";
+// import InfiniteScrolling from "./pages/InfiniteScrolling";
+import Home from "./pages/Home";
+import Layout from "./containers/layout/Layout";
 import IsLoading from "./containers/common/IsLoading";
-import InfiniteScrolling from "./pages/InfiniteScrolling";
 
+// const NotFound = lazy(() => import("./pages/NotFound"));
 const OurStore = lazy(() => import("./pages/OurStore"));
 const ContactUs = lazy(() => import("./pages/ContactUs"));
 const SingleProduct = lazy(() => import("./pages/SingleProduct"));
@@ -276,11 +273,14 @@ function App() {
 								</Suspense>
 							}
 						/>
-						<Route path='infinite-scroll' element={<InfiniteScrolling />} />
-						<Route path='shipping-policy' element={<ShippingPolicy />} />
-						<Route path='privacy-policy' element={<PrivacyPolicy />} />
-						<Route path='refund-policy' element={<RefundPolicy />} />
-						<Route path='term-conditions' element={<TermAndConditions />} />
+						{/* <Route
+							path='infinite-scroll'
+							element={
+								<Suspense fallback={<IsLoading />}>
+									<InfiniteScrolling />
+								</Suspense>
+							}
+						/> */}
 					</Route>
 					<Route
 						path='/admin/*'

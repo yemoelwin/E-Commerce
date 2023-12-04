@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import Meta from "../../containers/common/Meta";
 import BreadCrumb from "../../containers/common/BreadCrumb";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,14 +7,24 @@ import { login, clearErrorMessage } from "../../features/auth/AuthSlice";
 
 const Login = () => {
 	const userRef = useRef();
+	const location = useLocation();
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+
 	const [email, setEmail] = useState("");
+
 	const [password, setPassword] = useState("");
+
 	const { isLoading, isError, errorMessage, isAuthenticated } = useSelector(
 		(state) => state.auth,
 	);
 	const authState = useSelector((state) => state.auth.users);
+
+	const initialAlertMessage = new URLSearchParams(location.search).get(
+		"alertMessage",
+	);
+	const [alertMessage, setAlertMessage] = useState(initialAlertMessage);
+	// console.log("alertMessage", alertMessage);
 
 	useEffect(() => {
 		userRef.current.focus();
@@ -24,12 +34,14 @@ const Login = () => {
 		e.preventDefault();
 		setEmail(e.target.value);
 		removeErrorMessage();
+		setAlertMessage(null);
 	};
 
 	const handlePasswordChange = (e) => {
 		e.preventDefault();
 		setPassword(e.target.value);
 		removeErrorMessage();
+		setAlertMessage(null);
 	};
 
 	const handleSubmit = async (e) => {
@@ -71,10 +83,10 @@ const Login = () => {
 				<div className='container d-flex justify-content-center'>
 					<div className='form-container'>
 						<p
-							className={errorMessage ? "errmsg" : "offscreen"}
+							className={errorMessage || alertMessage ? "errmsg" : "offscreen"}
 							aria-live='assertive'
 						>
-							{errorMessage}
+							{errorMessage ? errorMessage : alertMessage}
 						</p>
 						<h3 className='title'>Login Account</h3>
 						<ul className='social-links'>

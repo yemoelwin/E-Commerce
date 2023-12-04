@@ -1,17 +1,18 @@
 import React from "react";
 import ReactStars from "react-rating-stars-component";
 import { Link, useLocation } from "react-router-dom";
-import prodcompare from "../images/prodcompare.svg";
+// import prodcompare from "../images/prodcompare.svg";
 import wish from "../images/wish.svg";
 import addcart from "../images/add-cart.svg";
 import view from "../images/view.svg";
 import { useDispatch } from "react-redux";
 import { addToWishlistProduct } from "../features/products/productSlice";
+import { LazyLoadImage } from "react-lazy-load-image-component";
+import "react-lazy-load-image-component/src/effects/blur.css";
 
 const CardProduct = (props) => {
-	const { grid, prodData, searchProducts } = props;
-	// console.log('prodData', prodData)
-	// console.log('searchProduct', searchProducts)
+	// const { grid, prodData, searchProducts } = props;
+	const { grid, productState, searchProducts } = props;
 	let location = useLocation();
 	const dispatch = useDispatch();
 
@@ -25,7 +26,7 @@ const CardProduct = (props) => {
 		}
 	};
 
-	const dataToDisplay = searchProducts ? searchProducts : prodData;
+	const dataToDisplay = searchProducts ? searchProducts : productState;
 
 	return (
 		<>
@@ -39,14 +40,14 @@ const CardProduct = (props) => {
 					>
 						<div className='product-card position-relative'>
 							<div className='product-image'>
-								{item.images && item.images.length > 0 && (
-									<img
+								{item?.images && item?.images?.length > 0 && (
+									<LazyLoadImage
 										src={item.images[0].url}
-										className='img-fluid mx-auto'
 										alt='product'
+										className='img-fluid mx-auto'
+										effect='blur'
 									/>
 								)}
-								{/* <img src={watch2} className='img-fluid mx-auto' alt='product' /> */}
 							</div>
 
 							<div className='product-details'>
@@ -114,9 +115,9 @@ const CardProduct = (props) => {
 										<img src={wish} alt='wishlist' />
 									</button>
 
-									<button className='mb-1 border-0 bg-transparent'>
+									{/* <button className='mb-1 border-0 bg-transparent'>
 										<img src={prodcompare} alt='addcart' />
-									</button>
+									</button> */}
 									{/* onClick={() => navigate(`/product/${item?._id}`)} */}
 									<Link
 										to={`/product/${item?._id}`}

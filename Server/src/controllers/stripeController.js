@@ -4,12 +4,13 @@ import orderModel from "../models/orderModel.js";
 import ProductModel from "../models/productModel.js";
 import invoiceTemplate from "./templatePDF.js";
 config();
-
+// 09264779748
 const stripe = Stripe(process.env.STRIPE_APIKEYS);
 
 export const stripeSession = async (req, res) => {
 	const { cartItemData, userId, transitionId } = req.body;
 	const { cartData } = cartItemData;
+	console.log("usrId", userId, "transitionId", transitionId);
 	try {
 		const customer = await stripe.customers.create({
 			metadata: {

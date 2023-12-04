@@ -27,9 +27,9 @@ export const getWishlist = createAsyncThunk(
 export const createOrder = createAsyncThunk(
 	"user/create-order",
 	async (data, thunkApi) => {
-		console.log("slice Data", data);
 		try {
 			const response = await userService.saveOrder(data);
+			console.log("create Order", response.data);
 			return response;
 		} catch (error) {
 			console.log(error);
@@ -41,7 +41,6 @@ export const createOrder = createAsyncThunk(
 export const getOrder = createAsyncThunk(
 	"user/get-order",
 	async ({ userId, transitionId }, thunkApi) => {
-		console.log("order Data", userId, transitionId);
 		try {
 			const response = await userService.getOrder({ userId, transitionId });
 			return response;
@@ -55,7 +54,6 @@ export const getOrder = createAsyncThunk(
 export const fetchOrders = createAsyncThunk(
 	"auth/get-user-orders",
 	async (id, thunkApi) => {
-		console.log("slice Id", id);
 		try {
 			const response = await userService.getOrders(id);
 			return response;
@@ -82,7 +80,6 @@ export const allUserOrders = createAsyncThunk(
 export const updateOrderStatus = createAsyncThunk(
 	"auth/update-order-status",
 	async (data, thunkApi) => {
-		console.log("sliceDeliveryStatus", data);
 		try {
 			const response = await userService.updateOrderStatus(data);
 			return response;
@@ -93,39 +90,15 @@ export const updateOrderStatus = createAsyncThunk(
 	},
 );
 
-// export const sendInvoiceMail = createAsyncThunk(
-// 	"auth/send-invoice-mail",
-// 	async (data, thunkApi) => {
-// 		console.log("sliceInvoiceData", data);
-// 		try {
-// 			const response = await userService.updateOrderStatus(data);
-// 			return response;
-// 		} catch (error) {
-// 			const errorMessage = error.message || "An error occurred.";
-// 			return thunkApi.rejectWithValue(errorMessage);
-// 		}
-// 	},
-// );
-
-// export const deleteOrder = createAsyncThunk('auth/delete-order', async(id, thunkApi) => {
-//     try {
-//         const response = await authService.deleteOrder(id);
-//         return response;
-//     } catch (error) {
-//         const errorMessage = error.message || "An error occurred.";
-//         return thunkApi.rejectWithValue(errorMessage);
-//     }
-// });
-
-export const pdfInvoice = createAsyncThunk(
-	"invoie/pdf-invoice",
+export const deleteOrder = createAsyncThunk(
+	"auth/delete-order",
 	async (id, thunkApi) => {
 		try {
-			const response = await userService.invoicePDF(id);
+			const response = await userService.deleteOrder(id);
 			return response;
 		} catch (error) {
-			console.log(error);
-			return thunkApi.rejectWithValue(error);
+			const errorMessage = error.message || "An error occurred.";
+			return thunkApi.rejectWithValue(errorMessage);
 		}
 	},
 );
@@ -261,47 +234,26 @@ export const userSlice = createSlice({
 				state.message = action.error.message || "An error occurred.";
 			})
 			// /* Delete Order */
-			// .addCase(deleteOrder.pending, (state) => {
-			//     state.isLoading = true;
-			// })
-			// .addCase(deleteOrder.fulfilled, (state, action) => {
-			//     state.isAuthenticated = true;
-			//     state.isError = false;
-			//     state.isLoading = false;
-			//     state.isSuccess = true;
-			//     state.message = "Success";
-			//     state.deletedOrder = action.payload;
-			//     })
-			// .addCase(deleteOrder.rejected, (state, action) => {
-			//     state.isLoading = false;
-			//     state.isAuthenticated = false;
-			//     state.isError = true;
-			//     state.isSuccess = false;
-			//     state.orders = null;
-			//     state.isLoggedIn = false;
-			//     state.message = action.error.message || "An error occurred.";
-			// })
-			/* Invoice */
-			.addCase(pdfInvoice.pending, (state) => {
+			.addCase(deleteOrder.pending, (state) => {
 				state.isLoading = true;
 			})
-			.addCase(pdfInvoice.fulfilled, (state, action) => {
+			.addCase(deleteOrder.fulfilled, (state, action) => {
+				state.isAuthenticated = true;
 				state.isError = false;
 				state.isLoading = false;
 				state.isSuccess = true;
 				state.message = "Success";
-				state.errorMessage = null;
-				state.invoiceData = action.payload;
+				state.deletedOrder = action.payload;
 			})
-			.addCase(pdfInvoice.rejected, (state, action) => {
-				state.isError = true;
+			.addCase(deleteOrder.rejected, (state, action) => {
 				state.isLoading = false;
+				state.isAuthenticated = false;
+				state.isError = true;
 				state.isSuccess = false;
-				state.message = "Failed";
-				state.errorMessage = action.payload;
-				state.users = null;
+				state.orders = null;
+				state.isLoggedIn = false;
+				state.message = action.error.message || "An error occurred.";
 			});
-		/* Send Email Invoice */
 	},
 });
 

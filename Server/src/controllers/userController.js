@@ -166,7 +166,6 @@ const userLogin = asyncHandler(async (req, res) => {
 });
 
 const Logout = asyncHandler(async (req, res) => {
-	console.log("heelo");
 	try {
 		const cookie = req.cookies;
 		console.log("cookies", cookie);

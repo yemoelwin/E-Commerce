@@ -14,9 +14,10 @@ const initialState = {
 
 export const getProducts = createAsyncThunk(
 	"product/getProducts",
-	async (thunkApi) => {
+	async (data, thunkApi) => {
+		console.log("data", data);
 		try {
-			const response = await productService.getProducts();
+			const response = await productService.getProducts(data);
 			return response;
 		} catch (error) {
 			console.log(error);
@@ -115,6 +116,21 @@ export const deleteProduct = createAsyncThunk(
 	async (id, thunkApi) => {
 		try {
 			const response = await productService.deleteProduct(id);
+			return response;
+		} catch (error) {
+			console.log(error);
+			const errorMessage = error.message || "An error occurred.";
+			return thunkApi.rejectWithValue(errorMessage);
+		}
+	},
+);
+
+export const rating = createAsyncThunk(
+	"product/rating star-comment",
+	async (data, thunkApi) => {
+		console.log("rating data of slice", data);
+		try {
+			const response = await productService.rating(data);
 			return response;
 		} catch (error) {
 			console.log(error);
@@ -309,6 +325,25 @@ export const productSlice = createSlice({
 				state.isLoading = false;
 				state.message = action.error.message || "An error occurred.";
 			})
+			/* rating stars and comment */
+			.addCase(rating.pending, (state) => {
+				state.isLoading = true;
+			})
+			.addCase(rating.fulfilled, (state, action) => {
+				state.newRating = action.payload;
+				state.isError = false;
+				state.isSuccess = true;
+				state.isLoading = false;
+				state.message = "Success";
+			})
+			.addCase(rating.rejected, (state, action) => {
+				state.products = null;
+				state.isError = true;
+				state.isSuccess = false;
+				state.isLoading = false;
+				state.message = action.error.message || "An error occurred.";
+			})
+			/*  */
 			.addCase(productResetState, () => initialState)
 			.addCase(addToWishListReset, (state) => {
 				state.addToWishList = null;

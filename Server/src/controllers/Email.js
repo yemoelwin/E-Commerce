@@ -140,7 +140,7 @@ export const sendInvoiceEmail = async (pdfBuffer, email, html) => {
 				<p>If you have any questions or concerns, please feel free to contact us. We appreciate your business!</p>
 				<p>Best regards,</p>
 				<p>The ShopSphere Team</p>
-			`, // Set the HTML content here
+			`,
 			text: "Thank you for your purchase! Invoice details attached as PDF.",
 			attachments: [
 				{

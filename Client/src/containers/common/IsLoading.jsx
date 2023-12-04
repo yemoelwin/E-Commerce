@@ -3,9 +3,8 @@ import React from "react";
 const IsLoading = () => {
 	return (
 		<>
-			<div className='loading-span gap-3'>
-				<div className='loading-spinner'></div>
-				<div className='load'>Loading ...</div>
+			<div className='loadingM gap-3'>
+				<div className=''> ... </div>
 			</div>
 		</>
 	);

@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { NavLink, Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { BsSearch } from "react-icons/bs";
 import compare from "../../images/compare.svg";
 import wishlist from "../../images/wishlist.svg";
@@ -9,7 +10,8 @@ import cart from "../../images/cart.svg";
 import { FaLuggageCart } from "react-icons/fa";
 import { CgProfile } from "react-icons/cg";
 import { IoIosLogOut } from "react-icons/io";
-import { useDispatch, useSelector } from "react-redux";
+import { RxDashboard } from "react-icons/rx";
+
 import { logout } from "../../features/auth/AuthSlice";
 import { persistor } from "../../app/store";
 import { clearCartItem } from "../../features/cart/cartSlice";
@@ -99,17 +101,18 @@ const Header = () => {
 				<div className='container-xxl'>
 					<div className='row align-items-center'>
 						{authState && authState?.role === "admin" ? (
-							<div className='col-2'>
-								<h2>
-									<Link to='admin' className='dashboardBanner'>
-										DashBoard
-									</Link>
-								</h2>
+							<div className='col-2 dashboardBanner'>
+								<Link to='admin' className='dashboard-link'>
+									<RxDashboard />
+									<span>DashBoard</span>
+								</Link>
 							</div>
 						) : (
 							<div className='col-2'>
 								<h2>
-									<div className='navBanner'>ShopSphere</div>
+									<Link to='/' className='navBanner'>
+										ShopSphere
+									</Link>
 								</h2>
 							</div>
 						)}

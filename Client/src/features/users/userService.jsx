@@ -58,8 +58,13 @@ const getOrders = async (id) => {
 		const response = await api.get(`/user/order/user-orders/${id}`);
 		return response.data;
 	} catch (error) {
-		console.error(error.response.data); // Re-throw the error for higher-level handlings
-		throw new Error();
+		if (error.response && error.response.data && error.response.data.message) {
+			// Extract and return the error message from the backend
+			throw new Error(error.response.data.message);
+		} else {
+			console.error("error", error);
+			throw new Error("An error occurred while getting single user orders."); // Fallback error message
+		}
 	}
 };
 
@@ -80,8 +85,13 @@ const getallUserOrders = async () => {
 		const response = await api.get(`/user/order/all-orders`);
 		return response.data;
 	} catch (error) {
-		console.error(error.response.data); // Re-throw the error for higher-level handlings
-		throw new Error();
+		if (error.response && error.response.data && error.response.data.message) {
+			// Extract and return the error message from the backend
+			throw new Error(error.response.data.message);
+		} else {
+			console.error("error", error);
+			throw new Error("An error occurred while fetching all orders."); // Fallback error message
+		}
 	}
 };
 
@@ -128,20 +138,20 @@ const deleteOrder = async (id) => {
 	}
 };
 
-const invoicePDF = async (id) => {
-	try {
-		const response = await api.get(`/invoice/pdf-invoice/${id}`);
-		return response.data;
-	} catch (error) {
-		if (error.response && error.response.data && error.response.data.message) {
-			// Extract and return the error message from the backend
-			throw new Error(error.response.data.message);
-		} else {
-			console.error("error", error);
-			throw new Error("An error occurred while fetching user wishlist."); // Fallback error message
-		}
-	}
-};
+// const invoicePDF = async (id) => {
+// 	try {
+// 		const response = await api.get(`/invoice/pdf-invoice/${id}`);
+// 		return response.data;
+// 	} catch (error) {
+// 		if (error.response && error.response.data && error.response.data.message) {
+// 			// Extract and return the error message from the backend
+// 			throw new Error(error.response.data.message);
+// 		} else {
+// 			console.error("error", error);
+// 			throw new Error("An error occurred while fetching user wishlist."); // Fallback error message
+// 		}
+// 	}
+// };
 
 const userService = {
 	getUserWishlist,
@@ -150,7 +160,7 @@ const userService = {
 	getOrders,
 	updateOrderStatus,
 	getallUserOrders,
-	invoicePDF,
+	deleteOrder,
 };
 
 export default userService;
