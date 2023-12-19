@@ -14,7 +14,7 @@ export const PrivateRoutes = ({ children }) => {
 
 			// Delay showing the toast message
 			setTimeout(() => {
-				toast.error("Please login first to add items to your cart", {
+				toast.error("Please you must login first.", {
 					autoClose: 3000, // Adjust the duration as needed
 				});
 			}, 100); // Adjust the delay as needed

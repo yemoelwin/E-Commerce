@@ -136,6 +136,7 @@ export const webHook = async (req, res) => {
 			const transitionId = data?.client_reference_id;
 			const email = data?.customer_details?.email;
 			const currency = data?.currency;
+
 			const order = await orderModel.find({
 				transitionId: transitionId,
 				stripe_response: false,
@@ -156,7 +157,7 @@ export const webHook = async (req, res) => {
 						shipping_details: data.shipping_details,
 						shipping_amount: data.shipping_options.shipping_amount,
 						payment_status: data.payment_status,
-						paidAt: new Date(),
+						createdAt: Date.now(),
 					},
 				},
 			);

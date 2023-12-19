@@ -238,13 +238,14 @@ footer .input-group-text {
 
 .grid-container {
 	display: grid;
-	grid-template-columns: auto auto;
+	grid-template-columns: 50% 50%;
 	gap: 20px;
 	max-width: auto;
 }
 
 .blog-card {
 	background-color: white;
+	/* width: 100%; */
 	border-radius: 10px;
 	border: 1px solid rgb(232, 231, 231);
 	height: 100%;
@@ -254,9 +255,7 @@ footer .input-group-text {
 
 .card-image {
 	flex: 1;
-	/* Take up remaining vertical space */
 	overflow: hidden;
-	/* Hide overflowing image */
 	border-top-left-radius: 10px;
 	border-top-right-radius: 10px;
 }
@@ -269,8 +268,6 @@ footer .input-group-text {
 
 .blog-content {
 	padding: 15px;
-
-	/* max-height: 300px; */
 }
 
 .blog-content p.date {
@@ -289,9 +286,7 @@ footer .input-group-text {
 	font-weight: 500;
 	color: var(--color-131921);
 	height: 55px;
-	/* Set a fixed height for the title */
 	overflow: hidden;
-	/* Hide overflowing text */
 }
 
 .blog-content p.description {
@@ -300,14 +295,11 @@ footer .input-group-text {
 	letter-spacing: 0.2px;
 	color: var(--color-777777);
 	height: 90px;
-	/* Set a fixed height for the description */
 	overflow: hidden;
-	/* Hide overflowing text */
 }
 
 .button {
 	margin-top: auto;
-	/* Push the button to the bottom */
 }
 
 .single-blogX {
@@ -322,12 +314,6 @@ footer .input-group-text {
 	margin-bottom: 20px;
 }
 
-/* .single-blog-card .title{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-} */
-
 .single-blog-card h3 {
 	font-size: 30px;
 	font-family: "Roboto", sans-serif !important;
@@ -340,14 +326,8 @@ footer .input-group-text {
 	font-size: 18px;
 }
 
-/* .blogImg{
-  display: flex;
-  justify-content: center;
-} */
-
 .blog-wrapper .single-blog-card img {
 	width: 70%;
-	/* max-width: 90%; */
 	height: auto;
 	border: 1px solid white;
 	box-shadow: 0 0px 8px rgb(176, 176, 176);
@@ -357,6 +337,13 @@ footer .input-group-text {
 	width: 100%;
 	display: flex;
 	justify-content: space-evenly;
+}
+
+.react_paginate {
+	display: flex;
+	justify-content: flex-end;
+	margin-top: 2rem;
+	margin-right: 1.5rem;
 }
 
 /* Blog Part Ends Here */
@@ -373,18 +360,7 @@ footer .input-group-text {
 
 /* Card Product starts here */
 
-/* .product-card{
-  padding: 18px;
-  background-color: rgb(255, 255, 255);
-  border-radius: 10px;
-  overflow: hidden;
-  height: 95%;
-  width: 100%;
-} */
-
 .product-card {
-	/* display: flex;
-  flex-direction: column; */
 	padding: 18px;
 	background-color: rgb(255, 255, 255);
 	border-radius: 10px;
@@ -394,13 +370,15 @@ footer .input-group-text {
 }
 
 .product-card .product-image {
-	height: 280px;
+	height: 220px;
+	display: flex;
+	justify-content: center;
 }
 
 .product-card .product-image img {
 	object-fit: contain;
-	max-width: 90%; /* Ensure the image fills its container */
-	height: 260px; /* Allow images of different heights */
+	max-width: 90%;
+	height: 200px;
 	display: block;
 	margin-right: auto;
 	margin-left: auto;
@@ -408,6 +386,7 @@ footer .input-group-text {
 }
 
 .product-card .product-details {
+	margin-top: 5px;
 	flex: 1;
 	/* Allow the details section to expand and fill available space */
 	display: flex;
@@ -429,7 +408,8 @@ footer .input-group-text {
 } */
 
 .product-card:hover .action-bar {
-	right: 8px;
+	right: -10px;
+	font-size: 12px;
 }
 
 .product-card .product-details h6 {
@@ -455,8 +435,8 @@ footer .input-group-text {
 
 .action-bar {
 	top: 2%;
-	right: -35px;
-	transition: 0.3s;
+	right: -55px;
+	transition: 0.2s;
 }
 
 .wishlist-icon {
@@ -683,10 +663,20 @@ footer .input-group-text {
 	border: 2px solid rgba(146, 144, 144, 0.1);
 	border-left: 2px solid #4b4b4b;
 	border-right: 2px solid #4b4b4b;
-	/* border-top: 2px solid #4b4b4b; */
 	border-radius: 50%;
 	width: 23px;
 	height: 23px;
+	animation: spin 1s linear infinite;
+	margin-bottom: 0px;
+}
+
+.loading-spinner-sm {
+	border: 2px solid rgba(146, 144, 144, 0.1);
+	border-left: 2px solid #4b4b4b;
+	border-right: 2px solid #4b4b4b;
+	border-radius: 50%;
+	width: 20px;
+	height: 20px;
 	animation: spin 1s linear infinite;
 	margin-bottom: 0px;
 }
@@ -706,6 +696,14 @@ footer .input-group-text {
 	margin-bottom: 3rem;
 }
 
+.loadingY {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	font-size: 17px;
+	margin-bottom: 3rem;
+}
+
 .loading-span {
 	display: flex;
 	justify-content: flex-start;
@@ -718,7 +716,7 @@ footer .input-group-text {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	font-size: 17px;
+	font-size: 13px;
 	color: rgb(80, 15, 231);
 }
 
@@ -852,4 +850,91 @@ footer .input-group-text {
 
 .profile-login img {
 	border-radius: 50%;
+}
+
+/* Email Verification page */
+
+.email-verify-container {
+	display: flex;
+	justify-content: center;
+	height: 100vh;
+	align-items: center;
+}
+
+.email-verify {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	border: 1px solid #ccc;
+	width: 50%;
+	height: 330px;
+	padding: 40px;
+	border-radius: 8px;
+}
+
+.email-verify h4 {
+	font-weight: 600;
+	color: #2c4376;
+}
+
+.email-verify .sub-email-verify p {
+	font-size: 15px;
+}
+
+.email-verify span {
+	margin-top: 10px;
+	font-size: 11px;
+	font-weight: bold;
+}
+
+.sub-email-verify {
+	width: 80%;
+	margin: 1rem 0;
+	text-align: center;
+}
+
+.verification-inputs {
+	display: flex;
+	justify-content: center;
+	margin-top: 10px;
+}
+
+.email-verify-input {
+	width: 40px;
+	height: 40px;
+	text-align: center;
+	font-size: 16px;
+	margin: 0 5px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+}
+
+.verify-button {
+	margin-top: 20px;
+}
+
+button {
+	padding: 8px 16px;
+	font-size: 14px;
+	cursor: pointer;
+	background-color: #4caf50;
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+	outline: none;
+}
+
+button:hover {
+	background-color: #45a049;
+	outline: none;
+}
+
+.verify-error-message {
+	text-align: center;
+	font-size: 13px;
+	color: red;
+	border: 1px solid red;
+	padding: 8px;
+	width: 300px;
+	border-radius: 5px;
 }

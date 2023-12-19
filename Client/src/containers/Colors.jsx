@@ -1,36 +1,27 @@
-import React from 'react'
+import React from "react";
 
 const Colors = (props) => {
-    const { colorData, setColor } = props;
-    // const [selectedColor, setSelectedColor] = useState(null);
-    // let array = [];
-    const handleColorClick = (label) => {
-        // setSelectedColor(label); // Update the selected color
-        // array.push(itemId, label)
-        setColor(label); // Call the parent component's setColor function
-    };
+	const { colorData, setColor } = props;
 
+	const handleColorClick = (label) => {
+		setColor(label);
+	};
 
-    return (
-        <>
-            {colorData && colorData?.color?.map((item, index) => {
-                return (
-                    // <div>
-                        
-                        <ul className='colors ps-0' key={index}>
-                            <li
-                                onClick={() => handleColorClick(item.label)}
-                                style={{ backgroundColor: item?.label }}
-                            ></li>
-                        </ul>    
-                    // </div>
-                )
-            })}
-            {/* <div>Selected Color: {selectedColor}</div> */}
-            
-            
-        </>
-    )
-}
+	return (
+		<>
+			{colorData &&
+				colorData?.color?.map((item, index) => {
+					return (
+						<ul className='colors ps-0' key={index}>
+							<li
+								onClick={() => handleColorClick(item.label)}
+								style={{ backgroundColor: item?.label }}
+							></li>
+						</ul>
+					);
+				})}
+		</>
+	);
+};
 
-export default Colors
+export default Colors;

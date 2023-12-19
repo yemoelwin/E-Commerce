@@ -29,7 +29,7 @@ const CheckoutSuccess = () => {
 	const userId = location.pathname.split("/")[2];
 	const transitionId = location.pathname.split("/")[3];
 	const orderData = useSelector((state) => state?.user?.orderDetail);
-	const paidAtDate = new Date(orderData?.paidAt);
+	const paidAtDate = new Date(orderData?.createdAt);
 	const formattedDate = `${
 		monthNames[paidAtDate.getMonth()]
 	}, ${paidAtDate.getDate()}, ${paidAtDate.getFullYear()}, ${paidAtDate.toLocaleTimeString()}`;
@@ -134,7 +134,7 @@ const CheckoutSuccess = () => {
 									<div className='date text-inverse m-t-5'>
 										{/* {orderData?.paidAt ? new Date(orderData.paidAt).toLocaleString() : ''}
 										 */}
-										{orderData?.paidAt ? formattedDate : ""}
+										{orderData?.createdAt ? formattedDate : ""}
 									</div>
 									<div className='invoice-detail'>
 										<span>orderId: {orderData?._id}</span>

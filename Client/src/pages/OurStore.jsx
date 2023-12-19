@@ -5,16 +5,20 @@ import Container from "../containers/common/Container";
 import BreadCrumb from "../containers/common/BreadCrumb";
 import Meta from "../containers/common/Meta";
 import { useDispatch, useSelector } from "react-redux";
-import { getProducts } from "../features/products/productSlice";
+import {
+	clearSearchState,
+	getProducts,
+} from "../features/products/productSlice";
 import NoData from "../containers/common/NoData";
 import ShowMoreList from "../containers/ShowMoreList";
 import { getBrands } from "../features/brand/brandSlice";
 import { getAllCategory } from "../features/category/categorySlice";
+import Paginate from "../containers/common/Paginate";
 
 const OurStore = () => {
 	const dispatch = useDispatch();
 
-	const [grid, setGrid] = useState(4);
+	const [grid, setGrid] = useState(3);
 
 	const [isLoading, setIsLoading] = useState(true);
 
@@ -48,11 +52,23 @@ const OurStore = () => {
 
 	/* Filter */
 
+	/* Global */
+
 	const productState = useSelector((state) => state?.product?.products);
 
 	const brandState = useSelector((state) => state?.brand?.brands);
 
 	const categoryState = useSelector((state) => state?.category?.categories);
+
+	/* Global */
+
+	const displayProducts = searchProducts ? searchProducts : productState;
+
+	/* Pagination */
+
+	const [productPagination, setProductPagination] = useState([]);
+
+	/* Pagination */
 
 	useEffect(() => {
 		const getAllProducts = async () => {
@@ -67,8 +83,7 @@ const OurStore = () => {
 				]);
 			} catch (error) {
 				console.error("error", error);
-				setIsLoading(false);
-				throw new Error("An error occurred while fetching all products."); // Fallback error message
+				throw new Error("An error occurred while fetching all products.");
 			} finally {
 				setIsLoading(false);
 			}
@@ -104,8 +119,7 @@ const OurStore = () => {
 	}, [searchProductState]);
 
 	const fetchAllProducts = async () => {
-		await dispatch(getProducts());
-		setSearchProducts("");
+		await Promise.all([dispatch(getProducts()), dispatch(clearSearchState())]);
 		setBrand("");
 		setCategory("");
 		setTag("");
@@ -113,8 +127,6 @@ const OurStore = () => {
 		setMaxPrice("");
 		setSort("");
 	};
-
-	const displayProducts = searchProducts ? searchProducts : productState;
 
 	return (
 		<>
@@ -336,15 +348,22 @@ const OurStore = () => {
 										<div className='loading-spinner'></div>
 										<div className='load'>Loading ... </div>
 									</div>
-								) : displayProducts.length > 0 ? (
+								) : productPagination.length > 0 ? (
 									<CardProduct
 										grid={grid}
-										productState={productState}
-										searchProducts={searchProducts}
+										prodData={productPagination ? productPagination : []}
 									/>
 								) : (
 									<NoData />
 								)}
+							</div>
+
+							<div>
+								<Paginate
+									items={displayProducts}
+									perPage={8}
+									setPaginateDisplay={setProductPagination}
+								/>
 							</div>
 						</div>
 					</div>
@@ -355,16 +374,3 @@ const OurStore = () => {
 };
 
 export default OurStore;
-
-// useEffect(() => {
-//     if (searchProductState && searchProductState.length > 0) {
-//         // Create a set of unique product IDs from the search results
-//         const searchProductIds = new Set(searchProductState.map(product => product._id));
-
-//         // Filter the productState to include only products whose IDs are in searchProductIds
-//         const filtered = productState.filter(product => searchProductIds.has(product._id));
-//         setFilteredProducts(filtered);
-//     } else {
-//         setFilteredProducts(productState);
-//     }
-// }, [searchProductState, productState]);

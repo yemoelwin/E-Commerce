@@ -1,40 +1,44 @@
-import multer from 'multer';
-import path from 'path';
-import fs from 'fs';
+import multer from "multer";
+import path from "path";
+import fs from "fs";
 
 const fileStorage = multer.diskStorage({
-        destination: (req, file, cb) => {
-        console.log("image files middleware", file)
-        cb(null, `./src/public/images`);
-    },
-        filename: function (req, file, cb) {
-        const uniquesuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-        cb(null, file.fieldname + "-" + uniquesuffix + ".jpeg");
-    },
+	destination: (req, file, cb) => {
+		console.log("image files middleware", file);
+		cb(null, `./src/public/images`);
+	},
+	filename: function (req, file, cb) {
+		const uniquesuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+		cb(null, file.fieldname + "-" + uniquesuffix + ".jpeg");
+	},
 });
 
 const fileFilter = (req, file, cb) => {
-    const filetypes = /jpeg|jpg|png|gif/;
-    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = filetypes.test(file.mimetype);
+	const allowedFileTypes = /jpeg|jpg|png|gif|webp/;
+	const extname = allowedFileTypes.test(
+		path.extname(file.originalname).toLowerCase(),
+	);
+	const mimetype = allowedFileTypes.test(file.mimetype);
 
-    if (mimetype && extname) {
-        cb(null, true); // Accept the file
-    } else {
-        cb(new Error('Only image files are allowed.'), false); // Reject the file
-    }
+	if (mimetype && extname) {
+		// Accept the file
+		cb(null, true);
+	} else {
+		// Reject the file
+		cb(new Error("Only JPEG, JPG, PNG, and GIF files are allowed."), false);
+	}
 };
 
 export const productUpload = multer({
-    storage: fileStorage,
-    fileFilter: fileFilter,
-    limits: { fileSize : 2000000 }, // Set the file filter function
+	storage: fileStorage,
+	fileFilter: fileFilter,
+	limits: { fileSize: 2000000 }, // Set the file filter function
 });
 
 export const blogUpload = multer({
-    storage: fileStorage,
-    fileFilter: fileFilter,
-    limits: { fileSize : 2000000 }, // Set the file filter function
+	storage: fileStorage,
+	fileFilter: fileFilter,
+	limits: { fileSize: 2000000 }, // Set the file filter function
 });
 
 // const productMiddleware = multer({
@@ -64,7 +68,5 @@ export const blogUpload = multer({
 //     fileFilter: fileFilter,
 //     limits: { fileSize : 2000000 },
 // })
-
-
 
 // export { productMiddleware, blogMiddleware } ;

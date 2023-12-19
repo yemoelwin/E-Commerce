@@ -75,7 +75,7 @@ const Orders = () => {
 			}
 		};
 		fetchData();
-	}, []);
+	}, [dispatch]);
 
 	const showModal = (e) => {
 		setOpen(true);
@@ -117,9 +117,21 @@ const Orders = () => {
 		}
 	};
 
+	const newOrderState = orderState?.slice().sort((a, b) => {
+		const dateA = a?.createdAt;
+		const dateB = b?.createdAt;
+		if (dateA > dateB) {
+			return -1;
+		}
+		if (dateA < dateB) {
+			return 1;
+		}
+		return 0;
+	});
+
 	const data1 = [];
-	for (let i = 0; i < orderState?.length; i++) {
-		const createdAtDate = new Date(orderState[i]?.paidAt);
+	for (let i = 0; i < newOrderState?.length; i++) {
+		const createdAtDate = new Date(newOrderState[i]?.createdAt);
 		const formattedDate = createdAtDate.toLocaleString("en-US", {
 			year: "numeric",
 			month: "2-digit",
@@ -127,14 +139,14 @@ const Orders = () => {
 		});
 		data1.push({
 			key: i + 1,
-			orderId: orderState[i]?._id,
+			orderId: newOrderState[i]?._id,
 			date: formattedDate,
-			customerName: orderState[i]?.customer_details.name,
-			amount: `$ ${(orderState[i]?.subTotalAmount).toFixed(2)}`,
+			customerName: newOrderState[i]?.customer_details.name,
+			amount: `$ ${(newOrderState[i]?.subTotalAmount).toFixed(2)}`,
 			product: (
 				<Link
 					className='viewColor'
-					to={`/admin/view-orders/${orderState[i]?.customerId}/${orderState[i]?.transitionId}`}
+					to={`/admin/view-orders/${newOrderState[i]?.customerId}/${newOrderState[i]?.transitionId}`}
 				>
 					View Item
 				</Link>
@@ -145,13 +157,13 @@ const Orders = () => {
 						name=''
 						id=''
 						defaultValue={
-							orderState[i]?.delivery_status
-								? orderState[i]?.delivery_status
+							newOrderState[i]?.delivery_status
+								? newOrderState[i]?.delivery_status
 								: "Pending"
 						}
 						className='form-control form-select'
 						onChange={(e) =>
-							handleUpdateStatus(e.target.value, orderState[i]?._id)
+							handleUpdateStatus(e.target.value, newOrderState[i]?._id)
 						}
 					>
 						<option value='Pending' className=''>
@@ -170,7 +182,7 @@ const Orders = () => {
 				<>
 					{/* <Link className=''>Edit</Link> */}
 					<button
-						onClick={() => showModal(orderState[i]?._id)}
+						onClick={() => showModal(newOrderState[i]?._id)}
 						className='ms-3 modalFix'
 					>
 						<MdDelete className='fs-4 text-danger mb-1 ' />

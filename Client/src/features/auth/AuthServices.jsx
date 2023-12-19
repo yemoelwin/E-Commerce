@@ -3,6 +3,7 @@ import api from "../../app/api/currentApi";
 const register = async (data) => {
 	try {
 		const response = await api.post(`/user/register`, data);
+		console.log("response data for register", response.data);
 		return response.data;
 	} catch (error) {
 		if (error.response && error.response.data && error.response.data.message) {
@@ -67,27 +68,11 @@ const resetPassword = async (data) => {
 	}
 };
 
-// const logout = async () => {
-//     try {
-//         const response = await api.post(`/user/auth/user-logout`);
-//         return response.data;
-//     } catch (error) {
-//         if (error.response && error.response.data && error.response.data.message) {
-//             throw new Error(error.response.data.message);
-//         } else {
-//             console.error("error", error);
-//             throw new Error('An error occurred while signing in.'); // Fallback error message
-//         }
-//     }
-
-// };
-
 const authService = {
 	register,
 	login,
 	forgotPasswordToken,
 	resetPassword,
-	// logout,
 };
 
 export default authService;

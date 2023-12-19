@@ -16,28 +16,13 @@ import "./admin/layouts/MainLayout.css";
 
 /* Main Application */
 
-// import OurStore from "./pages/OurStore";
-// import CompareProduct from "./pages/CompareProduct";
-// import Login from "./pages/auth/Login";
-// import ForgotPassword from "./pages/auth/ForgotPassword";
-// import SignUp from "./pages/auth/SignUp";
-// import ResetPassword from "./pages/auth/ResetPassword";
-// import SingleBlog from "./pages/SingleBlog";
-// import SingleProduct from "./pages/SingleProduct";
-// import Cart from "./pages/Cart";
-// import ContactUs from "./pages/ContactUs";
-// import BlogPage from "./pages/BlogPage";
-// import WishList from "./pages/WishList";
-// import OrderList from "./pages/OrderList";
-// import CheckoutCancel from "./containers/common/CheckoutCancel";
-// import CheckoutSuccess from "./pages/CheckoutSuccess";
 import NotFound from "./pages/NotFound";
-// import InfiniteScrolling from "./pages/InfiniteScrolling";
 import Home from "./pages/Home";
 import Layout from "./containers/layout/Layout";
 import IsLoading from "./containers/common/IsLoading";
+// import VerificationPage from "./pages/auth/VerificationPage";
+// import EmailVerification from "./pages/auth/EmailVerification";
 
-// const NotFound = lazy(() => import("./pages/NotFound"));
 const OurStore = lazy(() => import("./pages/OurStore"));
 const ContactUs = lazy(() => import("./pages/ContactUs"));
 const SingleProduct = lazy(() => import("./pages/SingleProduct"));
@@ -48,6 +33,7 @@ const CompareProduct = lazy(() => import("./pages/CompareProduct"));
 const WishList = lazy(() => import("./pages/WishList"));
 const Login = lazy(() => import("./pages/auth/Login"));
 const SignUp = lazy(() => import("./pages/auth/SignUp"));
+const VerificationPage = lazy(() => import("./pages/auth/VerificationPage"));
 const ForgotPassword = lazy(() => import("./pages/auth/ForgotPassword"));
 const ResetPassword = lazy(() => import("./pages/auth/ResetPassword"));
 const Cart = lazy(() => import("./pages/Cart"));
@@ -236,9 +222,11 @@ function App() {
 						<Route
 							path='wishlist'
 							element={
-								<Suspense fallback={<IsLoading />}>
-									<WishList />
-								</Suspense>
+								<PrivateRoutes>
+									<Suspense fallback={<IsLoading />}>
+										<WishList />
+									</Suspense>
+								</PrivateRoutes>
 							}
 						/>
 						<Route
@@ -257,6 +245,7 @@ function App() {
 								</Suspense>
 							}
 						/>
+
 						<Route
 							path='forgot-password'
 							element={
@@ -273,20 +262,20 @@ function App() {
 								</Suspense>
 							}
 						/>
-						{/* <Route
-							path='infinite-scroll'
-							element={
-								<Suspense fallback={<IsLoading />}>
-									<InfiniteScrolling />
-								</Suspense>
-							}
-						/> */}
 					</Route>
 					<Route
 						path='/admin/*'
 						element={
 							<Suspense fallback={<IsLoading />}>
 								<AdminRoutes />
+							</Suspense>
+						}
+					/>
+					<Route
+						path='/verify/email/:_id'
+						element={
+							<Suspense fallback={<IsLoading />}>
+								<VerificationPage />
 							</Suspense>
 						}
 					/>

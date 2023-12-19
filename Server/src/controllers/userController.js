@@ -48,7 +48,10 @@ const userRegister = asyncHandler(async (req, res) => {
 		}
 		const savedUser = await newUser.save();
 		await sendVerificationEmail(savedUser);
-		res.status(200).json(newUser);
+		res.status(200).json({
+			message: "Please check your email inbox for a verification link.",
+			newUser,
+		});
 	} catch (error) {
 		res.status(400).json({
 			status: "FAILED",
@@ -58,23 +61,20 @@ const userRegister = asyncHandler(async (req, res) => {
 });
 
 const verifyRegisterEmail = asyncHandler(async (req, res) => {
-	let { token, _id } = req.params;
-	console.log("Received userId from route params:", _id);
+	let { _id, code } = req.params;
+	console.log("_id", _id);
+	console.log("code", code);
+
 	try {
-		const decoded = jwt.verify(token, process.env.JWT_SECRET);
-		if (_id !== decoded._id) {
-			return res.status(400).json({ message: "Invalid user ID." });
-		}
-		console.log("decode", decoded);
 		const verificationRecord = await UserVerification.findOne({
 			userId: _id,
-			token,
-			expiredAt: { $gt: Date.now() },
+			digit_code: code,
 		});
+
 		if (!verificationRecord) {
-			return res.status(400).json({
+			return res.status(404).json({
 				status: "FAILED",
-				message: "Invalid or expired verification link.",
+				message: "Invalid verification code.",
 			});
 		}
 		await User.findByIdAndUpdate(
@@ -103,7 +103,7 @@ const userLogin = asyncHandler(async (req, res) => {
 		}
 		const user = await User.findOne({ email });
 		const genericErrorMessage = "Invalid email or password";
-		const verifyEmailMessage = "Verify Your Email";
+		const verifyEmailMessage = "Please verify your email first";
 		if (!user) {
 			res.status(401).json({
 				status: "FAILED",
@@ -145,7 +145,6 @@ const userLogin = asyncHandler(async (req, res) => {
 				email: user?.email,
 				role: userType,
 				token: accessToken,
-				refreshToken: refreshToken,
 				status: "Success",
 				message: `${
 					userType === "admin" ? "Admin" : "User"
@@ -220,10 +219,8 @@ const handleRefreshToken = asyncHandler(async (req, res) => {
 const resetPassword = asyncHandler(async (req, res) => {
 	try {
 		const { userId, uniqueToken } = req.params;
-		console.log("userId", userId);
-		console.log("uniqueToken", uniqueToken);
+
 		const { password } = req.body;
-		console.log("password", password);
 		if (!password) {
 			return res.status(400).json({
 				status: "FAILED",

@@ -13,15 +13,18 @@ const getProducts = async (data) => {
 		);
 		return response.data;
 	} catch (error) {
-		console.error("An error occurred during fetching all products:", error);
-		throw error; // Re-throw the error for higher-level handling
+		if (error.response && error.response.data && error.response.data.message) {
+			throw new Error(error.response.data.message);
+		} else {
+			console.error("error", error);
+			throw new Error("An error occurred while fetching all Products."); // Fallback error message
+		}
 	}
 };
 
 const searchProducts = async (searchInput) => {
 	try {
 		const response = await api.get(`/product/search/?query=${searchInput}`);
-		// console.log('responseData of searchINput', response.data);
 		return response.data;
 	} catch (error) {
 		console.error(
@@ -103,14 +106,12 @@ const deleteProduct = async (id) => {
 };
 
 const rating = async (data) => {
-	console.log("rating service data", data);
 	try {
 		const response = await api.put(`/product/star-rating/comment`, {
 			stars: data.stars,
 			prodId: data.prodId,
 			comment: data.comment,
 		});
-		// console.log('responseData of searchINput', response.data);
 		return response.data;
 	} catch (error) {
 		console.error(

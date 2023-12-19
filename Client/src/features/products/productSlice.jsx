@@ -15,7 +15,6 @@ const initialState = {
 export const getProducts = createAsyncThunk(
 	"product/getProducts",
 	async (data, thunkApi) => {
-		console.log("data", data);
 		try {
 			const response = await productService.getProducts(data);
 			return response;
@@ -128,7 +127,6 @@ export const deleteProduct = createAsyncThunk(
 export const rating = createAsyncThunk(
 	"product/rating star-comment",
 	async (data, thunkApi) => {
-		console.log("rating data of slice", data);
 		try {
 			const response = await productService.rating(data);
 			return response;

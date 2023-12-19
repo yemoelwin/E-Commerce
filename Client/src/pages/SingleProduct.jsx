@@ -15,21 +15,29 @@ import copy from "copy-to-clipboard";
 import { addToCart } from "../features/cart/cartSlice";
 import { RxCross1 } from "react-icons/rx";
 import IsLoading from "../containers/common/IsLoading";
+import Loading from "../containers/common/Loading";
 
 const SingleProduct = () => {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 	const location = useLocation();
 	const [color, setColor] = useState(null);
+
 	const [alreadyAdded, setAlreadyAdded] = useState(false);
+
 	const [isLoading, setIsLoading] = useState(true);
+
 	const [stars, setStars] = useState(0);
+
 	const [comment, setComment] = useState("");
+
 	const prodId = location.pathname.split("/")[2];
+
 	const product = useSelector((state) => state?.product?.singleData);
-	console.log("product", product);
+
 	const cartState = useSelector((state) => state?.cart?.items);
-	const userReviews = product.ratings;
+
+	const userReviews = product?.ratings;
 
 	useEffect(() => {
 		const fetchProduct = async () => {
@@ -37,7 +45,6 @@ const SingleProduct = () => {
 				setIsLoading(true);
 				await dispatch(fetchProductData(prodId));
 			} catch (error) {
-				setIsLoading(false);
 				console.error("error", error);
 				showToast("Something went wrong!");
 			} finally {
@@ -45,10 +52,7 @@ const SingleProduct = () => {
 			}
 		};
 		fetchProduct();
-		// if (prodId !== product?._id) {
-		// 	fetchProduct();
-		// }
-	}, [dispatch, prodId]);
+	}, [prodId]);
 
 	useEffect(() => {
 		const isProductInCart = async () => {
@@ -61,43 +65,41 @@ const SingleProduct = () => {
 		isProductInCart();
 	}, [prodId, cartState]);
 
-	const rateToProduct = () => {
-		if (stars === 0) {
-			showToast("Please add star rating", "info");
-		} else if (comment.trim() === "") {
-			showToast("Please write comment about the product", "info");
-		} else {
-			dispatch(
-				rating({
-					stars: stars,
-					comment: comment,
-					prodId: prodId,
-				}),
-			);
-			setStars(0);
-			setComment("");
+	const rateToProduct = async () => {
+		try {
+			if (stars === 0) {
+				showToast("Please add star rating", "info");
+			} else if (comment.trim() === "") {
+				showToast("Please write comment about the product", "info");
+			} else {
+				setIsLoading(true);
+				await dispatch(
+					rating({
+						stars: stars,
+						comment: comment,
+						prodId: prodId,
+					}),
+				);
+				setTimeout(() => {
+					showToast("Rating submitted successfully", "success");
+					setStars(0);
+					setComment("");
+				}, 200);
+			}
+		} catch (error) {
+			console.error("An error occurred while rating the product:", error);
+			showToast("An error occurred while rating the product", "error");
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
 	const props = {
-		width: 700,
-		height: 500,
-		zoomWidth: 600,
+		width: 600,
+		height: 400,
+		zoomWidth: 500,
 		img: product?.images[0].url ? product?.images[0].url : "",
 	};
-
-	// setorderedProduct
-	// const [orderedProduct] = useState(true);
-
-	// const copyToClipboard = (text) => {
-	// console.log("text", text);
-	// var textField = document.createElement("textarea");
-	// textField.innerText = text;
-	// document.body.appendChild(textField);
-	// textField.select();
-	// document.execCommand("copy");
-	// textField.remove();
-	// };
 
 	// const closeModal = () => {
 	//     setIsModalOpen(false);
@@ -120,7 +122,6 @@ const SingleProduct = () => {
 	};
 
 	const handleAddToCart = () => {};
-	// const closeModal = () => { };
 
 	const scrollToReview = () => {
 		const reviewElement = document.getElementById("review");
@@ -138,20 +139,26 @@ const SingleProduct = () => {
 				<div className='row'>
 					<div className='col-6'>
 						{/* Main Image */}
-						<div className='main-product-image'>
+
+						<div className='main-product-image d-flex justify-content-center'>
 							{isLoading ? (
-								<IsLoading />
+								<div
+									className='d-flex justify-content-center'
+									style={{ height: "400px", width: "100%" }}
+								>
+									<Loading />
+								</div>
 							) : (
 								<div>
-									<ReactImageZoom {...props} className='img-fluid' />
+									<ReactImageZoom {...props} />
 								</div>
 							)}
 						</div>
 
 						{/* Sub Images */}
-						<div className='other-product-images d-flex flex-wrap gap-15'>
+						<div className='other-product-images d-flex flex-wrap justify-content-between gap-15'>
 							{isLoading ? ( // Show loading indicator when isLoading is true
-								<IsLoading />
+								<Loading />
 							) : (
 								<div>
 									<img
@@ -163,7 +170,7 @@ const SingleProduct = () => {
 							)}
 
 							{isLoading ? (
-								<IsLoading />
+								<Loading />
 							) : (
 								<div>
 									<img
@@ -175,7 +182,7 @@ const SingleProduct = () => {
 							)}
 
 							{isLoading ? (
-								<IsLoading />
+								<Loading />
 							) : (
 								<div>
 									<img
@@ -187,7 +194,7 @@ const SingleProduct = () => {
 							)}
 
 							{isLoading ? (
-								<IsLoading />
+								<Loading />
 							) : (
 								<div>
 									<img
@@ -219,7 +226,7 @@ const SingleProduct = () => {
 										activeColor='#ffd700'
 									/>
 									<p className='mb-0 t-review'>
-										( {userReviews.length} Reviews )
+										( {userReviews?.length} Reviews )
 									</p>
 								</div>
 								<Link className='review-btn' to='#' onClick={scrollToReview}>
@@ -255,15 +262,6 @@ const SingleProduct = () => {
 										<p className='product-data'>{product?.tags}</p>
 									</div>
 
-									{/* Availablity */}
-									{/* <div className="d-flex gap-10 align-items-center my-2">
-                                        <h3 className="product-heading">Availablity :</h3>
-                                    <p className="product-data">
-                                        <span>
-                                            {product.quantity > 0 ? `instock (${product.quantity})` : `out of stock`}
-                                        </span>
-                                    </p>
-                                    </div> */}
 									{product ? (
 										<div className='d-flex gap-10 align-items-center my-2'>
 											<h3 className='product-heading'>Availability :</h3>
@@ -310,7 +308,10 @@ const SingleProduct = () => {
 													<Colors setColor={setColor} colorData={product} />
 												</div>
 												<div>
-													<h3 className='product-heading'>
+													<h3
+														className='product-heading'
+														style={{ color: "#000080", fontWeight: "600" }}
+													>
 														Selected Color: {color ? color : ""}
 													</h3>
 												</div>
@@ -337,7 +338,7 @@ const SingleProduct = () => {
 												)}
 											</div>
 										) : (
-											<p className='fs-6 text-danger'>
+											<p className='fs-6 ' style={{ color: "red" }}>
 												Currently not available
 											</p>
 										)}
@@ -478,8 +479,6 @@ const SingleProduct = () => {
 													"Product link copied to clipboard",
 													"success",
 												);
-												// copyToClipboard(
-												// );
 											}}
 										>
 											Copy Product Link
@@ -559,43 +558,47 @@ const SingleProduct = () => {
 								>
 									Customer Reviews
 								</p>
-								<div className='user-review'>
-									{userReviews && userReviews.length > 0 ? (
-										userReviews.map((review, index) => {
-											return (
-												<div className='review' key={index}>
-													<div className='d-flex gap-10 align-items-center'>
-														<p
-															className='mb-0'
-															style={{
-																fontSize: "14px",
-																fontWeight: "600",
-																color: "#0E86D4",
-																textDecoration: "underline",
-																marginTop: "3px",
-															}}
-														>
-															{review.postedby.firstname}
-															{review.postedby.lastname}
-														</p>
-														(
-														<ReactStars
-															count={5}
-															size={24}
-															value={review?.stars}
-															edit={false}
-															activeColor='#ffd700'
-														/>
-														)
+								{isLoading ? (
+									<IsLoading />
+								) : (
+									<div className='user-review'>
+										{userReviews && userReviews.length > 0 ? (
+											userReviews.map((review, index) => {
+												return (
+													<div className='review' key={index}>
+														<div className='d-flex gap-10 align-items-center'>
+															<p
+																className='mb-0'
+																style={{
+																	fontSize: "14px",
+																	fontWeight: "600",
+																	color: "#0E86D4",
+																	textDecoration: "underline",
+																	marginTop: "3px",
+																}}
+															>
+																{review.postedby.firstname}
+																{review.postedby.lastname}
+															</p>
+															(
+															<ReactStars
+																count={5}
+																size={24}
+																value={review?.stars}
+																edit={false}
+																activeColor='#ffd700'
+															/>
+															)
+														</div>
+														<p className='mt-3'>{review?.comment}</p>
 													</div>
-													<p className='mt-3'>{review?.comment}</p>
-												</div>
-											);
-										})
-									) : (
-										<p className='no-review'>No Review</p>
-									)}
-								</div>
+												);
+											})
+										) : (
+											<p className='no-review'>No Review</p>
+										)}
+									</div>
+								)}
 							</div>
 						</div>
 					</div>

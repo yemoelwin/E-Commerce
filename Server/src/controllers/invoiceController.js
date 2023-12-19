@@ -51,7 +51,7 @@ function generateCustomerInformation(doc, invoiceData) {
 		.text(`Invoice Number: 232323`, 50, 200)
 		.text(`Invoice Date: ${formatDate(new Date())}`, 50, 215)
 		.text(`Balance Due: 12345`, 50, 130)
-		.text(`Balance Due: ${invoice.subTotalAmount - invoice.paidAt}`, 50, 130)
+		.text(`Balance Due: ${invoice.subTotalAmount - invoice.createdAt}`, 50, 130)
 
 		.text(invoice?.shipping_details?.address?.name, 300, 200)
 		.text(
@@ -140,7 +140,7 @@ function generateInvoiceTable(doc, invoiceData) {
 		"",
 		"Paid To Date",
 		"",
-		formatCurrency(invoiceData?.paidAt),
+		formatCurrency(invoiceData?.createdAt),
 	);
 
 	const duePosition = paidToDatePosition + 25;
@@ -152,7 +152,7 @@ function generateInvoiceTable(doc, invoiceData) {
 		"",
 		"Balance Due",
 		"",
-		formatCurrency(invoiceData?.subTotalAmount - invoiceData?.paidAt),
+		formatCurrency(invoiceData?.subTotalAmount - invoiceData?.createdAt),
 	);
 	doc.font("Helvetica");
 }
@@ -187,7 +187,7 @@ export const pdfDocument = asyncHandler(async (req, res) => {
 		const pdfStream = fs.createWriteStream(`invoice_${orderId}.pdf`);
 		doc.pipe(pdfStream);
 		doc.fontSize(14);
-		doc.text(`Purchase Date: ${order.paidAt.toDateString()}`, {
+		doc.text(`Purchase Date: ${order.createdAt.toDateString()}`, {
 			align: "right",
 		});
 		doc.moveDown();

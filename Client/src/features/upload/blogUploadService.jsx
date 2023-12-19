@@ -5,11 +5,14 @@ const blogUploadImg = async (formData) => {
 		const response = await api.post(`/upload/blog/images`, formData);
 		return response.data;
 	} catch (error) {
-		console.error(
-			"An error occurred during uploading image to cloudinary:",
-			error,
-		);
-		throw error; // Re-throw the error for higher-level handling
+		if (error.response && error.response.data && error.response.data.message) {
+			throw new Error(error.response.data.message);
+		} else {
+			console.error("error", error);
+			throw new Error(
+				"An error occurred while uploading blog image to cloudinary.",
+			); // Fallback error message
+		}
 	}
 };
 
@@ -18,8 +21,14 @@ const deleteImg = async (id) => {
 		const response = await api.delete(`/upload/delete_images/${id}`);
 		return response.data;
 	} catch (error) {
-		console.error("An error occurred during deleting images:", error);
-		throw error; // Re-throw the error for higher-level handling
+		if (error.response && error.response.data && error.response.data.message) {
+			throw new Error(error.response.data.message);
+		} else {
+			console.error("error", error);
+			throw new Error(
+				"An error occurred while deleting blog image from cloudinary.",
+			); // Fallback error message
+		}
 	}
 };
 

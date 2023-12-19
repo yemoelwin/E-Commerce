@@ -66,7 +66,7 @@ const Invoice = ({ orderData }) => {
 						<View style={styles.section}>
 							<Text style={styles.header}>Order Invoice</Text>
 							<Text style={styles.text}>
-								Purchase Date: {new Date(orderData.paidAt).toLocaleString()}
+								Purchase Date: {new Date(orderData.createdAt).toLocaleString()}
 							</Text>
 							<Text style={styles.text}>Order ID: {orderData._id}</Text>
 							<Text style={styles.text}>

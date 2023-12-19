@@ -15,6 +15,7 @@ import blogImgUploadReducer from "../features/upload/blogUploadSlice";
 import couponReducer from "../features/coupon/couponSlice";
 import userReducer from "../features/users/userSlice";
 import cartReducer from "../features/cart/cartSlice";
+import incomeAndOrderReducer from "../features/incomeAndOrder/incomeAndOrderSlice";
 // import tokenMiddleware from '../middleware/tokenMiddleware';
 
 const persistConfig = {
@@ -39,6 +40,7 @@ const reducers = combineReducers({
 	blogUploadImg: blogImgUploadReducer,
 	coupon: couponReducer,
 	cart: cartReducer,
+	totalIncomeAndOrder: incomeAndOrderReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, reducers);

@@ -17,13 +17,11 @@ import colorRoute from "./routes/colorRoute.js";
 import inquiryRoute from "./routes/inquiryRoute.js";
 import uploadRoute from "./routes/uploadRoute.js";
 import stripeRoute from "./routes/stripeRoute.js";
+import orderIncomeRoute from "./routes/orderIncomeRoute.js";
 
 config();
 
 const app = express();
-
-// app.set("view engine", "ejs");
-// app.set("views", "views");
 
 app.use((req, res, next) => {
 	res.header("Access-Control-Allow-Origin", "*");
@@ -41,7 +39,6 @@ app.use(
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan("dev"));
-// app.use(cors());
 app.use(
 	cors({
 		origin: "http://localhost:3000", // Update this to your frontend URL
@@ -60,7 +57,26 @@ app.use("/api/color", colorRoute);
 app.use("/api/inquiry", inquiryRoute);
 app.use("/api/upload", uploadRoute);
 app.use("/api/stripe", stripeRoute);
+app.use("/api/ordersAndincomes", orderIncomeRoute);
+
+app.use((err, req, res, next) => {
+	console.log("error from multer server.js");
+	console.error(err);
+	if (err instanceof multer.MulterError) {
+		// A multer error occurred (e.g., file size exceeded or invalid file type)
+		console.log("error message 400");
+		res.status(400).json({ error: err.message });
+	} else if (err) {
+		console.log("error message 500");
+		res.status(500).json({ error: "Internal Server Error" });
+	} else {
+		console.log("No error");
+		next();
+	}
+});
+
 app.use(errorHandler.pageNotFound);
+
 app.use(errorHandler.handleError);
 
 const PORT = process.env.PORT || 4000;

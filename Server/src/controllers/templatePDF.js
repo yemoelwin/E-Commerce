@@ -25,7 +25,7 @@ async function invoiceTemplate(transitionId, email, currency) {
 		customer_info: details.customer_details,
 		items: details.products,
 		totalAmount: details.subTotalAmount,
-		purchase_Date: details.paidAt,
+		purchase_Date: details.createdAt,
 	};
 
 	console.log("orderData ######", orderData);

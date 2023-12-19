@@ -1,7 +1,69 @@
-import Product from '../models/productModel.js';
-import asyncHandler from 'express-async-handler';
-import { cloudinaryDeleteImg, cloudinaryUploadImg } from '../config/cloudinaryConfig.js';
-import fs from 'fs';
+import asyncHandler from "express-async-handler";
+import {
+	cloudinaryDeleteImg,
+	cloudinaryUploadImg,
+} from "../config/cloudinaryConfig.js";
+import fs from "fs";
+
+const uploadImages = asyncHandler(async (req, res) => {
+	try {
+		const uploader = (path) => cloudinaryUploadImg(path, req.query.context);
+		const urls = [];
+		const files = req.files;
+		for (const file of files) {
+			const { path } = file;
+			const newpath = await uploader(path);
+			console.log(newpath);
+			urls.push(newpath);
+
+			// Use fs.unlink with a callback to ensure it's asynchronous
+			fs.unlink(path, (unlinkError) => {
+				if (unlinkError) {
+					console.error(`Error deleting file: ${unlinkError}`);
+				} else {
+					console.log(`File deleted: ${path}`);
+				}
+			});
+		}
+		const images = urls.map((file) => {
+			return file;
+		});
+		res.status(200).json(images);
+	} catch (error) {
+		res.status(500).json({
+			status: "FAILED",
+			message: "Error occurred while deleting the cloudinary image",
+			error: error.message,
+		});
+	}
+});
+
+const deleteImage = asyncHandler(async (req, res) => {
+	const { id } = req.params;
+	try {
+		const deleted = cloudinaryDeleteImg(id, "images");
+		res.status(200).json({ message: "Deleted", deleted });
+	} catch (error) {
+		res.status(500).json({
+			status: "FAILED",
+			message: "Error occurred while deleting the cloudinary image",
+			error: error.message,
+		});
+	}
+});
+
+// const fileSizeFormatter = (bytes, decimal = 2) => {
+//     if (bytes === 0) return '0 Bytes';
+
+//     const k = 1024;
+//     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+
+//     const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+//     return parseFloat((bytes / Math.pow(k, i)).toFixed(decimal)) + ' ' + sizes[i];
+// };
+
+export const uploadImageController = { uploadImages, deleteImage };
 
 // const uploadImagesAndFormatSizes = asyncHandler(async (req, res) => {
 //     try { // Get product ID from route params
@@ -44,51 +106,3 @@ import fs from 'fs';
 //         return res.status(500).json({ error: 'Internal server error' });
 //     }
 // });
-
-const uploadImages = asyncHandler(async (req, res) => {
-    try {
-        const uploader = (path) => cloudinaryUploadImg(path, req.query.context);
-        const urls = [];
-        const files = req.files;
-        for (const file of files) {
-            const { path } = file;
-            const newpath = await uploader(path);
-            console.log(newpath);
-            urls.push(newpath);
-            fs.unlinkSync(path);
-        }
-        const images = urls.map((file) => {
-            return file;
-        });
-        res.json(images);
-    } catch (error) {
-        throw new Error(error);
-    }
-});
-
-const deleteImage = asyncHandler(async (req, res) => {
-    const { id } = req.params;
-    try {
-        const deleted = cloudinaryDeleteImg(id, 'images');
-        res.status(200).json({message: 'Deleted', deleted})
-    } catch (error) {
-        res.status(500).json({
-            status: 'FAILED',
-            message: 'Error occurred while deleting the cloudinary image',
-            error: error.message
-        })
-    }
-})
-
-const fileSizeFormatter = (bytes, decimal = 2) => {
-    if (bytes === 0) return '0 Bytes';
-
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(decimal)) + ' ' + sizes[i];
-};
-
-export const uploadImageController = { uploadImages, deleteImage };

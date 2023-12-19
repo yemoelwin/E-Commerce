@@ -19,7 +19,6 @@ const createProduct = asyncHandler(async (req, res) => {
 		if (!title) {
 			return res.status(400).json({ message: "Title is missing or invalid." });
 		}
-		// const slug = await generateUniqueSlug(title);
 		const slug = slugify(title, { lower: true, strict: true });
 		const existingProduct = await Product.findOne({ slug });
 		if (existingProduct) {
@@ -54,31 +53,6 @@ const createProduct = asyncHandler(async (req, res) => {
 		});
 	}
 });
-
-// const uploadImages = asyncHandler(async (req, res) => {
-//     try {
-//         const uploader = async (path) => await cloudinaryUploadImg(path, "images")
-//         const urls = [];
-//         const files = req.files;
-//         for (const file of files) {
-//             const { path } = file;
-//             const newpath = await uploader(path);
-//             urls.push(newpath);
-//             fs.unlinkSync(path);
-//         }
-//         const images = urls.map((file) =>{
-//    return file
-//          })
-//         res.status(200).json(images)
-//     } catch (error) {
-//         console.log(error);
-//         res.status(500).json({
-//             status: 'FAILED',
-//             message: 'Error occurred while uploading the product images.',
-//             error: error.message
-//             })
-//     }
-// })
 
 const getProductById = async (req, res) => {
 	const { id } = req.params;
@@ -165,13 +139,13 @@ const searchProducts = asyncHandler(async (req, res) => {
 	try {
 		const searchQuery = req.query.query;
 		console.log("searchQueryBackend", searchQuery);
-		const priceQuery = !isNaN(searchQuery) ? { price: searchQuery } : null;
+		// const priceQuery = !isNaN(searchQuery) ? { price: searchQuery } : null;
 		const filteredProducts = await Product.find({
 			$or: [
 				{ title: { $regex: searchQuery, $options: "i" } },
 				{ brand: { $regex: searchQuery, $options: "i" } },
 				{ category: { $regex: searchQuery, $options: "i" } },
-				priceQuery,
+				// priceQuery,
 			].filter(Boolean),
 		});
 
@@ -390,29 +364,6 @@ const starRating = asyncHandler(async (req, res) => {
 		res.status(500).json({
 			status: "ERROR",
 			message: "Internal Server Error. Please try again.",
-		});
-	}
-});
-
-const filterProduct = asyncHandler(async (req, res) => {
-	const { miniprice, maxprice, color, brand, category, availability } =
-		req.params;
-	console.log(req.query);
-	try {
-		const filterProduct = await Product.find({
-			price: {
-				$gte: miniprice,
-				$lte: maxprice,
-			},
-			category,
-			brand,
-			color,
-		});
-		res.json(filterProduct);
-	} catch (error) {
-		res.status(500).json({
-			status: "ERROR",
-			message: "Internal Server Error and try again.",
 		});
 	}
 });

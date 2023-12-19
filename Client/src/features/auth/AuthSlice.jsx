@@ -65,15 +65,6 @@ export const resetNewPassword = createAsyncThunk(
 		}
 	},
 );
-// export const userLogout = createAsyncThunk('auth/logout', async (thunkApi) => {
-//     try {
-//         const response = await authService.logout();
-//         return response;
-//     } catch (error) {
-//         const errorMessage = error.message || "An error occurred.";
-//         return thunkApi.rejectWithValue(errorMessage);
-//     }
-// });
 
 export const authResetState = createAction("remove_all");
 
@@ -111,7 +102,7 @@ export const authSlice = createSlice({
 				state.isLoading = false;
 				state.isSuccess = true;
 				state.isLoggedIn = true;
-				state.message = "Success";
+				state.message = "SUCCESS";
 				state.createdUser = action.payload;
 				state.errorMessage = null;
 			})

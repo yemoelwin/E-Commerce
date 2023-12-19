@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-// import DateTime from './DateTime';
 import moment from "moment";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
@@ -15,21 +14,18 @@ const BlogCart = (props) => {
 					<div className='blog-card mb-3' key={index}>
 						<div className='card-image'>
 							<LazyLoadImage
-								src={item.images[0].url}
+								src={item?.images[0]?.url}
 								alt='blog'
 								className='img-fluid w-100 '
-								effect='blur' // Add the blur effect
+								effect='blur'
 							/>
-							{/* <img
-								src={item?.images[0].url}
-								className='img-fluid w-100 '
-								alt='blog'
-							/> */}
 						</div>
+
 						<div className='blog-content'>
 							<p className='date'>
 								{moment(item?.createdAt).format("MMMM Do YYYY, h:mm a")}
 							</p>
+
 							<h5 className='title'>
 								{item?.title.length > 15
 									? (() => {
@@ -43,9 +39,11 @@ const BlogCart = (props) => {
 									  })()
 									: item?.title}
 							</h5>
+
 							<p className='description'>
 								{item?.description.substr(0, 150)}...
 							</p>
+
 							<Link to={`/blog/${item._id}`} className='button'>
 								Read More
 							</Link>

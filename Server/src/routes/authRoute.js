@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.post("/register", userInfo.userRegister);
 
-router.get("/verify_email/:token/:_id", userInfo.verifyRegisterEmail);
+router.get("/verify_email/:_id/:code", userInfo.verifyRegisterEmail);
 
 router.post("/auth/login", userInfo.userLogin);
 

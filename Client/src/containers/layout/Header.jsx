@@ -16,6 +16,7 @@ import { logout } from "../../features/auth/AuthSlice";
 import { persistor } from "../../app/store";
 import { clearCartItem } from "../../features/cart/cartSlice";
 import { searchInputProducts } from "../../features/products/productSlice";
+import { showToast } from "../common/ShowToast";
 
 const Header = () => {
 	const dispatch = useDispatch();
@@ -50,8 +51,19 @@ const Header = () => {
 
 	const handleSearchProduct = async () => {
 		try {
-			await dispatch(searchInputProducts(searchInput));
-			navigate("/product");
+			if (
+				searchInput === "" ||
+				searchInput === undefined ||
+				searchInput === null
+			) {
+				setSearchInput("");
+				setTimeout(() => {
+					showToast("Pls enter name, brand or category for the output", "info");
+				}, 300);
+			} else {
+				await dispatch(searchInputProducts(searchInput));
+				navigate("/product");
+			}
 		} catch (error) {
 			console.error("Error searching for products:", error);
 		}
@@ -293,7 +305,7 @@ const Header = () => {
 												Shop Categories
 											</span>
 										</button>
-										<ul
+										{/* <ul
 											className='dropdown-menu'
 											aria-labelledby='dropdownMenuButton1'
 										>
@@ -306,10 +318,8 @@ const Header = () => {
 											<Link className='dropdown-item text-white' to=''>
 												Something else here
 											</Link>
-											{/* <li><a className="dropdown-item" href="#">Action</a></li>
-                      <li><a className="dropdown-item" href="#">Another action</a></li>
-                      <li><a className="dropdown-item" href="#">Something else here</a></li> */}
-										</ul>
+											
+										</ul> */}
 									</div>
 								</div>
 

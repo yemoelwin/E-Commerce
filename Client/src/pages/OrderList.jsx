@@ -80,29 +80,11 @@ const OrderList = () => {
 		setSelectedOrder(orderData ? orderData?._id : "");
 	};
 
-	// const handleCancel = () => {
-	// 	setOpen(false);
-	// };
-
-	// const handleDeleteOrder = async (e) => {
-	//     setIsLoading(true);
-	//     try {
-	//         setOpen(false);
-	//         await dispatch(deleteOrder(e));
-	//         await dispatch(fetchOrders());
-	//         showToast('Order has been deleted successfully.')
-	//     } catch (error) {
-	//         console.error('Error deleting inquiry:', error);
-	//     } finally {
-	//         setIsLoading(false); // Set loading to false regardless of success or failure
-	//     }
-	// }
-
 	const data1 = [];
 	for (let i = 0; i < orderState?.length; i++) {
 		const userId = orderState[i]?.customerId;
 		const transitionId = orderState[i]?.transitionId;
-		const date = new Date(orderState[i]?.paidAt);
+		const date = new Date(orderState[i]?.createdAt);
 		const formattedDate = date.toLocaleString("en-US", {
 			year: "numeric",
 			month: "2-digit",

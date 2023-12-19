@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllBlog } from "../features/blog/blogSlice";
 import { getProducts } from "../features/products/productSlice";
 import Container from "../containers/common/Container";
-
+import Meta from "../containers/common/Meta";
 import BlogCart from "../containers/BlogCart";
 import CardProduct from "../containers/CardProduct";
 import SpecialProduct from "../containers/SpecialProduct";
@@ -21,8 +21,8 @@ const Home = () => {
 	useEffect(() => {
 		const indexPosts = async () => {
 			try {
-				await dispatch(getAllBlog());
 				await dispatch(getProducts());
+				await dispatch(getAllBlog());
 			} catch (error) {
 				console.error("error", error);
 				throw new Error("Something went wrong while fetching blog data");
@@ -30,7 +30,7 @@ const Home = () => {
 		};
 
 		indexPosts();
-	}, [dispatch]);
+	}, []);
 
 	const latest4Blogs = [...(indexBlogData || [])]
 		.sort((a, b) => {
@@ -50,6 +50,7 @@ const Home = () => {
 
 	return (
 		<>
+			<Meta title={"Home"} />
 			<BannerProduct />
 
 			<Offer />
@@ -62,7 +63,9 @@ const Home = () => {
 						<h3 className='section-heading'>Featured Product Collections</h3>
 					</div>
 
-					<CardProduct prodData={featuredProducts} />
+					<div className='col-12 d-flex justify-content-between flex-wrap'>
+						<CardProduct prodData={featuredProducts ? featuredProducts : []} />
+					</div>
 				</div>
 			</Container>
 

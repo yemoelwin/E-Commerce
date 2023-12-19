@@ -10,17 +10,6 @@ const orderSchema = new Schema(
 			type: String,
 			required: true,
 		},
-		// customer_details: {
-		//     name: {
-		//         type: String,
-		//     },
-		//     email: {
-		//         type: String,
-		//     },
-		//     mobile: {
-		//         type: Number,
-		//     },
-		// },
 		products: [],
 		totalQuantity: {
 			type: Number,
@@ -61,13 +50,15 @@ const orderSchema = new Schema(
 		},
 		createdAt: {
 			type: Date,
+			default: new Date(),
 		},
-		paidAt: {
-			type: Date,
+		month: {
+			type: String,
+			default: new Date().toLocaleString("en-US", { month: "long" }),
 		},
 	},
 	{
-		timestamps: true,
+		timestamps: false,
 	},
 );
 

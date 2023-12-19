@@ -47,7 +47,77 @@ body {
 }
 
 .desc {
-	font-size: 14px;
+	font-size: 11px;
 	font-family: "Roboto" !important;
 	color: var(--color-828599);
+	letter-spacing: 0.3px;
 }
+
+.desc span {
+	font-weight: 600;
+}
+
+.yearly-income-text {
+	font-size: 16px;
+	color: #3d464d;
+	font-weight: 500;
+	text-align: center;
+	/* margin-bottom: 2rem; */
+}
+
+.switch-to {
+	font-size: 15px;
+	color: #3d464d;
+	font-weight: 400;
+	margin-right: 8px;
+}
+
+.switch-to-select-box {
+	border: 1px solid rgb(179, 179, 179);
+	padding: 5px;
+	border-radius: 3px;
+	font-size: 14px;
+	color: rgb(101, 100, 100);
+	margin-right: 10px;
+}
+
+.no_data_found {
+	height: 20vh;
+	width: 100%;
+	border: 1px solid rgb(180, 178, 178);
+	border-radius: 4px;
+}
+
+.no_data_found p {
+	text-align: center;
+	margin-top: 42px;
+	font-size: 15px;
+	color: rgb(120, 120, 120);
+}
+
+/* :root {
+    --color-212529: #212529;
+    --color-ffd333: #ffd333;
+    --color-47ad24: #47ad24;
+    --color-e52e2e: #e52e2e;
+    --color-828599: #828599;
+    --color-3d464d: #3d464d;
+    --color-ced4da: #ced4da;
+}
+
+.justify_A{
+    justify-content: space-between;
+    align-items: center;
+}
+
+.green{
+    color: var(--color-47ad24);
+    font-family: 'Roboto' !important;
+    font-size: 14px;
+}
+
+.red{
+    color: var(--color-e52e2e);
+    font-family: 'Roboto' !important;
+    font-size: 14px;
+} */

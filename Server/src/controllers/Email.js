@@ -32,38 +32,39 @@ const generateResetToken = () => {
 	return uniqueToken;
 };
 
+const generateVerificationCode = () => {
+	// Generate a random 6-digit code
+	return Math.floor(100000 + Math.random() * 900000);
+};
+
 export const sendVerificationEmail = async ({ _id, email }) => {
-	// const currentURL = 'http://localhost:8080/api/';
-	// const uniqueString = uuidv4() + _id;
+	console.log("email", email);
 	try {
-		// const hashedUniqueString = await bcrypt.hash(uniqueString, 10);
-		const token = jwt.sign({ _id }, `${process.env.JWT_SECRET}`, {
-			expiresIn: "1h",
-		});
-		console.log("token", token);
-		const verificationLink = `http://localhost:8080/api/user/verify_email/${token}/${_id}`;
+		const verificationCode = generateVerificationCode();
+		// const verificationLink = `http://localhost:8080/api/user/verify_email/${token}/${_id}`;
 		const newVerification = new UserVerification({
 			userId: _id,
-			token: token,
-			createdAt: Date.now(),
-			expiredAt: Date.now() + 24 * 60 * 60 * 1000,
-			// expiredAt: Date.now() + 21600000
+			digit_code: verificationCode,
 		});
-		console.log("newVerification", newVerification);
 		await newVerification.save();
 		const mailOptions = {
 			from: process.env.AUTH_EMAIL,
 			to: email,
-			subject: "Verify Your Email",
-			text: `Click the following link to verify your email: ${verificationLink}`,
-			// html:
-			//     `<p>Verify your email address to complete signup and login your account.</p><br/>
-			// <p>This link <b>expires in 6 hours</b>.</p>
-			// <p><a href=${currentURL + 'user/verify/' + _id + "/" + encodeURIComponent(accessToken) }>Click here</a>
-			// to proceed.</p>`
+			subject: "Dear Customer, Please Verify Your Email",
+			html: `
+				<p>Dear Customer,</p>
+				<p>Thank you for your registration with ShopSphere, Inc. Here is a mail sent to you to confirm your registration.</p><br/>
+				<p>This link will expire in <b>1 hour.</b></p>
+				<p>Verification Code: <b>${verificationCode}</b></p>
+				<p><a href=${
+					"http://localhost:3000/verify/email/" + _id
+				}>Click here to verify your email and proceed to login.</p><br/>
+				<p>If you have any questions or concerns, please feel free to contact us. We appreciate your business!</p>
+				<p>Best regards,</p>
+				<p>The ShopSphere Team</p>
+			`,
 		};
 		await transporter.sendMail(mailOptions);
-		// console.log('Email sent successfully.');
 		return {
 			status: "SUCCESS",
 			message: "Verification email sent successfully",
@@ -118,8 +119,6 @@ export const ResetPasswordToken = async ({ _id, email }) => {
 };
 
 export const sendInvoiceEmail = async (pdfBuffer, email, html) => {
-	console.log("recevied data to send mail", pdfBuffer);
-	console.log("email", email);
 	try {
 		const mailOptions = {
 			from: process.env.AUTH_EMAIL,
