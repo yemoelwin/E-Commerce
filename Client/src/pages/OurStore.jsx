@@ -299,7 +299,7 @@ const OurStore = () => {
 									<button
 										className='totalproducts mb-0'
 										onClick={() => fetchAllProducts()}
-									>{`All Products`}</button>
+									>{`View All Products`}</button>
 									<div className='d-flex gap-10 align-items-center grid'>
 										<img
 											onClick={() => {

@@ -55,7 +55,7 @@ const Home = () => {
 
 			<Offer />
 
-			<Items />
+			{/* <Items /> */}
 
 			<Container class1='featured-wrapper py-5 home-wrapper-2 '>
 				<div className='row'>

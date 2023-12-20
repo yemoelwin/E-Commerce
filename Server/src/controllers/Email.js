@@ -53,8 +53,7 @@ export const sendVerificationEmail = async ({ _id, email }) => {
 			subject: "Dear Customer, Please Verify Your Email",
 			html: `
 				<p>Dear Customer,</p>
-				<p>Thank you for your registration with ShopSphere, Inc. Here is a mail sent to you to confirm your registration.</p><br/>
-				<p>This link will expire in <b>1 hour.</b></p>
+				<p>Thank you for registering with ShopSphere, Inc. We have sent you a six-digit code to validate your email and confirm your registration.</p><br/>
 				<p>Verification Code: <b>${verificationCode}</b></p>
 				<p><a href=${
 					"http://localhost:3000/verify/email/" + _id

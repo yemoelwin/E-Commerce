@@ -65,6 +65,10 @@ a {
 	gap: 30px;
 }
 
+.gap-40 {
+	gap: 40px;
+}
+
 .margin-top {
 	margin: 3rem;
 }

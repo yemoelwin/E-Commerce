@@ -290,8 +290,8 @@ const Header = () => {
 				<div className='container-xxl'>
 					<div className='row'>
 						<div className='col-12'>
-							<div className='menu-bottom d-flex align-items-center gap-30'>
-								<div>
+							<div className='menu-bottom d-flex justify-content-center align-items-center gap-40'>
+								{/* <div>
 									<div className='dropdown'>
 										<button
 											className='btn btn-secondary dropdown-toggle bg-transparent border-0 gap-15 d-flex align-items-center'
@@ -305,7 +305,7 @@ const Header = () => {
 												Shop Categories
 											</span>
 										</button>
-										{/* <ul
+										<ul
 											className='dropdown-menu'
 											aria-labelledby='dropdownMenuButton1'
 										>
@@ -318,10 +318,9 @@ const Header = () => {
 											<Link className='dropdown-item text-white' to=''>
 												Something else here
 											</Link>
-											
-										</ul> */}
+										</ul>
 									</div>
-								</div>
+								</div> */}
 
 								<div className='menu-links'>
 									<div className='d-flex align-items-center gap-15'>
