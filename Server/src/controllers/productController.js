@@ -298,9 +298,9 @@ const removeFromWishlist = asyncHandler(async (req, res) => {
 
 const starRating = asyncHandler(async (req, res) => {
 	const { _id } = req.user;
-	console.log("_id", _id);
+	// console.log("_id", _id);
 	const { stars, prodId, comment } = req.body;
-	console.log("star n prodId n comment", stars, prodId, comment);
+	// console.log("star n prodId n comment", stars, prodId, comment);
 	try {
 		const product = await Product.findById(prodId);
 		if (!product)

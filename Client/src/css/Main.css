@@ -242,7 +242,8 @@ a {
 }
 
 .totalproducts:hover {
-	color: rgb(71, 191, 60);
+	background-color: rgb(56, 132, 18);
+	color: rgb(255, 255, 255);
 }
 
 .shopby {

@@ -102,12 +102,13 @@ const userLogin = asyncHandler(async (req, res) => {
 			return res.status(400).json({ message: "All fields are required." });
 		}
 		const user = await User.findOne({ email });
-		const genericErrorMessage = "Invalid email or password";
+		const errorMessage = "User with this email does not exist.";
+		const errorPasswordMessage = "Invalid Password";
 		const verifyEmailMessage = "Please verify your email first";
 		if (!user) {
 			res.status(401).json({
 				status: "FAILED",
-				message: genericErrorMessage,
+				message: errorMessage,
 			});
 			return;
 		}
@@ -153,7 +154,7 @@ const userLogin = asyncHandler(async (req, res) => {
 		} else {
 			res.status(401).json({
 				status: "FAILED",
-				message: genericErrorMessage,
+				message: errorPasswordMessage,
 			});
 		}
 	} catch (error) {

@@ -97,7 +97,9 @@ const VerificationPage = () => {
 						</div>
 					</div>
 
-					<div className='verify-error-message'>{message}</div>
+					{message ? <div className='verify-error-message'>{message}</div> : ""}
+					{/* <div >
+					</div> */}
 
 					<div className='verify-button'>
 						<button

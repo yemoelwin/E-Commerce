@@ -24,11 +24,11 @@ api.interceptors.response.use(
 			error.response.status === 401 &&
 			error.response.statusText === "Unauthorized"
 		) {
-			console.log("error.response.", error.response);
-			console.log("error.response.data", error.response.data);
 			const { data } = error.response;
-			if (data && data.message === "Invalid email or password") {
-				console.log("Invalid email or password");
+			if (data && data.message === "User with this email does not exist.") {
+				console.log("User with this email does not exist");
+			} else if (data && data.message === "Invalid Password") {
+				console.log("Invalid Password");
 			} else {
 				localStorage.clear();
 

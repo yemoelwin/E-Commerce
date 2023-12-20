@@ -253,10 +253,10 @@ const Header = () => {
 															</Link>
 														</div>
 
-														<div className='logout'>
+														<div className='logout-menu-link'>
 															<button
 																onClick={handleLogout}
-																className='sub-menu-link'
+																className='logout-submenu-link'
 															>
 																<IoIosLogOut className='logo-sl' />
 																<p>Logout</p>

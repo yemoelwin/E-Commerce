@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactStars from "react-rating-stars-component";
 import { useLocation, useNavigate } from "react-router-dom";
 import wish from "../images/wish.svg";
-import addcart from "../images/add-cart.svg";
+// import redWish from "../images/wishRed.svg";
+// import addcart from "../images/add-cart.svg";
 import view from "../images/view.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { addToWishlistProduct } from "../features/products/productSlice";
@@ -19,6 +20,8 @@ const CardProduct = (props) => {
 	const navigate = useNavigate();
 
 	const { isAuthenticated } = useSelector((state) => state.auth);
+
+	// const [isInWishlist, setIsInWishlist] = useState(false);
 
 	const handleWishlist = async (prodId) => {
 		try {
@@ -112,12 +115,12 @@ const CardProduct = (props) => {
 											<div></div>
 										) : (
 											<button
-												className='mb-1 border-0 bg-transparent '
+												className={`mb-1 border-0 bg-transparent `}
 												onClick={(e) => {
 													handleWishlist(item?._id);
 												}}
 											>
-												<img src={wish} alt='wishlist' />
+												<img src={wish} alt='Add to wishlist' />
 											</button>
 										)}
 
@@ -128,9 +131,9 @@ const CardProduct = (props) => {
 											<img src={view} alt='addcart' />
 										</button>
 
-										<button className='mb-1 border-0 bg-transparent'>
+										{/* <button className='mb-1 border-0 bg-transparent'>
 											<img src={addcart} alt='addcart' />
-										</button>
+										</button> */}
 									</div>
 								</div>
 							</div>

@@ -50,6 +50,8 @@ const OurStore = () => {
 
 	const [searchProducts, setSearchProducts] = useState(searchProductState);
 
+	const [filteredProducts, setFilteredProducts] = useState([]);
+
 	/* Filter */
 
 	/* Global */
@@ -61,8 +63,6 @@ const OurStore = () => {
 	const categoryState = useSelector((state) => state?.category?.categories);
 
 	/* Global */
-
-	const displayProducts = searchProducts ? searchProducts : productState;
 
 	/* Pagination */
 
@@ -92,6 +92,16 @@ const OurStore = () => {
 	}, [dispatch, sort, tag, brand, category, minPrice, maxPrice]);
 
 	useEffect(() => {
+		if (searchProducts?.length > 0) {
+			setFilteredProducts(searchProducts);
+		} else {
+			setFilteredProducts(productState);
+		}
+	}, [searchProducts, productState]);
+
+	/* for brand and category search */
+
+	useEffect(() => {
 		let newTag = [];
 
 		for (let index = 0; index < productState?.length; index++) {
@@ -113,6 +123,8 @@ const OurStore = () => {
 	useEffect(() => {
 		setCategories(extractValues(categoryState, "title"));
 	}, [categoryState]);
+
+	/* for brand and category search */
 
 	useEffect(() => {
 		setSearchProducts(searchProductState);
@@ -360,7 +372,7 @@ const OurStore = () => {
 
 							<div>
 								<Paginate
-									items={displayProducts}
+									items={filteredProducts}
 									perPage={8}
 									setPaginateDisplay={setProductPagination}
 								/>
