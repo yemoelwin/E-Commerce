@@ -51,10 +51,10 @@ const columns = [
 const OrderList = () => {
 	const dispatch = useDispatch();
 	const [isLoading, setIsLoading] = useState(true);
-	const [open, setOpen] = useState(false);
-	const [orderId, setOrderId] = useState("");
-	const [selectedOrder, setSelectedOrder] = useState([]);
-	const orderState = useSelector((state) => state.user.orders);
+	// const [open, setOpen] = useState(false);
+	// const [orderId, setOrderId] = useState("");
+	// const [selectedOrder, setSelectedOrder] = useState([]);
+	const orderState = useSelector((state) => state.user?.orders);
 	const location = useLocation();
 	const id = location.pathname.split("/")[2];
 	console.log(orderState);
@@ -73,12 +73,12 @@ const OrderList = () => {
 		fetchData();
 	}, []);
 
-	const showModal = (e) => {
-		setOpen(true);
-		setOrderId(e);
-		const orderData = orderState?.find((data) => data._id === e);
-		setSelectedOrder(orderData ? orderData?._id : "");
-	};
+	// const showModal = (e) => {
+	// 	setOpen(true);
+	// 	setOrderId(e);
+	// 	const orderData = orderState?.find((data) => data._id === e);
+	// 	setSelectedOrder(orderData ? orderData?._id : "");
+	// };
 
 	const data1 = [];
 	for (let i = 0; i < orderState?.length; i++) {
@@ -100,7 +100,10 @@ const OrderList = () => {
 			quantity: orderState[i]?.totalQuantity,
 			amount: `$ ${orderState[i]?.subTotalAmount.toFixed(2)}`,
 			product: (
-				<Link className='viewColor' to={``}>
+				<Link
+					className='viewColor'
+					to={`/viewOrderProduct/${userId}/${orderState[i]._id}`}
+				>
 					View Item
 				</Link>
 			),
@@ -113,12 +116,12 @@ const OrderList = () => {
 					>
 						<PiEyeSlashLight className='fs-5' />
 					</Link>
-					<button
+					{/* <button
 						onClick={() => showModal(orderState[i]?._id)}
 						className='ms-3 modalFix'
 					>
 						<MdDelete className='fs-4 text-danger ' />
-					</button>
+					</button> */}
 				</>
 			),
 		});

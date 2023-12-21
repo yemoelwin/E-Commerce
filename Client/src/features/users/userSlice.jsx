@@ -40,9 +40,22 @@ export const createOrder = createAsyncThunk(
 
 export const getOrder = createAsyncThunk(
 	"user/get-order",
+	async ({ userId, id }, thunkApi) => {
+		try {
+			const response = await userService.getOrder({ userId, id });
+			return response;
+		} catch (error) {
+			console.log(error);
+			return thunkApi.rejectWithValue(error);
+		}
+	},
+);
+
+export const getInvoiceData = createAsyncThunk(
+	"user/get-Invoice",
 	async ({ userId, transitionId }, thunkApi) => {
 		try {
-			const response = await userService.getOrder({ userId, transitionId });
+			const response = await userService.getInvoice({ userId, transitionId });
 			return response;
 		} catch (error) {
 			console.log(error);
@@ -161,6 +174,26 @@ export const userSlice = createSlice({
 				state.orderDetail = action.payload;
 			})
 			.addCase(getOrder.rejected, (state, action) => {
+				state.isError = true;
+				state.isLoading = false;
+				state.isSuccess = false;
+				state.message = "Failed";
+				state.errorMessage = action.payload;
+				state.users = null;
+			})
+			/* GET Invoice */
+			.addCase(getInvoiceData.pending, (state) => {
+				state.isLoading = true;
+			})
+			.addCase(getInvoiceData.fulfilled, (state, action) => {
+				state.isError = false;
+				state.isLoading = false;
+				state.isSuccess = true;
+				state.message = "Success";
+				state.errorMessage = null;
+				state.orderDetail = action.payload;
+			})
+			.addCase(getInvoiceData.rejected, (state, action) => {
 				state.isError = true;
 				state.isLoading = false;
 				state.isSuccess = false;

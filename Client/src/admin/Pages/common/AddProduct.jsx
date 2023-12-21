@@ -478,13 +478,13 @@ const AddProduct = () => {
 									</div>
 								</div>
 								<div className='showimages d-flex flex-wrap gap-3 product-border bg-white p-3'>
-									{formik.values.images.length > 0 ? (
-										formik.values.images.map((image, index) => (
+									{formik.values?.images?.length > 0 ? (
+										formik.values?.images?.map((image, index) => (
 											<div key={index} className='position-relative display'>
 												<RxCross2
 													type='button'
 													onClick={() =>
-														handleRemoveImage(image.public_id, index)
+														handleRemoveImage(image?.public_id, index)
 													}
 													className='btn-cross position-absolute'
 													style={{ top: "7px", right: "7px" }}

@@ -4,7 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { MdDelete } from "react-icons/md";
 import { BiArrowBack } from "react-icons/bi";
-import { getOrder } from "../../../features/users/userSlice";
+import { getOrder } from "../features/users/userSlice";
+// import { getOrder } from "../../../features/users/userSlice";
 
 const columns = [
 	{
@@ -37,7 +38,7 @@ const columns = [
 	},
 ];
 
-const ViewOrders = () => {
+const ViewOrderProduct = () => {
 	const dispatch = useDispatch();
 
 	const navigate = useNavigate();
@@ -107,9 +108,9 @@ const ViewOrders = () => {
 	}
 	return (
 		<>
-			<div>
-				<div className='d-flex justify-content-between align-items-center'>
-					<h3 className='mb-4 title'>View Order</h3>
+			<div className='container-xl mt-3 mb-4'>
+				<div className='d-flex justify-content-between align-items-center mt-5'>
+					<h3 className='mb-4 title '>View Order Products</h3>
 					<button
 						onClick={goBack}
 						className='bg-transparent border-0 fs-6 align-items-center d-flex gap-1 gobackColor'
@@ -120,7 +121,7 @@ const ViewOrders = () => {
 				</div>
 				<div>
 					{isLoading ? (
-						<div className='loading gap-3'>
+						<div className='loadingX gap-3'>
 							<div className='loading-spinner'></div>
 							<div className=''>Loading... </div>
 						</div>
@@ -133,4 +134,4 @@ const ViewOrders = () => {
 	);
 };
 
-export default ViewOrders;
+export default ViewOrderProduct;

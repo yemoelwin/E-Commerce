@@ -25,14 +25,17 @@ router.put("/save-address/:_id", protect, userInfo.saveAddress);
 
 router.post("/order/create_userOrder", protect, userInfo.saveUserOrder);
 
-router.get(
-	"/order/get_order/:userId/:transitionId",
-	protect,
-	userInfo.getOrder,
-);
+router.get("/order/get_order/:userId/:id", protect, userInfo.getOrder);
+
 router.get("/order/user-orders/:id", protect, userInfo.getUserOrders);
 
 router.get("/order/all-orders", protect, isAdmin, userInfo.getAllOrders);
+
+router.get(
+	"/invoice/user-invoice/:userId/:transitionId",
+	protect,
+	userInfo.getInvoice,
+);
 
 router.put(
 	"/order/order_status/:id",

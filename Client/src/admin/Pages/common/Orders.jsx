@@ -146,7 +146,7 @@ const Orders = () => {
 			product: (
 				<Link
 					className='viewColor'
-					to={`/admin/view-orders/${newOrderState[i]?.customerId}/${newOrderState[i]?.transitionId}`}
+					to={`/admin/view-orders/${newOrderState[i]?.customerId}/${newOrderState[i]?._id}`}
 				>
 					View Item
 				</Link>

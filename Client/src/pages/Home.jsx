@@ -45,7 +45,7 @@ const Home = () => {
 		: [];
 
 	const featuredProducts = indexProductData
-		? indexProductData.filter((item) => item?.tags === "featured")
+		? indexProductData.filter((item) => item?.tags === "featured").slice(0, 8)
 		: [];
 
 	return (

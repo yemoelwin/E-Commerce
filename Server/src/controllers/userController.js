@@ -363,7 +363,7 @@ const wishList = asyncHandler(async (req, res) => {
 
 const saveUserOrder = asyncHandler(async (req, res) => {
 	const { _id } = req.user;
-	console.log("userID serverside", _id);
+	// console.log("userID serverside", _id);
 	const { cartData, cartTotalAmount, totalQuantity, transitionId } = req.body;
 	console.log(
 		"cartData from backend",
@@ -410,13 +410,36 @@ const saveUserOrder = asyncHandler(async (req, res) => {
 	}
 });
 
-const getOrder = asyncHandler(async (req, res) => {
+const getInvoice = asyncHandler(async (req, res) => {
 	const { userId, transitionId } = req.params;
-	console.log(userId, transitionId);
+
+	try {
+		const invoice = await Order.findOne({
+			transitionId,
+			customerId: userId,
+			stripe_response: true,
+		});
+
+		if (!invoice) {
+			return res.status(404).json({ message: "Not found" });
+		}
+
+		res.status(200).json(invoice);
+	} catch (error) {
+		console.error("Error:", error);
+		res
+			.status(500)
+			.json({ message: "Error occurred while retrieving user invoice." });
+	}
+});
+
+const getOrder = asyncHandler(async (req, res) => {
+	const { userId, id } = req.params;
+	console.log(userId, id);
 	try {
 		const userOrder = await Order.findOne({
+			_id: id,
 			customerId: userId,
-			transitionId,
 			stripe_response: true,
 		});
 		if (!userOrder) {
@@ -424,7 +447,7 @@ const getOrder = asyncHandler(async (req, res) => {
 		}
 		res.status(200).json(userOrder);
 	} catch (error) {
-		console.log("error", error);
+		console.error("Error:", error);
 		res
 			.status(500)
 			.json({ message: "Error occurred while retrieving user order." });
@@ -475,6 +498,29 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
 	} catch (error) {
 		console.log("error", error);
 		res.status(500).json({ message: "Error Occurred while ordering." });
+	}
+});
+
+const deleteOrder = asyncHandler(async (req, res) => {
+	const { id } = req.params;
+	validateMongodbID(id);
+	try {
+		const order = await Order.findByIdAndDelete(id);
+		if (!order) {
+			return res.status(404).json({
+				status: "FAILED",
+				message: "Order not found.",
+			});
+		}
+		res.status(200).json({
+			status: "SUCCESS",
+			message: "Order successfully deleted.",
+		});
+	} catch (error) {
+		res.status(500).json({
+			status: "FAILED",
+			message: "An error occurred while deleting and pls try again.",
+		});
 	}
 });
 
@@ -728,66 +774,6 @@ const creatOrderX = asyncHandler(async (req, res) => {
 	}
 });
 
-const deleteOrder = asyncHandler(async (req, res) => {
-	const { id } = req.params;
-	validateMongodbID(id);
-	try {
-		const order = await Order.findByIdAndDelete(id);
-		if (!order) {
-			return res.status(404).json({
-				status: "FAILED",
-				message: "Order not found.",
-			});
-		}
-		res.status(200).json({
-			status: "SUCCESS",
-			message: "Order successfully deleted.",
-		});
-	} catch (error) {
-		res.status(500).json({
-			status: "FAILED",
-			message: "An error occurred while deleting and pls try again.",
-		});
-	}
-});
-
-// const addToCart = asyncHandler(async (req, res) => {
-//     const { cart } = req.body;
-//     const { _id } = req.user;
-//     try {
-//         const user = await User.findById(_id)
-//         if (!user) {
-//             return res.status(404).json({ message: 'Error'})
-//         }
-//         let products = [];
-//         await Cart.findOneAndDelete({ orderby: user._id })
-//         for (let i = 0; i < cart.length; i++){
-//             let object = [];
-//             object.product = cart[i]._id;
-//             object.count = cart[i].count;
-//             object.color = cart[i].color;
-//             let getPrice = await Product.findById(cart[i]._id).select('price').exec();
-//             object.price = getPrice.price;
-//             products.push(object)
-//         }
-//         let cartTotalPrice = 0;
-//         for (let i = 0; i < products.length; i++){
-//             cartTotalPrice += products[i].price * products[i].count;
-//         }
-//         let newCart = new Cart({
-//             products,
-//             cartTotalPrice,
-//             orderby: user?._id
-//         })
-//         await newCart.save();
-//         res.status(200).json({ message: 'Items have been added to your cart.', newCart})
-//         console.log("products and cartTotal", products);
-//     } catch (error) {
-//         console.log('error', error);
-//         res.status(500).json({ message: "Error Occurred while adding the product to the user's cart" });
-//     }
-// })
-
 const addToCartOne = asyncHandler(async (req, res) => {
 	const { cart } = req.body;
 	const { _id } = req.user;
@@ -938,5 +924,43 @@ export const userInfo = {
 	getUserOrders,
 	getAllOrders,
 	updateOrderStatus,
+	getInvoice,
 	deleteOrder,
 };
+
+// const addToCart = asyncHandler(async (req, res) => {
+//     const { cart } = req.body;
+//     const { _id } = req.user;
+//     try {
+//         const user = await User.findById(_id)
+//         if (!user) {
+//             return res.status(404).json({ message: 'Error'})
+//         }
+//         let products = [];
+//         await Cart.findOneAndDelete({ orderby: user._id })
+//         for (let i = 0; i < cart.length; i++){
+//             let object = [];
+//             object.product = cart[i]._id;
+//             object.count = cart[i].count;
+//             object.color = cart[i].color;
+//             let getPrice = await Product.findById(cart[i]._id).select('price').exec();
+//             object.price = getPrice.price;
+//             products.push(object)
+//         }
+//         let cartTotalPrice = 0;
+//         for (let i = 0; i < products.length; i++){
+//             cartTotalPrice += products[i].price * products[i].count;
+//         }
+//         let newCart = new Cart({
+//             products,
+//             cartTotalPrice,
+//             orderby: user?._id
+//         })
+//         await newCart.save();
+//         res.status(200).json({ message: 'Items have been added to your cart.', newCart})
+//         console.log("products and cartTotal", products);
+//     } catch (error) {
+//         console.log('error', error);
+//         res.status(500).json({ message: "Error Occurred while adding the product to the user's cart" });
+//     }
+// })

@@ -408,7 +408,7 @@ footer .input-group-text {
 } */
 
 .product-card:hover .action-bar {
-	right: -10px;
+	right: 5px;
 	font-size: 12px;
 }
 

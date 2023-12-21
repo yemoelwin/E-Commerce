@@ -20,8 +20,7 @@ import NotFound from "./pages/NotFound";
 import Home from "./pages/Home";
 import Layout from "./containers/layout/Layout";
 import IsLoading from "./containers/common/IsLoading";
-// import VerificationPage from "./pages/auth/VerificationPage";
-// import EmailVerification from "./pages/auth/EmailVerification";
+// import ViewOrderProduct from "./pages/ViewOrderProduct";
 
 const OurStore = lazy(() => import("./pages/OurStore"));
 const ContactUs = lazy(() => import("./pages/ContactUs"));
@@ -29,6 +28,7 @@ const SingleProduct = lazy(() => import("./pages/SingleProduct"));
 const BlogPage = lazy(() => import("./pages/BlogPage"));
 const SingleBlog = lazy(() => import("./pages/SingleBlog"));
 const OrderList = lazy(() => import("./pages/OrderList"));
+const ViewOrderProduct = lazy(() => import("./pages/ViewOrderProduct"));
 const CompareProduct = lazy(() => import("./pages/CompareProduct"));
 const WishList = lazy(() => import("./pages/WishList"));
 const Login = lazy(() => import("./pages/auth/Login"));
@@ -86,10 +86,7 @@ function AdminRoutes() {
 				<Route path='edit-blog-category/:id' element={<AddBlogCategory />} />
 				<Route path='blog-category-list' element={<BlogCategoryList />} />
 				<Route path='orders' element={<Orders />} />
-				<Route
-					path='view-orders/:userId/:transitionId'
-					element={<ViewOrders />}
-				/>
+				<Route path='view-orders/:userId/:id' element={<ViewOrders />} />
 				<Route path='customers' element={<Customers />} />
 				<Route path='color-lists' element={<Colors />} />
 				<Route path='add-color' element={<AddColor />} />
@@ -200,6 +197,14 @@ function App() {
 							element={
 								<Suspense fallback={<IsLoading />}>
 									<OrderList />
+								</Suspense>
+							}
+						/>
+						<Route
+							path='viewOrderProduct/:userId/:id'
+							element={
+								<Suspense fallback={<IsLoading />}>
+									<ViewOrderProduct />
 								</Suspense>
 							}
 						/>

@@ -142,6 +142,8 @@ export const webHook = async (req, res) => {
 				stripe_response: false,
 			});
 
+			console.log("orderId", order._id);
+
 			if (!order) {
 				return res.status(404).json({ message: "No order found!" });
 			}

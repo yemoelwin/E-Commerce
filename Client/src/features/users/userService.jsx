@@ -36,10 +36,25 @@ const saveOrder = async (data) => {
 	}
 };
 
-const getOrder = async ({ userId, transitionId }) => {
+const getOrder = async ({ userId, id }) => {
+	try {
+		const response = await api.get(`/user/order/get_order/${userId}/${id}`);
+		return response.data;
+	} catch (error) {
+		if (error.response && error.response.data && error.response.data.message) {
+			// Extract and return the error message from the backend
+			throw new Error(error.response.data.message);
+		} else {
+			console.error("error", error);
+			throw new Error("An error occurred while fetching user wishlist."); // Fallback error message
+		}
+	}
+};
+
+const getInvoice = async ({ userId, transitionId }) => {
 	try {
 		const response = await api.get(
-			`/user/order/get_order/${userId}/${transitionId}`,
+			`/user/invoice/user-invoice/${userId}/${transitionId}`,
 		);
 		return response.data;
 	} catch (error) {
@@ -68,18 +83,6 @@ const getOrders = async (id) => {
 	}
 };
 
-// const sendInvoiceEmail = async (data) => {
-// 	console.log("invoiceEmaildata", data);
-// 	try {
-// 		const response = await api.post(`/user/order/download-pdf-invoice/${data}`);
-// 		console.log("invoiceEmailRepsonseData", response.data);
-// 		return response.data;
-// 	} catch (error) {
-// 		console.error(error.response.data); // Re-throw the error for higher-level handlings
-// 		throw new Error();
-// 	}
-// };
-
 const getallUserOrders = async () => {
 	try {
 		const response = await api.get(`/user/order/all-orders`);
@@ -94,16 +97,6 @@ const getallUserOrders = async () => {
 		}
 	}
 };
-
-// const getOrder = async (id) => {
-//     try {
-//         const response = await api.get(`/user/order/get_order_byuser/${id}`)
-//         return response.data;
-//     } catch (error) {
-//         console.error("An error occurred while updating order status", error);
-//         throw error; // Re-throw the error for higher-level handling
-//     }
-// };
 
 const updateOrderStatus = async (data) => {
 	console.log("orderServiceData", data);
@@ -157,6 +150,7 @@ const userService = {
 	getUserWishlist,
 	saveOrder,
 	getOrder,
+	getInvoice,
 	getOrders,
 	updateOrderStatus,
 	getallUserOrders,

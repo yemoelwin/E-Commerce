@@ -110,12 +110,12 @@ const CardProduct = (props) => {
 								</div>
 
 								<div className='action-bar position-absolute'>
-									<div className='d-flex flex-column action-barX'>
+									<div className='d-flex flex-column'>
 										{!isAuthenticated ? (
 											<div></div>
 										) : (
 											<button
-												className={`mb-1 border-0 bg-transparent `}
+												className='mb-1 border-0 bg-transparent'
 												onClick={(e) => {
 													handleWishlist(item?._id);
 												}}

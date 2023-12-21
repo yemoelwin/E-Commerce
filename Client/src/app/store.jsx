@@ -22,7 +22,7 @@ const persistConfig = {
 	key: "root", // Change this key as needed
 	// version: 1,
 	storage, // Use the storage option you imported
-	whitelist: ["cart", "product", "user"],
+	whitelist: ["cart", "product", "user", "auth"],
 };
 
 const reducers = combineReducers({
