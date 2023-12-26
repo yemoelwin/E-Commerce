@@ -11,19 +11,6 @@ const initialState = {
 	message: "",
 };
 
-export const getWishlist = createAsyncThunk(
-	"user/get-wishlist",
-	async (thunkApi) => {
-		try {
-			const response = await userService.getUserWishlist();
-			return response;
-		} catch (error) {
-			console.log(error);
-			return thunkApi.rejectWithValue(error);
-		}
-	},
-);
-
 export const createOrder = createAsyncThunk(
 	"user/create-order",
 	async (data, thunkApi) => {
@@ -122,25 +109,6 @@ export const userSlice = createSlice({
 	reducers: {},
 	extraReducers: (builder) => {
 		builder
-			.addCase(getWishlist.pending, (state) => {
-				state.isLoading = true;
-			})
-			.addCase(getWishlist.fulfilled, (state, action) => {
-				state.isError = false;
-				state.isLoading = false;
-				state.isSuccess = true;
-				state.message = "Success";
-				state.errorMessage = null;
-				state.wishlist = action.payload;
-			})
-			.addCase(getWishlist.rejected, (state, action) => {
-				state.isError = true;
-				state.isLoading = false;
-				state.isSuccess = false;
-				state.message = "Failed";
-				state.errorMessage = action.payload;
-				state.users = null;
-			})
 			/* Save to Cart */
 			.addCase(createOrder.pending, (state) => {
 				state.isLoading = true;

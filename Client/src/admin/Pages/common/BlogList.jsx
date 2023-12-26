@@ -84,19 +84,19 @@ const BlogList = () => {
 
 	const data1 = [];
 
-	const sortedBlogState = blogState?.slice().sort((a, b) => {
-		const numViewsA = a?.numViews;
-		const numViewsB = b?.numViews;
+	// const sortedBlogState = blogState?.slice().sort((a, b) => {
+	// 	const numViewsA = a?.numViews;
+	// 	const numViewsB = b?.numViews;
 
-		if (!isNaN(numViewsA) && !isNaN(numViewsB)) {
-			return numViewsB - numViewsA;
-		}
+	// 	if (!isNaN(numViewsA) && !isNaN(numViewsB)) {
+	// 		return numViewsB - numViewsA;
+	// 	}
 
-		return 0;
-	});
+	// 	return 0;
+	// });
 
-	for (let i = 0; i < sortedBlogState?.length; i++) {
-		const title = sortedBlogState[i]?.title;
+	for (let i = 0; i < blogState?.length; i++) {
+		const title = blogState[i]?.title;
 		if (!title) {
 			continue;
 		}
@@ -114,16 +114,16 @@ const BlogList = () => {
 		data1?.push({
 			key: i + 1,
 			name: truncatedTitle,
-			category: sortedBlogState[i]?.category,
-			views: sortedBlogState[i]?.numViews,
+			category: blogState[i]?.category,
+			views: blogState[i]?.numViews,
 			action: (
 				<>
-					<Link to={`/admin/edit-blog/${sortedBlogState[i]._id}`} className=''>
+					<Link to={`/admin/edit-blog/${blogState[i]._id}`} className=''>
 						Edit
 					</Link>
 					<button
 						className='ms-3 modalFix'
-						onClick={() => showModal(sortedBlogState[i]._id)}
+						onClick={() => showModal(blogState[i]._id)}
 					>
 						<MdDelete className='fs-5 text-danger mb-1' />
 					</button>

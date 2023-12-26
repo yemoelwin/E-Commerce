@@ -27,11 +27,12 @@ const searchProducts = async (searchInput) => {
 		const response = await api.get(`/product/search/?query=${searchInput}`);
 		return response.data;
 	} catch (error) {
-		console.error(
-			"An error occurred during fetching all search products:",
-			error,
-		);
-		throw error; // Re-throw the error for higher-level handling
+		if (error.response && error.response.data && error.response.data.message) {
+			throw new Error(error.response.data.message);
+		} else {
+			console.error("error", error);
+			throw new Error("An error occurred while searching products."); // Fallback error message
+		}
 	}
 };
 
@@ -40,8 +41,12 @@ const createProduct = async (prod) => {
 		const response = await api.post("/product/create-product", prod);
 		return response.data;
 	} catch (error) {
-		console.error("An error occurred while creating product:", error);
-		throw error; // Re-throw the error for higher-level handling
+		if (error.response && error.response.data && error.response.data.message) {
+			throw new Error(error.response.data.message);
+		} else {
+			console.error("error", error);
+			throw new Error("An error occurred while creating new product."); // Fallback error message
+		}
 	}
 };
 
@@ -50,8 +55,12 @@ const addToWishlist = async (prodId) => {
 		const response = await api.put(`/product/wishlist`, { prodId });
 		return response.data;
 	} catch (error) {
-		console.error("An error occurred while adding product to wishlist:", error);
-		throw error; // Re-throw the error for higher-level handling
+		if (error.response && error.response.data && error.response.data.message) {
+			throw new Error(error.response.data.message);
+		} else {
+			console.error("error", error);
+			throw new Error("An error occurred while adding item to wishlist."); // Fallback error message
+		}
 	}
 };
 
@@ -60,8 +69,14 @@ const removeFromToWishlist = async (prodId) => {
 		const response = await api.put(`/product/remove_wishlist`, { prodId });
 		return response.data;
 	} catch (error) {
-		console.error("An error occurred while adding product to wishlist:", error);
-		throw error; // Re-throw the error for higher-level handling
+		if (error.response && error.response.data && error.response.data.message) {
+			throw new Error(error.response.data.message);
+		} else {
+			console.error("error", error);
+			throw new Error(
+				"An error occurred while removing product from wishlist.",
+			); // Fallback error message
+		}
 	}
 };
 
@@ -70,8 +85,12 @@ const getProduct = async (prodId) => {
 		const response = await api.get(`/product/retrieve/${prodId}`);
 		return response.data;
 	} catch (error) {
-		console.error("An error occurred while fetching single product:", error);
-		throw error; // Re-throw the error for higher-level handling
+		if (error.response && error.response.data && error.response.data.message) {
+			throw new Error(error.response.data.message);
+		} else {
+			console.error("error", error);
+			throw new Error("An error occurred while fetching single product."); // Fallback error message
+		}
 	}
 };
 
@@ -90,8 +109,12 @@ const updateProduct = async (data) => {
 		});
 		return response.data;
 	} catch (error) {
-		console.error("An error occurred while fetching single product:", error);
-		throw error; // Re-throw the error for higher-level handling
+		if (error.response && error.response.data && error.response.data.message) {
+			throw new Error(error.response.data.message);
+		} else {
+			console.error("error", error);
+			throw new Error("An error occurred while updating product."); // Fallback error message
+		}
 	}
 };
 
@@ -100,8 +123,12 @@ const deleteProduct = async (id) => {
 		const response = await api.delete(`/product/delete/${id}`);
 		return response.data;
 	} catch (error) {
-		console.error("An error occurred while deleting product:", error);
-		throw error; // Re-throw the error for higher-level handling
+		if (error.response && error.response.data && error.response.data.message) {
+			throw new Error(error.response.data.message);
+		} else {
+			console.error("error", error);
+			throw new Error("An error occurred while deleting product."); // Fallback error message
+		}
 	}
 };
 
@@ -114,11 +141,12 @@ const rating = async (data) => {
 		});
 		return response.data;
 	} catch (error) {
-		console.error(
-			"An error occurred during fetching all search products:",
-			error,
-		);
-		throw error; // Re-throw the error for higher-level handling
+		if (error.response && error.response.data && error.response.data.message) {
+			throw new Error(error.response.data.message);
+		} else {
+			console.error("error", error);
+			throw new Error("An error occurred while rating stars and comments."); // Fallback error message
+		}
 	}
 };
 

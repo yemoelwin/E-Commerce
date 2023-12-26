@@ -3,18 +3,18 @@ import Container from "../containers/common/Container";
 import Meta from "../containers/common/Meta";
 import BreadCrumb from "../containers/common/BreadCrumb";
 import { useDispatch, useSelector } from "react-redux";
-import { getWishlist } from "../features/users/userSlice";
 import {
 	productResetState,
 	removeWishlist,
 } from "../features/products/productSlice";
 import { showToast } from "../containers/common/ShowToast";
+import { getWishlist } from "../features/wishlist/wishlistSlice";
 
 const WishList = () => {
 	const dispatch = useDispatch();
 	const [isLoading, setIsLoading] = useState(true);
 	const wishlistState = useSelector(
-		(state) => state?.user?.wishlist?.user?.wishlist,
+		(state) => state?.wishlist?.wishlist?.user?.wishlist,
 	);
 
 	useEffect(() => {
@@ -62,55 +62,59 @@ const WishList = () => {
 					</div>
 				) : (
 					<div className='row'>
-						{wishlistState?.length === 0 && (
+						{wishlistState && wishlistState?.length === 0 && (
 							<div className='text-center fs-5 text-secondary'>
 								Empty Wishlist
 							</div>
 						)}
-						{wishlistState?.map((item, index) => {
-							return (
-								<div className='col-3 wishlist-card-div' key={index}>
-									<div className='wishlist-card position-relative'>
-										<img
-											src='images/cross.svg'
-											alt='cross'
-											className='position-absolute cross img-fluid'
-											onClick={() => removeWishlistItem(item?._id)}
-										/>
-										<div className='wishlist-card-image'>
+						{wishlistState &&
+							wishlistState?.map((item, index) => {
+								return (
+									<div className='col-3 wishlist-card-div' key={index}>
+										<div className='wishlist-card position-relative'>
 											<img
-												src={item?.images[0]?.url}
-												// className="img-fluid "
-												alt='watch'
+												src='images/cross.svg'
+												alt='cross'
+												className='position-absolute cross img-fluid'
+												onClick={() => removeWishlistItem(item?._id)}
 											/>
-										</div>
-										<div className='py-3 px-3'>
-											<h5 className='title' title={item?.title}>
-												{item?.title?.length > 15
-													? (() => {
-															const truncatedTitle = item?.title.substr(0, 30);
-															const lastSpaceIndex =
-																truncatedTitle.lastIndexOf(" ");
-															if (!lastSpaceIndex) {
-																return `${truncatedTitle}...`;
-															}
-															return `${truncatedTitle.substr(
-																0,
-																lastSpaceIndex,
-															)}...`;
-													  })()
-													: item?.title}
-											</h5>
-											<h6 className='price'>${item?.price}</h6>
-											<h6 className='color'>
-												<span className='column'>Color:</span>{" "}
-												{item?.color[0]?.label}
-											</h6>
+											<div className='wishlist-card-image'>
+												<img
+													src={item?.images[0]?.url}
+													// className="img-fluid "
+													alt='watch'
+												/>
+											</div>
+											<div className='py-3 px-3'>
+												<h5 className='title' title={item?.title}>
+													{item?.title?.length > 15
+														? (() => {
+																const truncatedTitle = item?.title.substr(
+																	0,
+																	30,
+																);
+																const lastSpaceIndex =
+																	truncatedTitle.lastIndexOf(" ");
+																if (!lastSpaceIndex) {
+																	return `${truncatedTitle}...`;
+																}
+																return `${truncatedTitle.substr(
+																	0,
+																	lastSpaceIndex,
+																)}...`;
+														  })()
+														: item?.title}
+												</h5>
+												<h6 className='price'>${item?.price}</h6>
+												<h6 className='color'>
+													<span className='column'>Color:</span>{" "}
+													{item?.color[0]?.label}
+												</h6>
+											</div>
 										</div>
 									</div>
-								</div>
-							);
-						})}
+								);
+							})}
 					</div>
 				)}
 			</Container>

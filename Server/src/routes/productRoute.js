@@ -27,6 +27,12 @@ router.get("/", productController.fetchAllProduct); /* finished */
 router.get("/search", productController.searchProducts); /* finished */
 
 router.put(
+	"/user-wishlist",
+	protect,
+	productController.wishlist,
+); /* finished */
+
+router.put(
 	"/wishlist",
 	protect,
 	productController.addToWishlist,

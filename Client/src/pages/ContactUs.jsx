@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 // import Maps from './Maps';
 import { AiOutlineHome, AiOutlineMail } from "react-icons/ai";
 import { BiPhoneCall, BiInfoCircle } from "react-icons/bi";
@@ -11,6 +11,7 @@ import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { createContact } from "../features/inquiry/inquirySlice";
 import { showToast } from "../containers/common/ShowToast";
+import ReCAPTCHA from "react-google-recaptcha";
 
 let schema = yup.object().shape({
 	name: yup.string().required("Name is Required"),
@@ -26,8 +27,14 @@ let schema = yup.object().shape({
 });
 const ContactUs = () => {
 	const dispatch = useDispatch();
+
 	const { isLoading } = useSelector((state) => state.inquiry);
-	console.log("isloading", isLoading);
+
+	const [captchaValue, setCaptchaValue] = useState([]);
+
+	const recaptchaRef = React.useRef();
+
+	const site_key = "6Lf6VzwpAAAAAAqBf730JHS8c_qbbSxajGoDk-D9";
 
 	const formik = useFormik({
 		initialValues: {
@@ -39,7 +46,10 @@ const ContactUs = () => {
 		validationSchema: schema,
 		onSubmit: async (values) => {
 			try {
-				const response = await dispatch(createContact(values));
+				const response = await dispatch(
+					createContact({ values, captchaValue: captchaValue }),
+				);
+				recaptchaRef.current.reset();
 				if (response.error) {
 					showToast("Something went wrong.", "error");
 				} else {
@@ -52,6 +62,11 @@ const ContactUs = () => {
 			}
 		},
 	});
+
+	const onChange = (value) => {
+		console.log("value", value);
+		setCaptchaValue(value);
+	};
 
 	return (
 		<>
@@ -148,6 +163,14 @@ const ContactUs = () => {
 												{formik.errors.comments}
 											</div>
 										)}
+									</div>
+
+									<div>
+										<ReCAPTCHA
+											ref={recaptchaRef}
+											sitekey={site_key}
+											onChange={onChange}
+										/>
 									</div>
 
 									<div>

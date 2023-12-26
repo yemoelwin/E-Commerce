@@ -1,11 +1,17 @@
+/* importing a specific function, features, libraries of nodejs */
 import express from "express";
 import bodyParser from "body-parser";
 import { config } from "dotenv";
 import { dbConnect } from "./config/dbConnect.js";
-import errorHandler from "./middlewares/errorHandler.js";
+
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import cors from "cors";
+
+/* importing errorHandler */
+import errorHandler from "./middlewares/errorHandler.js";
+
+/* importing routes */
 import authRoute from "./routes/authRoute.js";
 import productRoute from "./routes/productRoute.js";
 import blogRoute from "./routes/blogRoute.js";
@@ -22,11 +28,6 @@ import orderIncomeRoute from "./routes/orderIncomeRoute.js";
 config();
 
 const app = express();
-
-app.use((req, res, next) => {
-	res.header("Access-Control-Allow-Origin", "*");
-	next();
-});
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -46,6 +47,8 @@ app.use(
 		credentials: true, // Enable cookies if needed
 	}),
 );
+
+/* Define the route name */
 app.use("/api/user", authRoute);
 app.use("/api/product", productRoute);
 app.use("/api/blog", blogRoute);

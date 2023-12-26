@@ -76,7 +76,14 @@ const OurStore = () => {
 				setIsLoading(true);
 				await Promise.all([
 					dispatch(
-						getProducts({ sort, tag, brand, category, minPrice, maxPrice }),
+						getProducts({
+							sort,
+							tag,
+							brand,
+							category,
+							minPrice,
+							maxPrice,
+						}),
 					),
 					dispatch(getBrands()),
 					dispatch(getAllCategory()),

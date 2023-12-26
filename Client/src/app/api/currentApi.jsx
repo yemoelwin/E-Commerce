@@ -31,7 +31,6 @@ api.interceptors.response.use(
 				console.log("Invalid Password");
 			} else {
 				localStorage.clear();
-
 				window.location.href = `/login?alertMessage=${encodeURIComponent(
 					alertMessage,
 				)}`;

@@ -20,11 +20,17 @@ import { showToast } from "../common/ShowToast";
 
 const Header = () => {
 	const dispatch = useDispatch();
+
 	const navigate = useNavigate();
+
 	const menuRef = useRef();
+
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
+
 	const [searchInput, setSearchInput] = useState("");
+
 	const authState = useSelector((state) => state.auth.users);
+
 	const { totalQuantity, cartTotalAmount } = useSelector((state) => state.cart);
 
 	useEffect(() => {
@@ -62,7 +68,8 @@ const Header = () => {
 				}, 300);
 			} else {
 				await dispatch(searchInputProducts(searchInput));
-				navigate("/product");
+				// navigate(`/product`);
+				navigate(`/product?search=${encodeURIComponent(searchInput)}`);
 			}
 		} catch (error) {
 			console.error("Error searching for products:", error);

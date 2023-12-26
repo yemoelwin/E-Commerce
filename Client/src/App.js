@@ -20,7 +20,6 @@ import NotFound from "./pages/NotFound";
 import Home from "./pages/Home";
 import Layout from "./containers/layout/Layout";
 import IsLoading from "./containers/common/IsLoading";
-// import ViewOrderProduct from "./pages/ViewOrderProduct";
 
 const OurStore = lazy(() => import("./pages/OurStore"));
 const ContactUs = lazy(() => import("./pages/ContactUs"));

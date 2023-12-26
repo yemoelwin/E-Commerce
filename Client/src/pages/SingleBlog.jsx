@@ -9,10 +9,16 @@ import { getBlog } from "../features/blog/blogSlice";
 import { PiGitlabLogoFill } from "react-icons/pi";
 
 const SingleBlog = () => {
+	window.scrollTo(0, 0);
+
 	const dispatch = useDispatch();
+
 	const location = useLocation();
+
 	const blogId = location.pathname.split("/")[2];
+
 	const [isLoading, setIsLoading] = useState(true);
+
 	const singleBlog = useSelector((state) => state?.blog?.singleBlogData);
 
 	useEffect(() => {

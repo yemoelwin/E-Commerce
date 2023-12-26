@@ -4,11 +4,11 @@ const getUserfromLocalStorage = JSON.parse(localStorage.getItem("user"));
 
 const initialState = {
 	users: getUserfromLocalStorage ? getUserfromLocalStorage : [],
-	isAuthenticated: false,
-	isLoggedIn: false,
+	isAuthenticated: getUserfromLocalStorage ? true : false,
+	isLoggedIn: getUserfromLocalStorage ? true : false,
 	isError: false,
 	isLoading: false,
-	isSuccess: false,
+	isSuccess: getUserfromLocalStorage ? true : false,
 	message: "",
 	errorMessage: "",
 };

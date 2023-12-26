@@ -16,13 +16,14 @@ import couponReducer from "../features/coupon/couponSlice";
 import userReducer from "../features/users/userSlice";
 import cartReducer from "../features/cart/cartSlice";
 import incomeAndOrderReducer from "../features/incomeAndOrder/incomeAndOrderSlice";
+import wishlistReducer from "../features/wishlist/wishlistSlice";
 // import tokenMiddleware from '../middleware/tokenMiddleware';
 
 const persistConfig = {
 	key: "root", // Change this key as needed
 	// version: 1,
 	storage, // Use the storage option you imported
-	whitelist: ["cart", "product", "user", "auth"],
+	whitelist: ["cart", "product", "user"],
 };
 
 const reducers = combineReducers({
@@ -41,6 +42,7 @@ const reducers = combineReducers({
 	coupon: couponReducer,
 	cart: cartReducer,
 	totalIncomeAndOrder: incomeAndOrderReducer,
+	wishlist: wishlistReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, reducers);

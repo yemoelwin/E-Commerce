@@ -341,7 +341,6 @@ export const productSlice = createSlice({
 				state.isLoading = false;
 				state.message = action.error.message || "An error occurred.";
 			})
-			/*  */
 			.addCase(productResetState, () => initialState)
 			.addCase(addToWishListReset, (state) => {
 				state.addToWishList = null;

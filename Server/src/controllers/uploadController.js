@@ -52,6 +52,8 @@ const deleteImage = asyncHandler(async (req, res) => {
 	}
 });
 
+export const uploadImageController = { uploadImages, deleteImage };
+
 // const fileSizeFormatter = (bytes, decimal = 2) => {
 //     if (bytes === 0) return '0 Bytes';
 
@@ -62,8 +64,6 @@ const deleteImage = asyncHandler(async (req, res) => {
 
 //     return parseFloat((bytes / Math.pow(k, i)).toFixed(decimal)) + ' ' + sizes[i];
 // };
-
-export const uploadImageController = { uploadImages, deleteImage };
 
 // const uploadImagesAndFormatSizes = asyncHandler(async (req, res) => {
 //     try { // Get product ID from route params

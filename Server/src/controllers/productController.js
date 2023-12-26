@@ -80,18 +80,30 @@ const getProductById = async (req, res) => {
 
 const fetchAllProduct = asyncHandler(async (req, res) => {
 	try {
+		//************* Filtering ************* //
+
+		// Create a copy of the req.query object
 		const queryObj = { ...req.query };
+
+		// Define an array of fields to be excluded from queryObj
 		const excludeFields = ["page", "sort", "limit", "fields"];
+
+		// Loop through each element in excludeFields and delete it from queryObj
 		excludeFields.forEach((element) => delete queryObj[element]);
+
+		// Convert the modified queryObj to a JSON string and Replace specific comparison operators with MongoDB operators in the string
 		let queryStr = JSON.stringify(queryObj).replace(
 			/\b(gte|gt|lte|lt)\b/g,
 			(match) => `$${match}`,
 		);
+
 		let productQuery = Product.find(JSON.parse(queryStr));
 
-		// sorting
+		//************* Sorting ************* //
 		if (req.query.sort) {
 			const sortBy = req.query.sort.split(",").join(" ");
+
+			console.log("sortBy", sortBy);
 			productQuery = productQuery
 				.collation({ locale: "en", caseLevel: false })
 				.sort(sortBy);
@@ -99,20 +111,25 @@ const fetchAllProduct = asyncHandler(async (req, res) => {
 			productQuery = productQuery.sort({ createdAt: -1 });
 		}
 
-		// limiting the fields
+		/* Currently not necessary */
+		//************* limiting the fields ************* //
 		if (req.query.fields) {
 			const fields = req.query.fields.split(",").join(" ");
-			console.log("fields", fields);
+
 			productQuery = productQuery.select(fields);
 		} else {
 			productQuery = productQuery.select("-__v");
 		}
 
-		// pagination
+		//************* pagination ************* //
 		const page = req.query.page;
+
 		const limitProduct = req.query.limit;
+
 		const skip = (page - 1) * limitProduct;
+
 		productQuery = productQuery.skip(skip).limit(limitProduct);
+
 		if (req.query.page) {
 			const productCount = await Product.countDocuments();
 			if (skip >= productCount) {
@@ -122,7 +139,8 @@ const fetchAllProduct = asyncHandler(async (req, res) => {
 				});
 			}
 		}
-		console.log(skip);
+
+		/* Currently not necessary */
 
 		const products = await productQuery;
 		res.json(products);
@@ -234,6 +252,42 @@ const deleteProduct = asyncHandler(async (req, res) => {
 		res.status(500).json({
 			status: "ERROR OCCURRED",
 			message: "Something went wrong. Please try again.",
+		});
+	}
+});
+
+const wishlist = asyncHandler(async (req, res) => {
+	const { _id } = req.user;
+	const { prodId } = req.body;
+	try {
+		const user = await User.findById(_id);
+		const alreadyAdded = user.wishlist.find((id) => id.toString() === prodId);
+		if (alreadyAdded) {
+			let user = await User.findByIdAndUpdate(
+				_id,
+				{
+					$pull: {
+						wishlist: prodId,
+					},
+				},
+				{ new: true },
+			);
+			res.status(200).json({ message: "Item removed from wishlist.", user });
+		} else {
+			let user = await User.findByIdAndUpdate(
+				_id,
+				{
+					$push: {
+						wishlist: prodId,
+					},
+				},
+				{ new: true },
+			);
+			res.status(200).json({ message: "Product added to wishlist.", user });
+		}
+	} catch (error) {
+		res.status(500).json({
+			message: "Internal Server Error",
 		});
 	}
 });
@@ -373,6 +427,7 @@ export const productController = {
 	getProductById,
 	fetchAllProduct,
 	deleteProduct,
+	wishlist,
 	addToWishlist,
 	removeFromWishlist,
 	updateProduct,

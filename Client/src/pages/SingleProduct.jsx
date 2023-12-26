@@ -18,9 +18,14 @@ import IsLoading from "../containers/common/IsLoading";
 import Loading from "../containers/common/Loading";
 
 const SingleProduct = () => {
+	// window.scrollTo(0, 0);
+
 	const dispatch = useDispatch();
+
 	const navigate = useNavigate();
+
 	const location = useLocation();
+
 	const [color, setColor] = useState(null);
 
 	const [alreadyAdded, setAlreadyAdded] = useState(false);

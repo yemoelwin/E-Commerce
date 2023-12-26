@@ -1,14 +1,15 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactStars from "react-rating-stars-component";
 import { useLocation, useNavigate } from "react-router-dom";
 import wish from "../images/wish.svg";
-// import redWish from "../images/wishRed.svg";
+import redWish from "../images/wishRed.svg";
 // import addcart from "../images/add-cart.svg";
 import view from "../images/view.svg";
 import { useDispatch, useSelector } from "react-redux";
-import { addToWishlistProduct } from "../features/products/productSlice";
+
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import "react-lazy-load-image-component/src/effects/blur.css";
+import { addToWishlist } from "../features/wishlist/wishlistSlice";
 
 const CardProduct = (props) => {
 	const { grid, prodData } = props;
@@ -21,11 +22,20 @@ const CardProduct = (props) => {
 
 	const { isAuthenticated } = useSelector((state) => state.auth);
 
-	// const [isInWishlist, setIsInWishlist] = useState(false);
+	const wishlistData = useSelector(
+		(state) => state.wishlist?.wishlist?.user?.wishlist,
+	);
+
+	const isProductInWishlist = (prodId) => {
+		return wishlistData?.some((item) => item.productId === prodId);
+	};
 
 	const handleWishlist = async (prodId) => {
 		try {
-			await dispatch(addToWishlistProduct(prodId));
+			console.log(prodId);
+
+			// Dispatch the action to add/remove from the wishlist
+			await dispatch(addToWishlist(prodId));
 		} catch (error) {
 			console.error("error", error);
 			throw new Error("Something went wrong while adding item to wishlist");
@@ -106,21 +116,23 @@ const CardProduct = (props) => {
 											  })()
 											: item?.description}
 									</p>
-									<p className='price'>{`$ ${item.price}`}</p>
+									<p className='price'>{`$ ${item?.price.toFixed(2)}`}</p>
 								</div>
 
 								<div className='action-bar position-absolute'>
 									<div className='d-flex flex-column'>
-										{!isAuthenticated ? (
-											<div></div>
-										) : (
+										{isAuthenticated && (
 											<button
 												className='mb-1 border-0 bg-transparent'
 												onClick={(e) => {
 													handleWishlist(item?._id);
 												}}
 											>
-												<img src={wish} alt='Add to wishlist' />
+												{isProductInWishlist(item._id) ? (
+													<img src={redWish} alt='added wishlist' />
+												) : (
+													<img src={wish} alt='empty wishlist' />
+												)}
 											</button>
 										)}
 
@@ -130,10 +142,6 @@ const CardProduct = (props) => {
 										>
 											<img src={view} alt='addcart' />
 										</button>
-
-										{/* <button className='mb-1 border-0 bg-transparent'>
-											<img src={addcart} alt='addcart' />
-										</button> */}
 									</div>
 								</div>
 							</div>
